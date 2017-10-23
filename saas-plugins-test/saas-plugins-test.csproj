@@ -7,8 +7,8 @@
     <ProjectGuid>{1684EE60-65C7-4806-8CD1-AA4FBD56052C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ad2csv_test</RootNamespace>
-    <AssemblyName>ad2csv-test</AssemblyName>
+    <RootNamespace>saas_plugins_test</RootNamespace>
+    <AssemblyName>saas_plugins_test</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -70,6 +70,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

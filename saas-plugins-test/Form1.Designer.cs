@@ -32,6 +32,7 @@
             this.tbCode = new System.Windows.Forms.TextBox();
             this.tbRunning = new System.Windows.Forms.TextBox();
             this.tbValue = new System.Windows.Forms.TextBox();
+            this.btnTest = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSubmit
@@ -78,11 +79,22 @@
             this.tbValue.TabIndex = 3;
             this.tbValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
+            // btnTest
+            // 
+            this.btnTest.Location = new System.Drawing.Point(923, 73);
+            this.btnTest.Name = "btnTest";
+            this.btnTest.Size = new System.Drawing.Size(223, 106);
+            this.btnTest.TabIndex = 4;
+            this.btnTest.Text = "Test";
+            this.btnTest.UseVisualStyleBackColor = true;
+            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1249, 924);
+            this.Controls.Add(this.btnTest);
             this.Controls.Add(this.tbValue);
             this.Controls.Add(this.tbRunning);
             this.Controls.Add(this.tbCode);
@@ -101,6 +113,7 @@
         private System.Windows.Forms.TextBox tbCode;
         private System.Windows.Forms.TextBox tbRunning;
         private System.Windows.Forms.TextBox tbValue;
+        private System.Windows.Forms.Button btnTest;
     }
 }
 

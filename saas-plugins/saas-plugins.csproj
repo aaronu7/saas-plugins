@@ -7,8 +7,8 @@
     <ProjectGuid>{8795B1E0-491E-4E45-A4A7-7EF48D79178D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ad2csv</RootNamespace>
-    <AssemblyName>ad2csv</AssemblyName>
+    <RootNamespace>saas_plugins</RootNamespace>
+    <AssemblyName>saas_plugins</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -41,7 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SaaS\CompilerRunner.cs" />
+    <Compile Include="SaaS\Plugin.cs" />
+    <Compile Include="SaaS\PluginManager.cs" />
+    <Compile Include="SaaS\PluginRunner.cs" />
     <Compile Include="SaaS\EvalEngine2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
