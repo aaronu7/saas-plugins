@@ -50,8 +50,22 @@ namespace template_test
             oPluginManager.OutputAssemblies();
 
 
+            object resA = oPluginManager.RunPlugin(PluginA, "DynamicPlugins.CSCodeEvaler", "EvalCode", new object[] {(int)7});
+            string sResA = "NULL";
+            if(resA!=null)
+                sResA = resA.ToString();
+            System.Console.WriteLine(sResA);
+
+
+            object resB = oPluginManager.RunPlugin(PluginB, "DynamicPlugins.CSCodeEvaler2", "EvalCode", new object[] {(int)7});
+            string sResB = "NULL";
+            if(resB!=null)
+                sResB = resB.ToString();
+            System.Console.WriteLine(sResB);
+
+
             /*
-            object res = oPluginManager.RunPlugin(oPluginA, "saas_plugins.SaaS.CompilerRunner.CSCodeEvaler", "EvalCode", new object[] {(int)77});
+            object res = oPluginManager.RunPlugin(oPluginA, "DynamicPlugins.CSCodeEvaler", "EvalCode", new object[] {(int)77});
 
             string sRes = "NULL";
             if(res!=null)
@@ -69,35 +83,27 @@ namespace template_test
                 "using System;" + Environment.NewLine +
                 "namespace DynamicPlugins {" + Environment.NewLine +
                 "  public class CSCodeEvaler {" + Environment.NewLine +
-                "    public object EvalCode(int x) {" + Environment.NewLine +
+                "    public int EvalCode(int x) {" + Environment.NewLine +
                 "      return x;" + Environment.NewLine +
                 "    }" + Environment.NewLine +
                 "  }" + Environment.NewLine +
                 "}";
-            PluginA = AddCode(new string[] {code1}, "DynamicPlugins.CSCodeEvaler", "PluginA.dll");
+            //PluginA = AddCode(new string[] {code1}, "DynamicPlugins.CSCodeEvaler", "PluginA.dll", new string[] {"PluginB.dll"});  // can't refernce before it has been added to domain
+            PluginA = AddCode(new string[] {code1}, "DynamicPlugins.CSCodeEvaler", "PluginA.dll", null);
 
             string code2 = 
                 "using System;" + Environment.NewLine +
                 "namespace DynamicPlugins {" + Environment.NewLine +
                 "  public class CSCodeEvaler2 {" + Environment.NewLine +
-                "    public object EvalCode(int x) {" + Environment.NewLine +
-                "      return x;" + Environment.NewLine +
-                "    }" + Environment.NewLine +
-                "    public object EvalCode1(int x) {" + Environment.NewLine +
-                "      return x*3;" + Environment.NewLine +
-                "    }" + Environment.NewLine +
-                "    public object EvalCode2(int x) {" + Environment.NewLine +
-                "      return x*3;" + Environment.NewLine +
-                "    }" + Environment.NewLine +
-                "    public object EvalCode3(int x) {" + Environment.NewLine +
-                "      return x*3;" + Environment.NewLine +
-                "    }" + Environment.NewLine +
-                "    public object EvalCode4(int x) {" + Environment.NewLine +
-                "      return x*3;" + Environment.NewLine +
+                "    public int EvalCode(int x) {" + Environment.NewLine +
+                "      CSCodeEvaler obj = new CSCodeEvaler();" + Environment.NewLine +
+                "      return (int)obj.EvalCode(x) * 2;" + Environment.NewLine +
+
+                //"      return x*2;" + Environment.NewLine +
                 "    }" + Environment.NewLine +
                 "  }" + Environment.NewLine +
                 "}";
-            PluginB = AddCode(new string[] {code2}, "DynamicPlugins.CSCodeEvaler2", "PluginB.dll");
+            PluginB = AddCode(new string[] {code2}, "DynamicPlugins.CSCodeEvaler2", "PluginB.dll", new string[] {"PluginA.dll"});
 
             
             /*
@@ -155,12 +161,16 @@ namespace template_test
 
 
 
-        protected Plugin AddCode(string[] code, string codeNamespacePath, string dllFileName) {
+        protected Plugin AddCode(string[] code, string codeNamespacePath, string dllFileName, string[] dllCustomRefs) {
             List<string> referencedAssemblySet = new List<string>();
             referencedAssemblySet.Add("system.dll");
             referencedAssemblySet.Add("system.drawing.dll");
             referencedAssemblySet.Add("saas_plugins.dll");
-            
+            if(dllCustomRefs != null) {
+                foreach(string reference in dllCustomRefs)
+                    referencedAssemblySet.Add(reference);
+            }
+
             string plugginRoot = Application.StartupPath + @"\DynamicPlugins\";
             //string plugginRoot = Application.StartupPath + @"\";
             System.IO.Directory.CreateDirectory(plugginRoot);

@@ -13,9 +13,30 @@ namespace saas_plugins.SaaS
 
       public class DllLoader : MarshalByRefObject, IDllLoader
       {
+        Assembly assembly = null;
+
         public string Load(string dllFilePath) {
-            var assembly = Assembly.LoadFile(dllFilePath);
+            try {
+                this.assembly = Assembly.LoadFile(dllFilePath);
+            } catch {}
+
+            // NOTE: Cant return the Assembly.... issues with cross-domain
+            //System.Console.WriteLine("Loaded: " + assembly.FullName);
             return assembly.FullName;
+        }
+
+        public object Run(string typeName, string methodName, object[] args)
+        {
+            Type type = this.assembly.GetType(typeName);
+            MethodInfo methodInfo = type.GetMethod(methodName);
+            object classInstance = Activator.CreateInstance(type, null);
+
+            object result = methodInfo.Invoke(classInstance, args);
+            classInstance = null;
+            methodInfo = null;
+            type = null;
+
+            return result;
         }
       }
 
@@ -26,14 +47,14 @@ namespace saas_plugins.SaaS
         private string _compilerRunnerNamespace = "";
         private string _instanceDomainName = "";
 
-        Dictionary<string, PluginRunner> _runnerSet = null;
+        Dictionary<string, DllLoader> _runnerSet = null;
 
         public PluginManager(string instanceDomainName, string compilerRunnerNamespace) {
             this._instanceDomainName = instanceDomainName;
             this._compilerRunnerNamespace = compilerRunnerNamespace;
 
             this._domain = AppDomain.CreateDomain(this._instanceDomainName);
-            this._runnerSet = new Dictionary<string, PluginRunner>();
+            this._runnerSet = new Dictionary<string, DllLoader>();
         }
 
         public void Dispose() {
@@ -41,37 +62,56 @@ namespace saas_plugins.SaaS
             //this._runnerSet.
         }
 
-        protected void LoadAssembly()
-        {
-            //string pathToDll = Assembly.GetExecutingAssembly().CodeBase;
-            //AppDomainSetup domainSetup = new AppDomainSetup { PrivateBinPath = pathToDll };
-            //var newDomain = AppDomain.CreateDomain("FooBar", null, domainSetup);
-
-            //ProxyClass c = (ProxyClass)(newDomain.CreateInstanceFromAndUnwrap(pathToDll, typeof(ProxyClass).FullName));
-            //Console.WriteLine(c == null);
-
-            Console.ReadKey(true);
-        }
 
         public void OutputAssemblies() {
             try {
-                //Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-                Assembly[] assemblies = this._domain.GetAssemblies();
-                System.Console.WriteLine("Running Assemblines");
+                /*
+                Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                System.Console.WriteLine("===================");
+                System.Console.WriteLine("Current App Domain");
                 System.Console.WriteLine("===================");
                 foreach(Assembly asm in assemblies) {
                     System.Console.WriteLine(asm.FullName);
                 }
+
+                assemblies = this._domain.GetAssemblies();
+                System.Console.WriteLine("===================");
+                System.Console.WriteLine("Plugin App Domain");
+                System.Console.WriteLine("===================");
+                foreach(Assembly asm in assemblies) {
+                    System.Console.WriteLine(asm.FullName);
+                }
+                */
             } catch(Exception ex) {
                 System.Console.WriteLine(ex.Message);
             }
+            
         }
 
         public void LoadPlugin(Plugin oPlugin) {
+            // Load into the Plugin domain
             string dllFilePath = oPlugin.DllFileDir + oPlugin.DllFileName;
-            var loader = (IDllLoader)this._domain.CreateInstanceAndUnwrap(typeof(DllLoader).Assembly.FullName, typeof(DllLoader).FullName);
-            loader.Load(dllFilePath);
-            System.Console.WriteLine("Loaded: " + oPlugin.DllFileName);
+            DllLoader loader = (DllLoader)this._domain.CreateInstanceAndUnwrap(typeof(DllLoader).Assembly.FullName, typeof(DllLoader).FullName);
+            string asmName = loader.Load(dllFilePath);
+            //System.Console.WriteLine("Loaded: " + asmName);
+
+            // Load  into the current running domain .... cannot "unload" and has memory issues
+            //Assembly asm = Assembly.LoadFile(dllFilePath);
+            //System.Console.WriteLine("Loaded: " + asm.FullName);
+
+
+            if(!this._runnerSet.ContainsKey(oPlugin.DllFileName)) {
+                this._runnerSet.Add(oPlugin.DllFileName, loader);
+                System.Console.WriteLine("Plugin Added: " + oPlugin.DllFileName);
+            } else {
+
+                // ********** we need to unload the entire AppDomain and reload it
+
+                //this._runnerSet[oPlugin.DllFileName].Dispose();
+                //this._runnerSet[oPlugin.DllFileName] = null;
+                //this._runnerSet[oPlugin.DllFileName] = cr;
+                //System.Console.WriteLine("Plugin Updated: " + oPlugin.DllFileName);
+            }
         }
 
         public void CompilePlugin(Plugin oPlugin) {
@@ -130,7 +170,7 @@ namespace saas_plugins.SaaS
                 System.Console.WriteLine("Plugin Not Found: " + oPlugin.DllFileName);
             } else {
                 System.Console.WriteLine("Plugin Function Called: " + oPlugin.DllFileName);
-                PluginRunner cr = this._runnerSet[oPlugin.DllFileName];
+                DllLoader cr = this._runnerSet[oPlugin.DllFileName];
                 result = cr.Run(oPlugin.ClassNamespacePath, functionName, functionArgs);
             }
             return result;
