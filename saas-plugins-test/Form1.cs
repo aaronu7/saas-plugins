@@ -13,7 +13,6 @@ namespace template_test
         System.Windows.Forms.Timer tmr = null;
         bool hasUpdate = false;
         PluginManager oPluginManager = null;
-        Plugin oPluginA = null;
 
         public Form1()
         {
@@ -41,9 +40,30 @@ namespace template_test
             }
         }
 
+        Plugin PluginA = null;
+        Plugin PluginB = null;
+
+        private void btnTest_Click(object sender, EventArgs e)
+        {
+            oPluginManager.LoadPlugin(PluginA);
+            oPluginManager.LoadPlugin(PluginB);
+            oPluginManager.OutputAssemblies();
+
+
+            /*
+            object res = oPluginManager.RunPlugin(oPluginA, "saas_plugins.SaaS.CompilerRunner.CSCodeEvaler", "EvalCode", new object[] {(int)77});
+
+            string sRes = "NULL";
+            if(res!=null)
+                sRes = res.ToString();
+
+            tbValue.Text = sRes;
+            */
+        }
+
         private void btnSubmit_Click(object sender, EventArgs e)
         {
-            
+
             // Simple class
             string code1 = 
                 "using System;" + Environment.NewLine +
@@ -54,9 +74,30 @@ namespace template_test
                 "    }" + Environment.NewLine +
                 "  }" + Environment.NewLine +
                 "}";
+            PluginA = AddCode(new string[] {code1}, "DynamicPlugins.CSCodeEvaler", "PluginA.dll");
 
-            AddCode(new string[] {code1}, "DynamicPlugins.CSCodeEvaler", "PluginA.dll");
-            
+            string code2 = 
+                "using System;" + Environment.NewLine +
+                "namespace DynamicPlugins {" + Environment.NewLine +
+                "  public class CSCodeEvaler2 {" + Environment.NewLine +
+                "    public object EvalCode(int x) {" + Environment.NewLine +
+                "      return x;" + Environment.NewLine +
+                "    }" + Environment.NewLine +
+                "    public object EvalCode1(int x) {" + Environment.NewLine +
+                "      return x*3;" + Environment.NewLine +
+                "    }" + Environment.NewLine +
+                "    public object EvalCode2(int x) {" + Environment.NewLine +
+                "      return x*3;" + Environment.NewLine +
+                "    }" + Environment.NewLine +
+                "    public object EvalCode3(int x) {" + Environment.NewLine +
+                "      return x*3;" + Environment.NewLine +
+                "    }" + Environment.NewLine +
+                "    public object EvalCode4(int x) {" + Environment.NewLine +
+                "      return x*3;" + Environment.NewLine +
+                "    }" + Environment.NewLine +
+                "  }" + Environment.NewLine +
+                "}";
+            PluginB = AddCode(new string[] {code2}, "DynamicPlugins.CSCodeEvaler2", "PluginB.dll");
 
             
             /*
@@ -104,39 +145,32 @@ namespace template_test
                 "    }" + Environment.NewLine +
                 "  }" + Environment.NewLine +
                 "}" + Environment.NewLine;
-            AddCode(new string[] {code2}, "DynamicPlugins.RockStar");
-            AddCode(new string[] {code1}, "DynamicPlugins.CSCodeEvaler");       // Add a dynamic assembly ????
+            AddCode(new string[] {code2}, "DynamicPlugins.RockStar", "PluginB.dll");
+            AddCode(new string[] {code1}, "DynamicPlugins.CSCodeEvaler", "PluginA.dll");       // Add a dynamic assembly ????
             */
             
             //AddCode(code1, "ad2csv.SaaS.CompilerRunner.CSCodeEvaler");
         }
 
-        private void btnTest_Click(object sender, EventArgs e)
-        {
-            object res = oPluginManager.RunPlugin(oPluginA, "saas_plugins.SaaS.CompilerRunner.CSCodeEvaler", "EvalCode", new object[] {(int)77});
-
-            string sRes = "NULL";
-            if(res!=null)
-                sRes = res.ToString();
-
-            tbValue.Text = sRes;
-        }
 
 
-        protected void AddCode(string[] code, string codeNamespacePath, string dllFileName) {
+
+        protected Plugin AddCode(string[] code, string codeNamespacePath, string dllFileName) {
             List<string> referencedAssemblySet = new List<string>();
             referencedAssemblySet.Add("system.dll");
             referencedAssemblySet.Add("system.drawing.dll");
             referencedAssemblySet.Add("saas_plugins.dll");
             
             string plugginRoot = Application.StartupPath + @"\DynamicPlugins\";
+            //string plugginRoot = Application.StartupPath + @"\";
             System.IO.Directory.CreateDirectory(plugginRoot);
-            oPluginA = new Plugin(plugginRoot, dllFileName, referencedAssemblySet, 
+            Plugin oPlugin = new Plugin(plugginRoot, dllFileName, referencedAssemblySet, 
                 "saas_plugins.SaaS.PluginRunner", "MyDomain",
                 codeNamespacePath, code);
 
-            oPluginManager.AddPlugin(oPluginA);
+            oPluginManager.CompilePlugin(oPlugin);
 
+            return oPlugin;
             /*
             object res = EvalEngine2.CompileQuickRun(
                 "ad2csv.dll", "ad2csv.SaaS.CompilerRunner", "MyDomain", 

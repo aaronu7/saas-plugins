@@ -32,6 +32,20 @@ namespace saas_plugins.SaaS
             AppDomain.Unload(domain);
             return result;
         }
+
+        public static bool CompileDLL(Plugin oPlugin, string mainDllFileName, string tmpInstanceDomain, string compilerRunnerNamespace) {
+
+            //RunExpression("ad2csv.dll", "ad2csv.SaaS.CompilerRunner", "MyDomain", "code goes here", "ad2csv.SaaS.CompilerRunner.CSCodeEvaler", "EvalCode", new object[0]);
+
+            AppDomain domain = AppDomain.CreateDomain(tmpInstanceDomain);
+            PluginRunner cr = (PluginRunner)domain.CreateInstanceFromAndUnwrap(mainDllFileName, compilerRunnerNamespace);
+
+            string dllFilePath = oPlugin.DllFileDir + oPlugin.DllFileName;
+            bool res = cr.CompileToFile(oPlugin.Code, dllFilePath, oPlugin.DllFileNameReferenceSet);
+
+            AppDomain.Unload(domain);
+            return res;
+        }
     }
 
 
