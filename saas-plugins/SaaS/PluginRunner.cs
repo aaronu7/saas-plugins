@@ -6,17 +6,57 @@ using Microsoft.CSharp;
 
 namespace saas_plugins.SaaS
 {
-    public class PluginRunner : MarshalByRefObject, IDisposable
+    public class PluginRunner : MarshalByRefObject
     {
         private Assembly assembly = null;
 
+        
         public override string ToString() {
             return "This object is running in the " + AppDomain.CurrentDomain.FriendlyName + " AppDomain";
         }
 
-        public void Dispose() {
-            this.assembly = null;
+        public void OutputAssemblies() {
+            try {
+                Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                System.Console.WriteLine("===================");
+                System.Console.WriteLine("Current App Domain");
+                System.Console.WriteLine("===================");
+                foreach(Assembly asm in assemblies) {
+                    System.Console.WriteLine(asm.FullName);
+                }
+                
+            } catch(Exception ex) {
+                System.Console.WriteLine(ex.Message);
+            }
+            
         }
+
+
+        public object Run(string typeName, string methodName, object[] args)
+        {
+            Type type = this.assembly.GetType(typeName);
+            MethodInfo methodInfo = type.GetMethod(methodName);
+            object classInstance = Activator.CreateInstance(type, null);
+
+            object result = methodInfo.Invoke(classInstance, args);
+            classInstance = null;
+            methodInfo = null;
+            type = null;
+
+            return result;
+        }
+        
+
+        public string Load(string dllFilePath) {
+            try {
+                this.assembly = Assembly.LoadFile(dllFilePath);
+            } catch {}
+
+            // NOTE: Cant return the Assembly.... issues with cross-domain
+            //System.Console.WriteLine("Loaded: " + assembly.FullName);
+            return assembly.FullName;
+        }
+
 
         #region " CompileToFile "
 
@@ -97,20 +137,6 @@ namespace saas_plugins.SaaS
 
         #endregion
 
-        public object Run(string typeName, string methodName, object[] args)
-        {
-            Type type = this.assembly.GetType(typeName);
-            MethodInfo methodInfo = type.GetMethod(methodName);
-            object classInstance = Activator.CreateInstance(type, null);
 
-            object result = methodInfo.Invoke(classInstance, args);
-            classInstance = null;
-            methodInfo = null;
-            type = null;
-
-            return result;
-
-            //return type.InvokeMember(methodName, BindingFlags.InvokeMethod, null, assembly, args);
-        }
     }
 }

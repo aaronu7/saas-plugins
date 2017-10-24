@@ -41,10 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SaaS\_OLD\DllLoader.cs" />
     <Compile Include="SaaS\Plugin.cs" />
-    <Compile Include="SaaS\PluginManager.cs" />
+    <Compile Include="SaaS\PluginDomain.cs" />
     <Compile Include="SaaS\PluginRunner.cs" />
-    <Compile Include="SaaS\EvalEngine2.cs" />
+    <Compile Include="SaaS\_OLD\HelperPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

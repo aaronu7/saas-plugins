@@ -8,32 +8,30 @@ namespace saas_plugins.SaaS
 {
     public class Plugin
     {
-        //RunExpression("ad2csv.dll", "ad2csv.SaaS.CompilerRunner", "MyDomain", "code goes here", "ad2csv.SaaS.CompilerRunner.CSCodeEvaler", "EvalCode", new object[0]);
-
-        //private string _instanceDomainName = "";
-        //private string _compilerRunnerNamespace = "";
-        
+        private string _name = "";
+        private string _description = "";        
         private string _dllFileDir = "";
         private string _dllFileName = "";
         private List<string> _dllFileNameReferenceSet = null;
         private string _classNamespacePath = "";
         private string[] _code = null;
 
-        //private string functionCall
-        //private object[] functionArgs
+        // MetaData (ex. Function calls and parameters) 
 
-        public Plugin(string dllFileDir, string dllFileName, List<string> dllFileNameReferenceSet, 
-            string compilerRunnerNamespace, string instanceDomainName, 
+        public Plugin(string name, string description, 
+            string dllFileDir, string dllFileName, List<string> dllFileNameReferenceSet, 
             string classNamespacePath, string[] code) {
 
+            this._name = name;
+            this._description = description;
             this._dllFileDir = dllFileDir;
             this._dllFileName = dllFileName;
             this._dllFileNameReferenceSet = dllFileNameReferenceSet;
-            //this._compilerRunnerNamespace = compilerRunnerNamespace;
-            //this._instanceDomainName = instanceDomainName;
             this._classNamespacePath = classNamespacePath;
             this._code = code;
         }
+
+        public override string ToString() {return this.Name;}
 
         #region " Properties "
 
@@ -50,15 +48,15 @@ namespace saas_plugins.SaaS
             set {this._dllFileNameReferenceSet = value;}
         }
 
-        //public string CompilerRunnerNamespace {
-        //    get {return this._compilerRunnerNamespace;}
-        //    set {this._compilerRunnerNamespace = value;}
-        //}
+        public string Name {
+            get {return this._name;}
+            set {this._name = value;}
+        }
 
-        //public string InstanceDomainName {
-        //    get {return this._instanceDomainName;}
-        //    set {this._instanceDomainName = value;}
-        //}
+        public string Description {
+            get {return this._description;}
+            set {this._description = value;}
+        }
 
         public string ClassNamespacePath {
             get {return this._classNamespacePath;}

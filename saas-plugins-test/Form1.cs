@@ -12,7 +12,7 @@ namespace template_test
     {
         System.Windows.Forms.Timer tmr = null;
         bool hasUpdate = false;
-        PluginManager oPluginManager = null;
+        PluginDomain oPluginDomain = null;
 
         public Form1()
         {
@@ -22,7 +22,7 @@ namespace template_test
             tmr.Tick += Tmr_Tick;
             tmr.Enabled = true;
 
-            oPluginManager = new PluginManager("MyDomain", "saas_plugins.SaaS.PluginRunner");
+            oPluginDomain = new PluginDomain("MyDomain", "saas_plugins.SaaS.PluginRunner");
         }
 
 
@@ -45,23 +45,7 @@ namespace template_test
 
         private void btnTest_Click(object sender, EventArgs e)
         {
-            oPluginManager.LoadPlugin(PluginA);
-            oPluginManager.LoadPlugin(PluginB);
-            oPluginManager.OutputAssemblies();
 
-
-            object resA = oPluginManager.RunPlugin(PluginA, "DynamicPlugins.CSCodeEvaler", "EvalCode", new object[] {(int)7});
-            string sResA = "NULL";
-            if(resA!=null)
-                sResA = resA.ToString();
-            System.Console.WriteLine(sResA);
-
-
-            object resB = oPluginManager.RunPlugin(PluginB, "DynamicPlugins.CSCodeEvaler2", "EvalCode", new object[] {(int)7});
-            string sResB = "NULL";
-            if(resB!=null)
-                sResB = resB.ToString();
-            System.Console.WriteLine(sResB);
 
 
             /*
@@ -91,6 +75,7 @@ namespace template_test
             //PluginA = AddCode(new string[] {code1}, "DynamicPlugins.CSCodeEvaler", "PluginA.dll", new string[] {"PluginB.dll"});  // can't refernce before it has been added to domain
             PluginA = AddCode(new string[] {code1}, "DynamicPlugins.CSCodeEvaler", "PluginA.dll", null);
 
+            
             string code2 = 
                 "using System;" + Environment.NewLine +
                 "namespace DynamicPlugins {" + Environment.NewLine +
@@ -104,8 +89,27 @@ namespace template_test
                 "  }" + Environment.NewLine +
                 "}";
             PluginB = AddCode(new string[] {code2}, "DynamicPlugins.CSCodeEvaler2", "PluginB.dll", new string[] {"PluginA.dll"});
-
             
+            
+
+            oPluginDomain.LoadPlugin(PluginA);
+            oPluginDomain.LoadPlugin(PluginB);
+            oPluginDomain.OutputAssemblies(PluginA);
+
+            object resA = oPluginDomain.RunPlugin(PluginA, "DynamicPlugins.CSCodeEvaler", "EvalCode", new object[] {(int)7});
+            string sResA = "NULL";
+            if(resA!=null)
+                sResA = resA.ToString();
+            System.Console.WriteLine(sResA);
+            
+            object resB = oPluginDomain.RunPlugin(PluginB, "DynamicPlugins.CSCodeEvaler2", "EvalCode", new object[] {(int)7});
+            string sResB = "NULL";
+            if(resB!=null)
+                sResB = resB.ToString();
+            System.Console.WriteLine(sResB);
+
+
+
             /*
             // Two classes interacting and interacting back with main library
             //      add order matters
@@ -174,74 +178,14 @@ namespace template_test
             string plugginRoot = Application.StartupPath + @"\DynamicPlugins\";
             //string plugginRoot = Application.StartupPath + @"\";
             System.IO.Directory.CreateDirectory(plugginRoot);
-            Plugin oPlugin = new Plugin(plugginRoot, dllFileName, referencedAssemblySet, 
-                "saas_plugins.SaaS.PluginRunner", "MyDomain",
+            Plugin oPlugin = new Plugin("", "", plugginRoot, dllFileName, referencedAssemblySet, 
                 codeNamespacePath, code);
 
-            oPluginManager.CompilePlugin(oPlugin);
+            oPluginDomain.CompilePlugin(oPlugin);
 
             return oPlugin;
-            /*
-            object res = EvalEngine2.CompileQuickRun(
-                "ad2csv.dll", "ad2csv.SaaS.CompilerRunner", "MyDomain", 
-                referencedAssemblySet, code, 
-                "ad2csv.SaaS.CompilerRunner.CSCodeEvaler", "EvalCode", new object[0]);
-
-            string sRes = "NULL";
-            if(res!=null)
-                sRes = res.ToString();
-            return sRes;
-            */
         }
 
 
-        /*
-        protected string RunCode(string code) {
-            List<string> referencedAssemblySet = new List<string>();
-            referencedAssemblySet.Add("system.dll");
-            referencedAssemblySet.Add("system.drawing.dll");
-            referencedAssemblySet.Add("ad2csv.dll");
-            
-            object res = EvalEngine2.CompileQuickRun(
-                "ad2csv.dll", "ad2csv.SaaS.CompilerRunner", "MyDomain", 
-                referencedAssemblySet, code, 
-                "ad2csv.SaaS.CompilerRunner.CSCodeEvaler", "EvalCode", new object[0]);
-
-            string sRes = "NULL";
-            if(res!=null)
-                sRes = res.ToString();
-            return sRes;
-        }
-
-        private void btnSubmit_Click(object sender, EventArgs e)
-        {
-            tbRunning.Text = tbCode.Text;
-            hasUpdate = true;
-        }
-
-        private void btnTest_Click(object sender, EventArgs e)
-        {
-            string exp = "10 / 2";
-            string code = 
-                "using System;" + Environment.NewLine +
-                "namespace ad2csv.SaaS.CompilerRunner {" + Environment.NewLine +
-                "  public class CSCodeEvaler{" + Environment.NewLine +
-                "    public object EvalCode(){" + Environment.NewLine +
-                "      return RockStar.GetValue();" + Environment.NewLine +
-                "    }" + Environment.NewLine +
-                "  }" + Environment.NewLine +
-
-                "  public static class RockStar {" + Environment.NewLine +
-                "    public static int GetValue(){" + Environment.NewLine +
-                //"      return " + exp + ";" + Environment.NewLine +
-                "      return ad2csv.SaaS.EvalEngine2.GetTestValue();" + Environment.NewLine +
-                "    }" + Environment.NewLine +
-                "  }" + Environment.NewLine +
-
-                "}" + Environment.NewLine;
-
-            tbValue.Text = RunCode(code);
-        }
-        */
     }
 }
