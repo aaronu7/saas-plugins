@@ -19,7 +19,7 @@ namespace saas_plugins.SaaS
             try {
                 Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
                 System.Console.WriteLine("===================");
-                System.Console.WriteLine("Domain: " + AppDomain.CurrentDomain.FriendlyName);
+                System.Console.WriteLine("Current App Domain");
                 System.Console.WriteLine("===================");
                 foreach(Assembly asm in assemblies) {
                     System.Console.WriteLine(asm.FullName);
@@ -80,7 +80,6 @@ namespace saas_plugins.SaaS
                 this.assembly = results.CompiledAssembly;
                 System.Console.WriteLine("Assembly created: " + this.assembly.GetName() + "   ----   " + this.assembly.FullName);
             } else {
-                System.Console.WriteLine("Compiler Error: " + dllFilePath);
                 foreach(CompilerError err in results.Errors) {
                     System.Console.WriteLine(err.ErrorText);
                 }

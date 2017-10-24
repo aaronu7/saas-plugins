@@ -17,7 +17,6 @@ namespace saas_plugins.SaaS
         private string[] _code = null;
 
         private bool _isCompiled = false;
-        //private Dictionary<string, List<PluginReference>> _pluginDomainReferences = null;  // pluginID   -> List<PluginDomain>
 
         // MetaData (ex. Function calls and parameters) 
 
@@ -32,15 +31,11 @@ namespace saas_plugins.SaaS
             this._dllFileNameReferenceSet = dllFileNameReferenceSet;
             this._classNamespacePath = classNamespacePath;
             this._code = code;
-
-            //_pluginDomainReferences = new Dictionary<string, List<PluginReference>>();
         }
 
         public override string ToString() {return this.Name;}
 
-        //public Dictionary<string, List<PluginReference>> PluginDomainReferences {get {return this._pluginDomainReferences; }}
-
-        public string PluginID {get {return this._dllFileName; }}
+        public string PluginID {get {return this._dllFileDir; }}
 
         #region " Properties "
 

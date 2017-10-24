@@ -41,15 +41,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SaaS\PluginReference.cs" />
+    <Compile Include="SaaS\PluginSystem.cs" />
     <Compile Include="SaaS\_OLD\DllLoader.cs" />
     <Compile Include="SaaS\Plugin.cs" />
     <Compile Include="SaaS\PluginDomain.cs" />
     <Compile Include="SaaS\PluginRunner.cs" />
-    <Compile Include="SaaS\_OLD\HelperPlugin.cs" />
+    <Compile Include="SaaS\HelperPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="SaaS\_OLD\Form1.cs">
+      <SubType>Form</SubType>
+    </None>
+    <None Include="SaaS\_OLD\Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </None>
+    <None Include="SaaS\_OLD\Plugin.cs" />
+    <None Include="SaaS\_OLD\PluginDomain.cs" />
+    <None Include="SaaS\_OLD\PluginRunner.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Db\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SaaS\_OLD\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
