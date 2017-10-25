@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Text;
 using System.Collections.Generic;
 
@@ -9,12 +10,12 @@ namespace saas_plugins.SaaS
     
     public static class HelperPlugin 
     {
-        /*
-        public static int GetTestValue(int x) {
+        
+        public static int GetMirrorValue(int x) {
             return x;
         }
 
-        
+        /*
         public static object CompileQuickRun(string asmDLLName, string compilerRunnerNamespace, 
             string instanceDomainName, List<string> referencedAssemblySet, string code, 
             string classTypeString, 

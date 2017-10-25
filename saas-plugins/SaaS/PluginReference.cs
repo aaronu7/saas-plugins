@@ -19,6 +19,15 @@ namespace saas_plugins.SaaS
             this._plugin = plugin;
         }
 
+        public void OutputAssemblies() {
+            if(this.PluginRunner!=null) {
+                try {
+                    this.PluginRunner.OutputAssemblies();
+                } catch(Exception ex) {
+                    System.Console.WriteLine(ex.Message);
+                }
+            }
+        }
 
         #region " Properties "
 

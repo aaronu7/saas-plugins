@@ -82,30 +82,36 @@ namespace template_test
 
             Plugin oPluginA = CreatePluginA();
             Plugin oPluginB = CreatePluginB();
+            oPluginA.IsCompiled = false;
+            oPluginB.IsCompiled = false;
 
             PluginReference pluginReferenceA = pluginSystem.PluginAdd(oPluginA, "AppDomain1");            
             PluginReference pluginReferenceB = pluginSystem.PluginAdd(oPluginB, "AppDomain1");
-            pluginReferenceB.PluginDomain.OutputAssemblies(pluginReferenceB);
+            //pluginReferenceB.PluginDomain.OutputAssemblies(pluginReferenceB);
 
-
-            object resA = pluginReferenceA.PluginDomain.RunPlugin(pluginReferenceA.Plugin, "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});
+            
+            object resA = pluginReferenceA.PluginDomain.RunPlugin(pluginReferenceA.Plugin, pluginReferenceA.Plugin.ClassNamespacePath, 
+                "MirrorInt", new object[] {(int)7});
             string sResA = "NULL";
             if(resA!=null)
                 sResA = resA.ToString();
             System.Console.WriteLine(sResA);
 
             
-            object resB = pluginReferenceB.PluginDomain.RunPlugin(pluginReferenceB.Plugin, "DynamicPlugins.CodeMultiplier", "MultBy2", new object[] {(int)7});
+            object resB = pluginReferenceB.PluginDomain.RunPlugin(pluginReferenceB.Plugin, pluginReferenceA.Plugin.ClassNamespacePath, 
+                "MultBy2", new object[] {(int)7});
             string sResB = "NULL";
             if(resB!=null)
                 sResB = resB.ToString();
             System.Console.WriteLine(sResB);
+            
 
 
-
-            /*
-            PluginReference pluginReferenceA2 = pluginSystem.PluginAdd(oPluginA, "AppDomain2");            
+            
+            //PluginReference pluginReferenceA2 = pluginSystem.PluginAdd(oPluginA, "AppDomain2");
+            //PluginReference pluginReferenceA3 = pluginSystem.PluginAdd(oPluginB, "AppDomain3");
             //PluginReference pluginReferenceB2 = pluginSystem.PluginAdd(oPluginB, "AppDomain2");            
+            /*
             pluginReferenceA2.PluginDomain.OutputAssemblies(pluginReferenceA2);
 
             object resA2 = pluginReferenceA2.PluginDomain.RunPlugin(pluginReferenceA.Plugin, "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)77});
@@ -139,30 +145,36 @@ namespace template_test
 
         
         protected Plugin CreatePluginB()
-        {
-            /*
-            string code1 = @"
+        {            
+            //CodeMirror obj = new CodeMirror();
+            //return (int)obj.MirrorInt(x) * 2;
+            //return HelperPlugin.saas_plugins.SaaS(x)*2;
+            string code2 = @"
                 using System;
+                using System.Reflection;
+                using DynamicPlugins.PluginA;
+
                 namespace DynamicPlugins {
-                  public class CSCodeEvaler {
-                    public int MirrorCode(int x) {
-                      return x;
+                  public class CodeMultiplier {
+                    CodeMirror obj = null;
+
+                    public CodeMultiplier() {
+                        //this.obj = new CodeMirror();
+                    }
+
+                    public int MultBy2(int x) {
+                        //DynamicPlugins.PluginA.CodeMirror obj = new DynamicPlugins.PluginA.CodeMirror();
+                        //return 7;
+                        
+                        //Type type = Assembly.GetExecutingAssembly().GetType(""DynamicPlugins.PluginA.CodeMirror"");
+                        //object classInstance = Activator.CreateInstance(type, null);
+                        //MethodInfo methodInfo = type.GetMethod(""MirrorInt"");
+                        //object result = methodInfo.Invoke(classInstance, new object[] {(int)888});
+
+                        return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x)*2;
                     }
                   }
-                }
-            ";
-            */
-            string code2 = 
-                "using System;" + Environment.NewLine +
-                "namespace DynamicPlugins {" + Environment.NewLine +
-                "  public class CodeMultiplier {" + Environment.NewLine +
-                "    public int MultBy2(int x) {" + Environment.NewLine +
-                //"      CodeMirror obj = new CodeMirror();" + Environment.NewLine +
-                //"      return (int)obj.MirrorInt(x) * 2;" + Environment.NewLine +
-                "        return x * 2;" + Environment.NewLine +
-                "    }" + Environment.NewLine +
-                "  }" + Environment.NewLine +
-                "}";
+                }";
             return CreatePlugin("CodeMultiplier", "Return the input int multiplied by 2.", new string[] {code2}, 
                 //"DynamicPlugins.CodeMultiplier", "CodeMultiplier.dll", null);
                 "DynamicPlugins.CodeMultiplier", "CodeMultiplier.dll", new string[] {"CodeMirror.dll"});
@@ -170,28 +182,33 @@ namespace template_test
 
         protected Plugin CreatePluginA()
         {
-            string code1 = 
-                "using System;" + Environment.NewLine +
-                "namespace DynamicPlugins {" + Environment.NewLine +
-                "  public class CodeMirror {" + Environment.NewLine +
-                "    public int MirrorInt(int x) {" + Environment.NewLine +
-                "      return x;" + Environment.NewLine +
-                "    }" + Environment.NewLine +
-                "  }" + Environment.NewLine +
-                "}";
+            // return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);
+            string code1 = @"
+                using System;
+                namespace DynamicPlugins.PluginA {
+                  public class CodeMirror {
+                    public int MirrorInt(int x) {
+                      return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);
+                    }
+                  }
+                }";
+            
             return CreatePlugin("CodeMirror", "Return the input int.", new string[] {code1}, 
-                "DynamicPlugins.CodeMirror", "CodeMirror.dll", null);
+                "DynamicPlugins.PluginA.CodeMirror", "CodeMirror.dll", null);
         }
         
 
         protected Plugin CreatePlugin(string name, string desc, string[] code, string codeNamespacePath, string dllFileName, string[] dllCustomRefs)
         {
             string plugginRoot = Application.StartupPath + @"\DynamicPlugins\";
+            string libDllPath = Application.StartupPath + @"\saas_plugins.dll";
 
             List<string> referencedAssemblySet = new List<string>();
             referencedAssemblySet.Add("system.dll");
             referencedAssemblySet.Add("system.drawing.dll");
-            referencedAssemblySet.Add("saas_plugins.dll");
+            //referencedAssemblySet.Add("saas_plugins.dll");
+            referencedAssemblySet.Add(libDllPath);
+
             if(dllCustomRefs != null) {
                 foreach(string reference in dllCustomRefs)
                     referencedAssemblySet.Add(plugginRoot + reference);
@@ -353,5 +370,10 @@ namespace template_test
         }
 
         #endregion
+
+        private void btnView_Click(object sender, EventArgs e)
+        {
+            pluginSystem.OutputAssemblies();
+        }
     }
 }

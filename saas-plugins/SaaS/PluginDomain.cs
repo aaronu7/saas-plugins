@@ -51,6 +51,7 @@ namespace saas_plugins.SaaS
                 AppDomain.Unload(this._domain);
                 foreach(string key in this._pluginReferences.Keys) {
                     this._pluginReferences[key].PluginRunner = null;
+                    this._pluginReferences[key].IsLoaded = false;
                 }
             }
             this._domain = AppDomain.CreateDomain(this._instanceDomain);
@@ -85,6 +86,7 @@ namespace saas_plugins.SaaS
                     this._pluginReferences.Add(plugin.PluginID, pluginReference);
                 }
                 pluginReference.PluginRunner = loader;
+                pluginReference.IsLoaded = true;
 
             } catch (Exception ex) {
                 System.Console.WriteLine(ex.Message);
@@ -123,7 +125,7 @@ namespace saas_plugins.SaaS
 
             // Discard the temp domain
             AppDomain.Unload(domain);
-
+            
             return res;
         }
 

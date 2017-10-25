@@ -31,6 +31,7 @@
             this.btnSubmit = new System.Windows.Forms.Button();
             this.tbLog = new System.Windows.Forms.TextBox();
             this.btnTest = new System.Windows.Forms.Button();
+            this.btnView = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSubmit
@@ -61,11 +62,22 @@
             this.btnTest.UseVisualStyleBackColor = true;
             this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
             // 
+            // btnView
+            // 
+            this.btnView.Location = new System.Drawing.Point(934, 376);
+            this.btnView.Name = "btnView";
+            this.btnView.Size = new System.Drawing.Size(223, 106);
+            this.btnView.TabIndex = 5;
+            this.btnView.Text = "View";
+            this.btnView.UseVisualStyleBackColor = true;
+            this.btnView.Click += new System.EventHandler(this.btnView_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1249, 924);
+            this.Controls.Add(this.btnView);
             this.Controls.Add(this.btnTest);
             this.Controls.Add(this.tbLog);
             this.Controls.Add(this.btnSubmit);
@@ -83,6 +95,7 @@
         private System.Windows.Forms.Button btnSubmit;
         private System.Windows.Forms.TextBox tbLog;
         private System.Windows.Forms.Button btnTest;
+        private System.Windows.Forms.Button btnView;
     }
 }
 

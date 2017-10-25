@@ -43,6 +43,26 @@ namespace saas_plugins.SaaS
 
         #endregion
 
+        public void OutputAssemblies() {
+            foreach(string key in _pluginDomainSet.Keys) {
+                foreach(string keyRef in this._pluginDomainSet[key].PluginReferenceSet.Keys) {
+                    PluginReference pluginReference = this._pluginDomainSet[key].PluginReferenceSet[keyRef];
+                    pluginReference.OutputAssemblies();
+                    break;
+                }
+            }
+        }
+
+
+        /*
+        public PluginReference PluginCompile(Plugin plugin) {
+            // Recompile this plugin (uses a temporary domain)
+            pluginDomain.CompilePlugin(plugin);
+            plugin.IsCompiled = true;
+            OnLogNotify("Plugin Compiled: " + plugin.PluginID);
+        }
+        */
+
         /// <summary>
         /// Recompile and add the plugin to the default domain
         /// </summary>
@@ -52,6 +72,7 @@ namespace saas_plugins.SaaS
         public PluginReference PluginAdd(Plugin plugin, string domainName) {
 
             PluginReference pluginReference = null;
+            bool compileTriggered = false;
 
             if(domainName=="")
                 domainName = this._defaultDomainName;
@@ -68,9 +89,12 @@ namespace saas_plugins.SaaS
                 OnLogNotify("Domain Created: " + domainName);
             }
 
+            string refMatchKey = pluginDomain.InstanceDomainName + "." + plugin.PluginID;
+
             //--------------------------------
             // Compile Plugin if not already compiled
             if(!plugin.IsCompiled) {
+                compileTriggered = true;
                 //--------------------------------
                 // Reset Domain
                 //      ONLY RESET THE DOMAIN IF IT HAS AN ACTIVE REFERENCE TO THIS PLUGIN
@@ -115,39 +139,53 @@ namespace saas_plugins.SaaS
                 OnLogNotify("ReferenceSet Started: " + domainName + "." + plugin.PluginID);
             } else {
                 // reference set exists .... search for this exact reference
-                foreach(PluginReference pluginRef in this._pluginDomainReferences[plugin.PluginID]) {
-                    if(pluginRef.Plugin.PluginID == plugin.PluginID) {
+                List<PluginReference> RefSet = this._pluginDomainReferences[plugin.PluginID];
+                PluginReference pluginFound = null;
+
+                foreach(PluginReference pluginRef in RefSet) {
+                    string refKey     = pluginRef.PluginDomain.InstanceDomainName + "." + pluginRef.Plugin.PluginID;
+                    
+                    if(refMatchKey == refKey) {
                         // Already exists -break and don't create a new one
-                        pluginReference = pluginRef;
+                        pluginFound = pluginRef;
                         break;
                     }
                 }
-                if(pluginReference==null) {
-                    this._pluginDomainReferences[plugin.PluginID].Add(pluginReference);
+                if(pluginFound==null) {
+                    RefSet.Add(pluginReference);
                     OnLogNotify("Reference Add to existing set: " + domainName + "." + plugin.PluginID);
                 } else {
-                    OnLogNotify("Reference already exists: " + domainName + "." + plugin.PluginID);
+                    OnLogNotify("Reference already exists: " + domainName + "." + plugin.PluginID);             // issues with multiple domains
                 }
             }
 
+            if(compileTriggered) {
+                // SKIP THE FOLLOWING ON A FULL REBUILD
 
-            // Reload The rest of THIS domain
+                // Reload all references that exist IN THIS domain (except the one we are going to compile)
+                foreach(string key in pluginDomain.PluginReferenceSet.Keys) {
+                    if(key != plugin.PluginID) {
+                        PluginReference plugRef = pluginDomain.LoadPlugin(pluginDomain.PluginReferenceSet[key].Plugin);
+                        OnLogNotify("---- Reloading: " + domainName + "." + pluginDomain.PluginReferenceSet[key].Plugin.PluginID);
+                    }
+                }
 
+                // Reload all OTHER affected domains
+                List<PluginReference> domRefSet = this._pluginDomainReferences[plugin.PluginID];
+                foreach(PluginReference pluginRef in domRefSet) {
+                    string refKey  = pluginRef.PluginDomain.InstanceDomainName + "." + pluginRef.Plugin.PluginID;
 
-            // Reload all other affected domains
-
+                    if(refMatchKey != refKey) {
+                        // Reload this domain
+                        OnLogNotify("Trigger domain reload: " + pluginRef.PluginDomain.InstanceDomainName);
+                    }
+                }
+            }
 
                         
 
             /*
-            // Reload all references that exist IN THIS domain (except the one we are going to compile)
-            foreach(string key in pluginDomain.PluginReferenceSet.Keys) {
-                if(key != plugin.PluginID) {
-                    PluginReference plugRef = pluginDomain.LoadPlugin(pluginDomain.PluginReferenceSet[key].Plugin);
-                    OnLogNotify("---- Reloading: " + pluginDomain.PluginReferenceSet[key].Plugin.PluginID);
-                    pluginDomain.OutputAssemblies(plugRef);
-                }
-            }
+
             */
 
 

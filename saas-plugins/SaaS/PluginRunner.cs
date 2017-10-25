@@ -50,6 +50,7 @@ namespace saas_plugins.SaaS
         public string Load(string dllFilePath) {
             try {
                 this.assembly = Assembly.LoadFile(dllFilePath);
+                //AppDomain.CurrentDomain.Load(File.ReadAllBytes(assemblyFileName));
             } catch {}
 
             // NOTE: Cant return the Assembly.... issues with cross-domain
