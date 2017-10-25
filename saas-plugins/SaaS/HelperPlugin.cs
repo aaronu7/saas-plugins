@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text;
 using System.Collections.Generic;
+using System.IO;
 
 namespace saas_plugins.SaaS
 {
@@ -14,6 +15,162 @@ namespace saas_plugins.SaaS
         public static int GetMirrorValue(int x) {
             return x;
         }
+
+        #region " NOTEs Binding DLL Location Issue "
+        /*
+        // https://stackoverflow.com/questions/15883109/createinstanceandunwrap-fails-to-load-assembly
+        Use the LoadFrom context (by using the CreateInstanceFromXXX methods).
+
+        Add the Mytypes folder to the AppDomainSetup.PrivateBinPath used to create the AppDomain. This way the Load context will be able to resolve the assebmlies located there.
+
+        Subscribe to the AppDomain.AssemblyResolve event and resolve the assemblies yourself by looking for them and loading them from the Mytypes folder.
+        Deploy all your assemblies in the base directory of your application.
+        */
+
+        /*
+            // alternate dll directories seem to cause issues ...
+            //  --- need to explore bindings and see where we can override this
+            //  --- explore variants for loading assembly into AppDomain
+            */
+
+        /* App.config
+         
+          <runtime>
+            <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+              <probing privatePath="bin;bin\DynamicPlugins"/>
+            </assemblyBinding>
+          </runtime>
+          */
+        #endregion
+
+        #region " Create AppDomain "
+
+        public static AppDomain CreateAppDomain(string domainName, string baseDirectory, string subDirectory, string configFile) {
+            AppDomainSetup appSetup = new AppDomainSetup()
+            {
+                ApplicationName = domainName,
+                ApplicationBase = baseDirectory,
+                PrivateBinPath = subDirectory,
+                ConfigurationFile = configFile
+                //ApplicationBase = AppDomain.CurrentDomain.BaseDirectory,
+                //PrivateBinPath = @"Plugins",
+                //ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile
+            };
+
+            AppDomain appDomain = AppDomain.CreateDomain(domainName, null, appSetup);
+            return appDomain;
+        }
+        #endregion
+
+        #region " RunPlugin "
+
+        public static string RunMethodString(PluginDomain plugDomain, Plugin plugin, string classPath, string methodName, object[] args) {
+            //object res = plugDomain.RunPlugin(plugin, plugin.ClassNamespacePath, "MultBy2", new object[] {(int)7});
+            object res = plugDomain.RunPlugin(plugin, classPath, methodName, args);
+            string sRes = "NULL";
+            if(res!=null)
+                sRes = res.ToString();
+
+            //System.Console.WriteLine(sRes);
+            return sRes;
+        }
+
+        #endregion
+
+        #region " CreatePlugin "
+
+        public static Plugin CreatePlugin(string name, string desc, string[] code, string codeNamespacePath, string dllFileName, string[] dllCustomRefs)
+        {
+            // alternate dll directories seem to cause issues ...
+            //  --- need to explore bindings and see where we can override this
+            //  --- explore variants for loading assembly into AppDomain
+            //
+            string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+            //      dllRoot = Application.StartupPath + @"\";
+
+            //string plugginRoot = Application.StartupPath + @"\DynamicPlugins\";
+            //string plugginRoot = Application.StartupPath + @"\";
+            //string libDllPath = Application.StartupPath + @"\saas_plugins.dll";
+            
+
+            List<string> referencedAssemblySet = new List<string>();
+            referencedAssemblySet.Add("system.dll");
+            referencedAssemblySet.Add("system.drawing.dll");
+            //referencedAssemblySet.Add("saas_plugins.dll");
+            referencedAssemblySet.Add(dllRoot + "saas_plugins.dll");    // unit tests need this expicit
+
+            if(dllCustomRefs != null) {
+                foreach(string reference in dllCustomRefs) { 
+                    //referencedAssemblySet.Add(dllRoot + reference);   //  only needed if we move it out of the expected location .... which isn't working yet
+                    referencedAssemblySet.Add(reference);
+                }
+            }
+
+            
+            //string plugginRoot = Application.StartupPath + @"\";
+            System.IO.Directory.CreateDirectory(dllRoot);
+            Plugin oPlugin = new Plugin("", "", dllRoot, dllFileName, referencedAssemblySet, codeNamespacePath, code);
+
+            return oPlugin;
+        }
+
+        #endregion
+
+        #region " CompilePlugin "
+
+        static public bool CompilePlugin(Plugin plugin, string tempDomainName, string compilerRunnerNamespace) {
+            
+            // Create the temporary domain
+            AppDomain domainTemp = AppDomain.CreateDomain(tempDomainName);
+
+            // Create a PluginRunner instance in the temp domain
+            //string mainDllFileName = Assembly.GetExecutingAssembly().GetName(false).Name + ".dll"; // "saas_plugins.dll"
+            //PluginRunner runner = (PluginRunner)domainTemp.CreateInstanceFromAndUnwrap(mainDllFileName, compilerRunnerNamespace);
+
+            // More explicit DLL path for Unit Testing
+            string mainDllFileName = Assembly.GetExecutingAssembly().GetName(false).Name + ".dll"; // "saas_plugins.dll"
+            string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+            string dllPath = dllRoot + mainDllFileName;
+            PluginRunner runner = (PluginRunner)domainTemp.CreateInstanceFromAndUnwrap(dllPath, compilerRunnerNamespace);
+
+            // Compile the file within the temp domain
+            string dllFilePath = plugin.DllFileDir + plugin.DllFileName;
+            bool res = runner.CompileToFile(plugin.Code, dllFilePath, plugin.DllFileNameReferenceSet);
+
+            // Discard the temp domain
+            AppDomain.Unload(domainTemp);
+            domainTemp = null;
+            
+            return res;
+        }
+
+        #endregion
+
+        #region " LoadPlugin "
+
+        public static PluginRunner LoadPlugin(Plugin plugin, AppDomain domain)
+        {
+            // Load into the Plugin domain
+            string dllFilePath = plugin.DllFileDir + plugin.DllFileName;
+            PluginRunner loader = null;
+
+            if(domain != null) {
+                try {
+                    loader = (PluginRunner)domain.CreateInstanceAndUnwrap(typeof(PluginRunner).Assembly.FullName, typeof(PluginRunner).FullName);
+                    //loader = (PluginRunner)domain.CreateInstanceFromAndUnwrap(typeof(PluginRunner).Assembly.FullName, typeof(PluginRunner).FullName);
+
+                    loader.Load(dllFilePath);
+
+                } catch (Exception ex) {
+                    System.Console.WriteLine(ex.Message);
+                }
+            }
+
+            return loader;
+        }
+
+        #endregion
+
 
         /*
         public static object CompileQuickRun(string asmDLLName, string compilerRunnerNamespace, 
@@ -37,20 +194,22 @@ namespace saas_plugins.SaaS
         }
         */
 
-        public static bool CompileDLL(Plugin oPlugin, string mainDllFileName, string tmpInstanceDomain, string compilerRunnerNamespace) {
+        /*
+    public static bool CompileDLL(Plugin oPlugin, string mainDllFileName, string tmpInstanceDomain, string compilerRunnerNamespace) {
 
-            // Create a temp domain and create our plugin runner
-            AppDomain domain = AppDomain.CreateDomain(tmpInstanceDomain);
-            PluginRunner cr = (PluginRunner)domain.CreateInstanceFromAndUnwrap(mainDllFileName, compilerRunnerNamespace);
+        // Create a temp domain and create our plugin runner
+        AppDomain domain = AppDomain.CreateDomain(tmpInstanceDomain);
+        PluginRunner cr = (PluginRunner)domain.CreateInstanceFromAndUnwrap(mainDllFileName, compilerRunnerNamespace);
 
-            // Compile the file within the temp domain
-            string dllFilePath = oPlugin.DllFileDir + oPlugin.DllFileName;
-            bool res = cr.CompileToFile(oPlugin.Code, dllFilePath, oPlugin.DllFileNameReferenceSet);
+        // Compile the file within the temp domain
+        string dllFilePath = oPlugin.DllFileDir + oPlugin.DllFileName;
+        bool res = cr.CompileToFile(oPlugin.Code, dllFilePath, oPlugin.DllFileNameReferenceSet);
 
-            // Discard the temp domain
-            AppDomain.Unload(domain);
-            return res;
-        }
+        // Discard the temp domain
+        AppDomain.Unload(domain);
+        return res;
+    }
+    */
 
         /*
 
@@ -103,6 +262,6 @@ namespace saas_plugins.SaaS
         }
         */
     }
-    
+
 
 }

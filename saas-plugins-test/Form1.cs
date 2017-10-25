@@ -61,14 +61,7 @@ namespace template_test
             
         }
 
-        protected void OutputCall(PluginDomain plugDomain, Plugin plugin, string classPath, string methodName, object[] args) {
-            //object res = plugDomain.RunPlugin(plugin, plugin.ClassNamespacePath, "MultBy2", new object[] {(int)7});
-            object res = plugDomain.RunPlugin(plugin, classPath, methodName, args);
-            string sRes = "NULL";
-            if(res!=null)
-                sRes = res.ToString();
-            System.Console.WriteLine(sRes);
-        }
+
 
         #region " System Test "
 
@@ -102,7 +95,13 @@ namespace template_test
             
             //pluginReferenceB.PluginDomain.OutputAssemblies(pluginReferenceB);
 
-            
+            System.Console.WriteLine(HelperPlugin.RunMethodString(pluginReferenceA.PluginDomain, pluginReferenceA.Plugin, pluginReferenceA.Plugin.ClassNamespacePath, 
+                "MirrorInt", new object[] {(int)7}));
+
+            System.Console.WriteLine(HelperPlugin.RunMethodString(pluginReferenceB.PluginDomain, pluginReferenceB.Plugin, pluginReferenceB.Plugin.ClassNamespacePath, 
+                "MultBy2", new object[] {(int)7}));
+
+            /*
             object resA = pluginReferenceA.PluginDomain.RunPlugin(pluginReferenceA.Plugin, pluginReferenceA.Plugin.ClassNamespacePath, 
                 "MirrorInt", new object[] {(int)7});
             string sResA = "NULL";
@@ -117,7 +116,7 @@ namespace template_test
             if(resB!=null)
                 sResB = resB.ToString();
             System.Console.WriteLine(sResB);
-            
+            */
 
 
             
@@ -169,15 +168,12 @@ namespace template_test
                   }
                 }";
             
-            return CreatePlugin("RockStar", "Return the input int.", new string[] {code}, 
+            return HelperPlugin.CreatePlugin("RockStar", "Return the input int.", new string[] {code}, 
                 "DynamicPlugins.RockStar", "_RockStar.dll", null);
         }
                         
         protected Plugin CreatePluginB()
         {            
-            //CodeMirror obj = new CodeMirror();
-            //return (int)obj.MirrorInt(x) * 2;
-            //return HelperPlugin.saas_plugins.SaaS(x)*2;
             string code2 = @"
                 using System;
                 using System.Reflection;
@@ -186,22 +182,15 @@ namespace template_test
                   public class CodeMultiplier {
                     CodeMirror obj = null;
 
-                    public CodeMultiplier() {
-                        //this.obj = new CodeMirror();
-                    }
-
                     public int MultBy2(int x) {
                         DynamicPlugins.CodeMirror obj = new DynamicPlugins.CodeMirror();
                         return (int)obj.MirrorInt(x) * 2;
-                        
-                        //return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x)*2;
-                        //return RockStar.GetValue(x);
                     }
                   }
                 }";
-            return CreatePlugin("CodeMultiplier", "Return the input int multiplied by 2.", new string[] {code2}, 
+            return HelperPlugin.CreatePlugin("CodeMultiplier", "Return the input int multiplied by 2.", new string[] {code2}, 
                 //"DynamicPlugins.CodeMultiplier", "CodeMultiplier.dll", null);
-                "DynamicPlugins.CodeMultiplier", "CodeMultiplier.dll", new string[] {"_CodeMirror.dll", "_RockStar.dll"});
+                "DynamicPlugins.CodeMultiplier", "_CodeMultiplier.dll", new string[] {"_CodeMirror.dll", "_RockStar.dll"});
         }
 
         protected Plugin CreatePluginA()
@@ -217,23 +206,23 @@ namespace template_test
                   }
                 }";
             
-            return CreatePlugin("CodeMirror", "Return the input int.", new string[] {code1}, 
+            return HelperPlugin.CreatePlugin("CodeMirror", "Return the input int.", new string[] {code1}, 
                 "DynamicPlugins.CodeMirror", "_CodeMirror.dll", null);
         }
         
-
+        /*
         protected Plugin CreatePlugin(string name, string desc, string[] code, string codeNamespacePath, string dllFileName, string[] dllCustomRefs)
         {
             // alternate dll directories seem to cause issues
             //string plugginRoot = Application.StartupPath + @"\DynamicPlugins\";
             string plugginRoot = Application.StartupPath + @"\";
-            string libDllPath = Application.StartupPath + @"\saas_plugins.dll";
+            //string libDllPath = Application.StartupPath + @"\saas_plugins.dll";
 
             List<string> referencedAssemblySet = new List<string>();
             referencedAssemblySet.Add("system.dll");
             referencedAssemblySet.Add("system.drawing.dll");
-            //referencedAssemblySet.Add("saas_plugins.dll");
-            referencedAssemblySet.Add(libDllPath);
+            referencedAssemblySet.Add("saas_plugins.dll");
+            //referencedAssemblySet.Add(libDllPath);
 
             if(dllCustomRefs != null) {
                 foreach(string reference in dllCustomRefs)
@@ -247,6 +236,7 @@ namespace template_test
 
             return oPlugin;
         }
+        */
 
         #endregion
 
@@ -341,7 +331,7 @@ namespace template_test
             */
 
 
-            
+            /*
             // Two seperate dynamic plugins interacting (linking to their DLLs) ...... 
             string code1 = 
                 "using System;" + Environment.NewLine +
@@ -365,15 +355,15 @@ namespace template_test
             Plugin plugin1 = AddCode(new string[] {code1}, "DynamicPlugins.CSCodeEvaler", "_PluginA.dll", new string[] {"_PluginB.dll"});
 
             pluginDomain.UnloadDomain();
-            pluginDomain.CompilePlugin(plugin2, false);
-            pluginDomain.CompilePlugin(plugin1, false);
+            pluginDomain.CompilePlugin(plugin2);
+            pluginDomain.CompilePlugin(plugin1);
             
             pluginDomain.UnloadDomain();
             pluginDomain.LoadPlugin(plugin2);
             pluginDomain.LoadPlugin(plugin1);
             
-            OutputCall(pluginDomain, plugin1, "DynamicPlugins.CSCodeEvaler", "EvalCode", new object[] {(int)7});
-            
+            System.Console.WriteLine(HelperPlugin.MethodCallReturnString(pluginDomain, plugin1, "DynamicPlugins.CSCodeEvaler", "EvalCode", new object[] {(int)7}));
+            */
 
             //AddCode(new string[] {code2}, "DynamicPlugins.RockStar", "PluginB.dll");
             //AddCode(new string[] {code1}, "DynamicPlugins.CSCodeEvaler", "PluginA.dll");       // Add a dynamic assembly ????
@@ -382,7 +372,7 @@ namespace template_test
             //AddCode(code1, "ad2csv.SaaS.CompilerRunner.CSCodeEvaler");
         }
 
-
+        /*
         protected Plugin AddCode(string[] code, string codeNamespacePath, string dllFileName, string[] dllCustomRefs) {
             List<string> referencedAssemblySet = new List<string>();
             referencedAssemblySet.Add("system.dll");
@@ -394,8 +384,10 @@ namespace template_test
             string plugginRoot = Application.StartupPath + @"\";
 
             if(dllCustomRefs != null) {
-                foreach(string reference in dllCustomRefs)
-                    referencedAssemblySet.Add(plugginRoot + reference);
+                foreach(string reference in dllCustomRefs) {
+                    //referencedAssemblySet.Add(plugginRoot + reference);
+                    referencedAssemblySet.Add(reference);
+                }
             }
 
             
@@ -408,6 +400,7 @@ namespace template_test
 
             return oPlugin;
         }
+        */
 
         #endregion
 

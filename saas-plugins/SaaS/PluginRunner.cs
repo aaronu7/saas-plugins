@@ -42,6 +42,9 @@ namespace saas_plugins.SaaS
 
             // This invoke will try and link to the actual DLL file .... and by default it looks in the bin folder
             object result = methodInfo.Invoke(classInstance, args);
+            
+            //AppDomain.CurrentDomain.AssemblyLoad
+            //var propBinder = Binder
             //object result = methodInfo.Invoke(classInstance, BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.Instance, null, args, null);
             
             classInstance = null;

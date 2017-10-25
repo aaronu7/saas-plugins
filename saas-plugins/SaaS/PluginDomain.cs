@@ -70,9 +70,22 @@ namespace saas_plugins.SaaS
                     this._pluginReferences[key].IsLoaded = false;
                 }
             }
-            this._domain = AppDomain.CreateDomain(this._instanceDomain);
+            CreateDomain();
         }
 
+        protected void CreateDomain() {
+            this._domain = AppDomain.CreateDomain(this._instanceDomain);
+            //this._domain.AssemblyResolve += _domain_AssemblyResolve;
+        }
+
+        /*
+        private Assembly _domain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            args.RequestingAssembly.d
+        }
+        */
+
+        //AppDomain.CurrentDomain.AssemblyLoad
 
         public void OutputAssemblies(PluginReference oPluginRef) {
             if(oPluginRef!=null && oPluginRef.PluginRunner!=null) {
@@ -84,6 +97,35 @@ namespace saas_plugins.SaaS
             }
         }
 
+        #region " LoadPlugin "
+
+        public PluginReference LoadPlugin(Plugin plugin) {
+            // Load into the Plugin domain
+            string dllFilePath = plugin.DllFileDir + plugin.DllFileName;
+            PluginReference pluginReference = null;
+
+            if(this._domain == null)
+                CreateDomain();
+
+            PluginRunner loader = HelperPlugin.LoadPlugin(plugin, this._domain);
+
+            if(loader != null) {
+                // Build/Update the reference
+                if(this._pluginReferences.ContainsKey(plugin.PluginID)) {
+                    pluginReference = this._pluginReferences[plugin.PluginID];
+                } else {
+                    pluginReference = new PluginReference(this, plugin);
+                    this._pluginReferences.Add(plugin.PluginID, pluginReference);
+                }
+                pluginReference.PluginRunner = loader;
+                pluginReference.IsLoaded = true;
+            }
+
+            return pluginReference;
+        }
+
+
+        /*
         public PluginReference LoadPlugin(Plugin plugin) {
             // Load into the Plugin domain
             string dllFilePath = plugin.DllFileDir + plugin.DllFileName;
@@ -91,7 +133,7 @@ namespace saas_plugins.SaaS
             PluginReference pluginReference = null;
 
             if(this._domain == null)
-                this._domain = AppDomain.CreateDomain(this._instanceDomain);
+                CreateDomain();
 
             try {
                 loader = (PluginRunner)this._domain.CreateInstanceAndUnwrap(typeof(PluginRunner).Assembly.FullName, typeof(PluginRunner).FullName);
@@ -110,51 +152,16 @@ namespace saas_plugins.SaaS
             } catch (Exception ex) {
                 System.Console.WriteLine(ex.Message);
             }
-            
-            if(pluginReference.PluginRunner == null)
-            {
-                string a = "";
-            }
+
             return pluginReference;
         }
+        */
 
-        public bool CompilePlugin(Plugin plugin) {
-            return CompilePlugin(plugin, true);
-        }
-
-        public bool CompilePlugin(Plugin plugin, bool unloadTempDomain) {
-            
-            // Reset the domain if we are trying to compile an RUNNING plugin  
-            //      This will only trigger on the first in a compile sequence (clean slate after first)
-            //      This will release any holds on the DLL
-            //if(this._pluginReferences.ContainsKey(plugin.PluginID)) {
-            //    this.ResetDomain();
-            //    System.Console.WriteLine("Domain Reseting");
-            //}
+        #endregion
 
 
-            // Compile the DLL  -will destroy its temporary app domain
-            //HelperPlugin.CompileDLL(oPlugin, "saas_plugins.dll", "tmpCompileDomain", this._compilerRunnerNamespace);
-
-            string mainDllFileName = Assembly.GetExecutingAssembly().GetName(false).Name + ".dll"; // "saas_plugins.dll"
-
-            // Create a temp domain and create our plugin runner
-            if(this._domainTemp==null)
-                this._domainTemp = AppDomain.CreateDomain(this._instanceDomainTemp);
-
-            PluginRunner cr = (PluginRunner)this._domainTemp.CreateInstanceFromAndUnwrap(mainDllFileName, this._compilerRunnerNamespace);
-
-            // Compile the file within the temp domain
-            string dllFilePath = plugin.DllFileDir + plugin.DllFileName;
-            bool res = cr.CompileToFile(plugin.Code, dllFilePath, plugin.DllFileNameReferenceSet);
-
-            // Discard the temp domain
-            if(unloadTempDomain) {
-                AppDomain.Unload(this._domainTemp);
-                this._domainTemp = null;
-            }
-            
-            return res;
+        public bool CompilePlugin(Plugin plugin) {            
+            return HelperPlugin.CompilePlugin(plugin, this._instanceDomainTemp, this._compilerRunnerNamespace);            
         }
 
         public object RunPlugin(Plugin plugin, string classNamespacePath, string functionName, object[] functionArgs) {
