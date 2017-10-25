@@ -134,8 +134,13 @@ namespace saas_plugins.SaaS
 
         #region " CompilePlugin "
 
-        static public bool CompilePlugin(Plugin plugin, string tempDomainName, string compilerRunnerNamespace) {
+        static public bool CompilePlugin(Plugin plugin, string tempDomainName, string compilerRunnerNamespace, bool removeExistingFirst) {
             
+            // Remove any previously generated DLL's
+            if(removeExistingFirst && System.IO.File.Exists(plugin.DllFilePath)) {
+                System.IO.File.Delete(plugin.DllFilePath);
+            }
+
             // Create the temporary domain
             AppDomain domainTemp = AppDomain.CreateDomain(tempDomainName);
 
@@ -150,8 +155,7 @@ namespace saas_plugins.SaaS
             PluginRunner runner = (PluginRunner)domainTemp.CreateInstanceFromAndUnwrap(dllPath, compilerRunnerNamespace);
 
             // Compile the file within the temp domain
-            string dllFilePath = plugin.DllFileDir + plugin.DllFileName;
-            bool res = runner.CompileToFile(plugin.Code, dllFilePath, plugin.DllFileNameReferenceSet);
+            bool res = runner.CompileToFile(plugin.Code, plugin.DllFilePath, plugin.DllFileNameReferenceSet);
 
             // Discard the temp domain
             AppDomain.Unload(domainTemp);
@@ -167,7 +171,6 @@ namespace saas_plugins.SaaS
         public static PluginRunner LoadPlugin(Plugin plugin, AppDomain domain)
         {
             // Load into the Plugin domain
-            string dllFilePath = plugin.DllFileDir + plugin.DllFileName;
             PluginRunner loader = null;
 
             if(domain != null) {
@@ -175,7 +178,7 @@ namespace saas_plugins.SaaS
                     loader = (PluginRunner)domain.CreateInstanceAndUnwrap(typeof(PluginRunner).Assembly.FullName, typeof(PluginRunner).FullName);
                     //loader = (PluginRunner)domain.CreateInstanceFromAndUnwrap(typeof(PluginRunner).Assembly.FullName, typeof(PluginRunner).FullName);
 
-                    loader.Load(dllFilePath);
+                    loader.Load(plugin.DllFilePath);
 
                 } catch (Exception ex) {
                     System.Console.WriteLine(ex.Message);

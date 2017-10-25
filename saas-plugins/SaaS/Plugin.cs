@@ -17,7 +17,6 @@ namespace saas_plugins.SaaS
         private string[] _code = null;
 
         private bool _isCompiled = false;
-        //private Dictionary<string, List<PluginReference>> _pluginDomainReferences = null;  // pluginID   -> List<PluginDomain>
 
         // MetaData (ex. Function calls and parameters) 
 
@@ -49,6 +48,10 @@ namespace saas_plugins.SaaS
             set {this._isCompiled = value;}
         }
 
+        public string DllFilePath {
+            get {return  this._dllFileDir + this._dllFileName;}
+        }
+
         public string DllFileDir {
             get {return this._dllFileDir;}
             set {this._dllFileDir = value;}
@@ -57,6 +60,7 @@ namespace saas_plugins.SaaS
             get {return this._dllFileName;}
             set {this._dllFileName = value;}
         }
+        
         public List<string> DllFileNameReferenceSet {
             get {return this._dllFileNameReferenceSet;}
             set {this._dllFileNameReferenceSet = value;}

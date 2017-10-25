@@ -83,12 +83,17 @@ namespace template_test
             */
         }
 
+        private string baseDir = "";
+        private string subDir = "";
+        private string dllRoot = "";
+
         protected void InitSystem()
         {
-            string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
-            //string dllSub = @"\Plugins\";
-            string dllSub = @"";
-            pluginSystem = new PluginSystem("MyDefaultDomain", dllRoot, dllSub, "saas_plugins.SaaS.PluginRunner");
+            baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+            subDir = @"Plugins";
+            dllRoot = baseDir + subDir + @"\";
+
+            pluginSystem = new PluginSystem("MyDefaultDomain", this.baseDir, this.subDir, "saas_plugins.SaaS.PluginRunner");
             pluginSystem.LogNotify += PluginSystem_LogNotify;
         }
 
@@ -96,7 +101,7 @@ namespace template_test
             tbLog.Text = "";
 
             //string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\Plugins\";   // path to bin
-            string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+            //string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
             Plugin oPluginA = CreatePluginA(dllRoot);  // A simple public class
             Plugin oPluginC = CreatePluginC(dllRoot);  // A static public class
             Plugin oPluginB = CreatePluginB(dllRoot);
@@ -115,24 +120,7 @@ namespace template_test
 
             System.Console.WriteLine(HelperPlugin.RunMethodString(pluginReferenceB.PluginRunner, pluginReferenceB.Plugin, pluginReferenceB.Plugin.ClassNamespacePath, 
                 "MultBy2", new object[] {(int)7}));
-
-            /*
-            object resA = pluginReferenceA.PluginDomain.RunPlugin(pluginReferenceA.Plugin, pluginReferenceA.Plugin.ClassNamespacePath, 
-                "MirrorInt", new object[] {(int)7});
-            string sResA = "NULL";
-            if(resA!=null)
-                sResA = resA.ToString();
-            System.Console.WriteLine(sResA);
-
             
-            object resB = pluginReferenceB.PluginDomain.RunPlugin(pluginReferenceB.Plugin, pluginReferenceA.Plugin.ClassNamespacePath, 
-                "MultBy2", new object[] {(int)7});
-            string sResB = "NULL";
-            if(resB!=null)
-                sResB = resB.ToString();
-            System.Console.WriteLine(sResB);
-            */
-
 
             
             //PluginReference pluginReferenceA2 = pluginSystem.PluginAdd(oPluginA, "AppDomain2");
@@ -200,7 +188,8 @@ namespace template_test
 
                     public int MultBy2(int x) {
                         DynamicPlugins.CodeMirror obj = new DynamicPlugins.CodeMirror();
-                        return (int)obj.MirrorInt(x) * 2;
+                        //return (int)obj.MirrorInt(x) * 2;
+                        return (int)obj.MirrorInt(x) * RockStar.GetValue(x);
                     }
                   }
                 }";
@@ -259,9 +248,9 @@ namespace template_test
 
         #region " Simple Domain Test - No System "
 
-        PluginDomain pluginDomain = null;
-        Plugin PluginA = null;
-        Plugin PluginB = null;
+        //PluginDomain pluginDomain = null;
+        //Plugin PluginA = null;
+        //Plugin PluginB = null;
 
         protected void Test1() {
             /*

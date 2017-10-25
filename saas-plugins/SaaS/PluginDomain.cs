@@ -17,7 +17,6 @@ namespace saas_plugins.SaaS
         private string _instanceDomain = "";
         private string _instanceDomainTemp = "";
 
-        //Dictionary<string, PluginRunner> _runnerSet = null;
         Dictionary<string, PluginReference> _pluginReferences = null;
         
 
@@ -117,7 +116,6 @@ namespace saas_plugins.SaaS
 
         public PluginReference LoadPlugin(Plugin plugin) {
             // Load into the Plugin domain
-            string dllFilePath = plugin.DllFileDir + plugin.DllFileName;
             PluginReference pluginReference = null;
 
             if(this._domain == null)
@@ -177,15 +175,15 @@ namespace saas_plugins.SaaS
 
 
         public bool CompilePlugin(Plugin plugin) {            
-            return HelperPlugin.CompilePlugin(plugin, this._instanceDomainTemp, this._compilerRunnerNamespace);            
+            return HelperPlugin.CompilePlugin(plugin, this._instanceDomainTemp, this._compilerRunnerNamespace, true);            
         }
 
         public object RunPlugin(Plugin plugin, string classNamespacePath, string functionName, object[] functionArgs) {
             object result = null;
             if(!this._pluginReferences.ContainsKey(plugin.PluginID)) {
-                System.Console.WriteLine("Plugin Not Found: " + plugin.DllFileName);
+                System.Console.WriteLine("Plugin Not Found: " + plugin.DllFilePath);
             } else {
-                System.Console.WriteLine("Plugin Function Called: " + plugin.DllFileName);
+                System.Console.WriteLine("Plugin Function Called: " + plugin.PluginID);
                 PluginRunner cr = this._pluginReferences[plugin.PluginID].PluginRunner;
                 if(cr != null) {
                     try {
