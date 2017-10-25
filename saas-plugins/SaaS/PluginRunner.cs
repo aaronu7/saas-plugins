@@ -34,11 +34,16 @@ namespace saas_plugins.SaaS
 
         public object Run(string typeName, string methodName, object[] args)
         {
+            System.Console.WriteLine("Running from: " + AppDomain.CurrentDomain.FriendlyName);
+
             Type type = this.assembly.GetType(typeName);
             MethodInfo methodInfo = type.GetMethod(methodName);
             object classInstance = Activator.CreateInstance(type, null);
 
+            // This invoke will try and link to the actual DLL file .... and by default it looks in the bin folder
             object result = methodInfo.Invoke(classInstance, args);
+            //object result = methodInfo.Invoke(classInstance, BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.Instance, null, args, null);
+            
             classInstance = null;
             methodInfo = null;
             type = null;
@@ -92,6 +97,7 @@ namespace saas_plugins.SaaS
             codeProvider.Dispose();
             codeProvider = null;
             parameters = null;
+
             return this.assembly != null;
         }
 

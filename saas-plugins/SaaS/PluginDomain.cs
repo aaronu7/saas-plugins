@@ -10,6 +10,7 @@ namespace saas_plugins.SaaS
     public class PluginDomain : IDisposable
     {
         AppDomain _domain = null;
+        AppDomain _domainTemp = null;
         private string _compilerRunnerNamespace = "";
         private string _instanceDomain = "";
         private string _instanceDomainTemp = "";
@@ -28,7 +29,7 @@ namespace saas_plugins.SaaS
         }
 
         public void Dispose() {
-            AppDomain.Unload(this._domain);
+            UnloadDomain();
         }
 
         #region " Properties "
@@ -42,6 +43,21 @@ namespace saas_plugins.SaaS
         }
 
         #endregion
+
+        public void UnloadDomain() {
+            if(this._domain!=null) {
+                AppDomain.Unload(this._domain);
+                this._domain = null;
+            }
+
+            if(this._domainTemp!=null) {
+                AppDomain.Unload(this._domainTemp);
+                this._domainTemp = null;
+            }
+            this._pluginReferences.Clear();
+            this._pluginReferences = null;
+            this._pluginReferences = new Dictionary<string, PluginReference>();
+        }
 
         /// <summary>
         /// Re-Initialize the domain as empty -this will allow for a recompile of any linked DLL's
@@ -74,6 +90,9 @@ namespace saas_plugins.SaaS
             PluginRunner loader = null;
             PluginReference pluginReference = null;
 
+            if(this._domain == null)
+                this._domain = AppDomain.CreateDomain(this._instanceDomain);
+
             try {
                 loader = (PluginRunner)this._domain.CreateInstanceAndUnwrap(typeof(PluginRunner).Assembly.FullName, typeof(PluginRunner).FullName);
                 string asmName = loader.Load(dllFilePath);
@@ -100,6 +119,10 @@ namespace saas_plugins.SaaS
         }
 
         public bool CompilePlugin(Plugin plugin) {
+            return CompilePlugin(plugin, true);
+        }
+
+        public bool CompilePlugin(Plugin plugin, bool unloadTempDomain) {
             
             // Reset the domain if we are trying to compile an RUNNING plugin  
             //      This will only trigger on the first in a compile sequence (clean slate after first)
@@ -116,15 +139,20 @@ namespace saas_plugins.SaaS
             string mainDllFileName = Assembly.GetExecutingAssembly().GetName(false).Name + ".dll"; // "saas_plugins.dll"
 
             // Create a temp domain and create our plugin runner
-            AppDomain domain = AppDomain.CreateDomain(this._instanceDomainTemp);
-            PluginRunner cr = (PluginRunner)domain.CreateInstanceFromAndUnwrap(mainDllFileName, this._compilerRunnerNamespace);
+            if(this._domainTemp==null)
+                this._domainTemp = AppDomain.CreateDomain(this._instanceDomainTemp);
+
+            PluginRunner cr = (PluginRunner)this._domainTemp.CreateInstanceFromAndUnwrap(mainDllFileName, this._compilerRunnerNamespace);
 
             // Compile the file within the temp domain
             string dllFilePath = plugin.DllFileDir + plugin.DllFileName;
             bool res = cr.CompileToFile(plugin.Code, dllFilePath, plugin.DllFileNameReferenceSet);
 
             // Discard the temp domain
-            AppDomain.Unload(domain);
+            if(unloadTempDomain) {
+                AppDomain.Unload(this._domainTemp);
+                this._domainTemp = null;
+            }
             
             return res;
         }
@@ -136,8 +164,14 @@ namespace saas_plugins.SaaS
             } else {
                 System.Console.WriteLine("Plugin Function Called: " + plugin.DllFileName);
                 PluginRunner cr = this._pluginReferences[plugin.PluginID].PluginRunner;
-                if(cr != null)
-                    result = cr.Run(plugin.ClassNamespacePath, functionName, functionArgs);
+                if(cr != null) {
+                    try {
+                        result = cr.Run(plugin.ClassNamespacePath, functionName, functionArgs);
+                    } catch(Exception ex) {
+                        System.Console.WriteLine("RUN ERROR: " + ex.Message);
+                        System.Console.WriteLine("RUN ERROR: " + ex.InnerException.Message);
+                    }
+                }
             }
             return result;
         }
