@@ -64,14 +64,27 @@ namespace saas_plugins.SaaS
 
         #region " RunPlugin "
 
-        public static string RunMethodString(PluginDomain plugDomain, Plugin plugin, string classPath, string methodName, object[] args) {
-            //object res = plugDomain.RunPlugin(plugin, plugin.ClassNamespacePath, "MultBy2", new object[] {(int)7});
-            object res = plugDomain.RunPlugin(plugin, classPath, methodName, args);
+        public static object RunMethodObject(PluginRunner runner, Plugin plugin, string classNamespacePath, string functionName, object[] functionArgs) {
+            object result = null;
+
+            if(runner != null) {
+                try {
+                    result = runner.Run(plugin.ClassNamespacePath, functionName, functionArgs);
+                } catch(Exception ex) {
+                    System.Console.WriteLine("RUN ERROR: " + ex.Message);
+                    System.Console.WriteLine("RUN ERROR: " + ex.InnerException.Message);
+                }
+            }
+
+            return result;
+        }
+
+        public static string RunMethodString(PluginRunner runner, Plugin plugin, string classPath, string methodName, object[] args) {
+            object res = RunMethodObject(runner, plugin, classPath, methodName, args);
             string sRes = "NULL";
             if(res!=null)
                 sRes = res.ToString();
 
-            //System.Console.WriteLine(sRes);
             return sRes;
         }
 
@@ -79,13 +92,13 @@ namespace saas_plugins.SaaS
 
         #region " CreatePlugin "
 
-        public static Plugin CreatePlugin(string name, string desc, string[] code, string codeNamespacePath, string dllFileName, string[] dllCustomRefs)
+        public static Plugin CreatePlugin(string name, string desc, string dllRoot, string dllFileName, string[] code, string codeNamespacePath, string[] dllCustomRefs)
         {
             // alternate dll directories seem to cause issues ...
             //  --- need to explore bindings and see where we can override this
             //  --- explore variants for loading assembly into AppDomain
             //
-            string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+            //string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
             //      dllRoot = Application.StartupPath + @"\";
 
             //string plugginRoot = Application.StartupPath + @"\DynamicPlugins\";
@@ -97,12 +110,15 @@ namespace saas_plugins.SaaS
             referencedAssemblySet.Add("system.dll");
             referencedAssemblySet.Add("system.drawing.dll");
             //referencedAssemblySet.Add("saas_plugins.dll");
-            referencedAssemblySet.Add(dllRoot + "saas_plugins.dll");    // unit tests need this expicit
+
+            string projectRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+            //referencedAssemblySet.Add(dllRoot + "saas_plugins.dll");    // unit tests need this expicit
+            referencedAssemblySet.Add(projectRoot + "saas_plugins.dll");    // unit tests need this expicit
 
             if(dllCustomRefs != null) {
                 foreach(string reference in dllCustomRefs) { 
-                    //referencedAssemblySet.Add(dllRoot + reference);   //  only needed if we move it out of the expected location .... which isn't working yet
-                    referencedAssemblySet.Add(reference);
+                    referencedAssemblySet.Add(dllRoot + reference);   //  only needed if we move it out of the expected location .... which isn't working yet
+                    //referencedAssemblySet.Add(reference);
                 }
             }
 

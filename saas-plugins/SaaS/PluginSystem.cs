@@ -12,6 +12,8 @@ namespace saas_plugins.SaaS
         private string _defaultDomainNameTemp = "";
         private string _defaultDomainName = "";
         private string _pluginRunnerTypePath = "";
+        private string _domainBasePath = "";
+        private string _domainSubPath = "";
 
         private Dictionary<string, PluginDomain> _pluginDomainSet = null;               // domainName -> PluginDomain
         private Dictionary<string, List<PluginReference>> _pluginDomainReferences = null;  // pluginID   -> List<PluginDomain>
@@ -22,9 +24,12 @@ namespace saas_plugins.SaaS
         /// </summary>
         /// <param name="defaultDomainName">ex. MyPluginDomain</param>
         /// <param name="pluginRunnerTypePath">ex. saas_plugins.SaaS.PluginRunner</param>
-        public PluginSystem(string defaultDomainName, string pluginRunnerTypePath) {
+        public PluginSystem(string defaultDomainName, string domainBasePath, string domainSubPath, string pluginRunnerTypePath) {
             this._defaultDomainName = defaultDomainName;
             this._defaultDomainNameTemp = this._defaultDomainName + "TEMP";
+            this._domainBasePath = domainBasePath;
+            this._domainSubPath = domainSubPath;
+
             this._pluginRunnerTypePath = pluginRunnerTypePath;
             //_pluginLookup = new Dictionary<string, Dictionary<string, Plugin>>();
             _pluginDomainSet = new Dictionary<string, PluginDomain>();
@@ -84,7 +89,7 @@ namespace saas_plugins.SaaS
                 pluginDomain = _pluginDomainSet[domainName];
 
             } else {
-                pluginDomain = new PluginDomain(domainName, this._pluginRunnerTypePath);
+                pluginDomain = new PluginDomain(domainName, this._domainBasePath, this._domainSubPath, this._pluginRunnerTypePath);
                 _pluginDomainSet.Add(domainName, pluginDomain);
                 OnLogNotify("Domain Created: " + domainName);
             }

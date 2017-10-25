@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +11,8 @@ namespace saas_plugins.SaaS
     {
         AppDomain _domain = null;
         AppDomain _domainTemp = null;
+        private string _domainBasePath = "";
+        private string _domainSubPath = "";
         private string _compilerRunnerNamespace = "";
         private string _instanceDomain = "";
         private string _instanceDomainTemp = "";
@@ -19,10 +21,12 @@ namespace saas_plugins.SaaS
         Dictionary<string, PluginReference> _pluginReferences = null;
         
 
-        public PluginDomain(string instanceDomainName, string compilerRunnerNamespace) {
+        public PluginDomain(string instanceDomainName, string domainBasePath, string domainSubPath, string compilerRunnerNamespace) {
             this._instanceDomain = instanceDomainName;
             this._instanceDomainTemp = instanceDomainName + "TEMP";
             this._compilerRunnerNamespace = compilerRunnerNamespace;
+            this._domainBasePath = domainBasePath;
+            this._domainSubPath = domainSubPath;
 
             this.ResetDomain();
             this._pluginReferences = new Dictionary<string, PluginReference>();
@@ -74,14 +78,26 @@ namespace saas_plugins.SaaS
         }
 
         protected void CreateDomain() {
-            this._domain = AppDomain.CreateDomain(this._instanceDomain);
+            //string basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\Plugins\";   // path to bin
+            this._domain = HelperPlugin.CreateAppDomain(this._instanceDomain, this._domainBasePath, this._domainSubPath, AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+                
+            //this._domain = AppDomain.CreateDomain(this._instanceDomain);
             //this._domain.AssemblyResolve += _domain_AssemblyResolve;
         }
 
         /*
-        private Assembly _domain_AssemblyResolve(object sender, ResolveEventArgs args)
+        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            args.RequestingAssembly.d
+            foreach (var moduleDir in _moduleDirectories)
+            {
+                var di = new DirectoryInfo(moduleDir);
+                var module = di.GetFiles().FirstOrDefault(i => i.Name == args.Name+".dll");
+                if (module != null)
+                {
+                    return Assembly.LoadFrom(module.FullName);
+                }
+            }
+            return null;
         }
         */
 

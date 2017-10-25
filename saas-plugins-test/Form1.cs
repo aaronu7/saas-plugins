@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Data;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
 
 using saas_plugins.SaaS;
 
@@ -16,8 +18,8 @@ namespace template_test
         {
             InitializeComponent();
             //Tmr_Init();
-            pluginSystem = new PluginSystem("MyDefaultDomain", "saas_plugins.SaaS.PluginRunner");
-            pluginSystem.LogNotify += PluginSystem_LogNotify;
+
+            InitSystem();
         }
 
         private void PluginSystem_LogNotify(string message) {
@@ -66,6 +68,7 @@ namespace template_test
         #region " System Test "
 
         protected void BuildSystemA() {
+            /*
             tbLog.Text = "";
 
             Plugin oPluginA = CreatePluginA();
@@ -77,14 +80,26 @@ namespace template_test
             if(resA!=null)
                 sResA = resA.ToString();
             System.Console.WriteLine(sResA);
+            */
+        }
+
+        protected void InitSystem()
+        {
+            string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+            //string dllSub = @"\Plugins\";
+            string dllSub = @"";
+            pluginSystem = new PluginSystem("MyDefaultDomain", dllRoot, dllSub, "saas_plugins.SaaS.PluginRunner");
+            pluginSystem.LogNotify += PluginSystem_LogNotify;
         }
 
         protected void BuildSystem() {
             tbLog.Text = "";
 
-            Plugin oPluginA = CreatePluginA();  // A simple public class
-            Plugin oPluginC = CreatePluginC();  // A static public class
-            Plugin oPluginB = CreatePluginB();
+            //string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\Plugins\";   // path to bin
+            string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+            Plugin oPluginA = CreatePluginA(dllRoot);  // A simple public class
+            Plugin oPluginC = CreatePluginC(dllRoot);  // A static public class
+            Plugin oPluginB = CreatePluginB(dllRoot);
             
             oPluginA.IsCompiled = false;
             oPluginB.IsCompiled = false;
@@ -95,10 +110,10 @@ namespace template_test
             
             //pluginReferenceB.PluginDomain.OutputAssemblies(pluginReferenceB);
 
-            System.Console.WriteLine(HelperPlugin.RunMethodString(pluginReferenceA.PluginDomain, pluginReferenceA.Plugin, pluginReferenceA.Plugin.ClassNamespacePath, 
+            System.Console.WriteLine(HelperPlugin.RunMethodString(pluginReferenceA.PluginRunner, pluginReferenceA.Plugin, pluginReferenceA.Plugin.ClassNamespacePath, 
                 "MirrorInt", new object[] {(int)7}));
 
-            System.Console.WriteLine(HelperPlugin.RunMethodString(pluginReferenceB.PluginDomain, pluginReferenceB.Plugin, pluginReferenceB.Plugin.ClassNamespacePath, 
+            System.Console.WriteLine(HelperPlugin.RunMethodString(pluginReferenceB.PluginRunner, pluginReferenceB.Plugin, pluginReferenceB.Plugin.ClassNamespacePath, 
                 "MultBy2", new object[] {(int)7}));
 
             /*
@@ -156,7 +171,7 @@ namespace template_test
         }
 
         
-        protected Plugin CreatePluginC()
+        protected Plugin CreatePluginC(string dllRoot)
         {
             string code = @"
                 using System;
@@ -168,11 +183,12 @@ namespace template_test
                   }
                 }";
             
-            return HelperPlugin.CreatePlugin("RockStar", "Return the input int.", new string[] {code}, 
-                "DynamicPlugins.RockStar", "_RockStar.dll", null);
+            //string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+            return HelperPlugin.CreatePlugin("RockStar", "Return the input int.", dllRoot,"_RockStar.dll", new string[] {code}, 
+                "DynamicPlugins.RockStar", null);
         }
                         
-        protected Plugin CreatePluginB()
+        protected Plugin CreatePluginB(string dllRoot)
         {            
             string code2 = @"
                 using System;
@@ -188,12 +204,12 @@ namespace template_test
                     }
                   }
                 }";
-            return HelperPlugin.CreatePlugin("CodeMultiplier", "Return the input int multiplied by 2.", new string[] {code2}, 
-                //"DynamicPlugins.CodeMultiplier", "CodeMultiplier.dll", null);
-                "DynamicPlugins.CodeMultiplier", "_CodeMultiplier.dll", new string[] {"_CodeMirror.dll", "_RockStar.dll"});
+            //string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+            return HelperPlugin.CreatePlugin("CodeMultiplier", "Return the input int multiplied by 2.", dllRoot, "_CodeMultiplier.dll", new string[] {code2}, 
+                "DynamicPlugins.CodeMultiplier", new string[] {"_CodeMirror.dll", "_RockStar.dll"});
         }
 
-        protected Plugin CreatePluginA()
+        protected Plugin CreatePluginA(string dllRoot)
         {
             // return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);
             string code1 = @"
@@ -206,8 +222,9 @@ namespace template_test
                   }
                 }";
             
-            return HelperPlugin.CreatePlugin("CodeMirror", "Return the input int.", new string[] {code1}, 
-                "DynamicPlugins.CodeMirror", "_CodeMirror.dll", null);
+            //string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+            return HelperPlugin.CreatePlugin("CodeMirror", "Return the input int.", dllRoot, "_CodeMirror.dll", new string[] {code1}, 
+                "DynamicPlugins.CodeMirror", null);
         }
         
         /*
@@ -247,11 +264,12 @@ namespace template_test
         Plugin PluginB = null;
 
         protected void Test1() {
+            /*
             if(pluginDomain == null) {
                 pluginDomain = new PluginDomain("MyDomain", "saas_plugins.SaaS.PluginRunner");
                 System.Console.WriteLine("Domain Created: " + "MyDomain");
             }
-
+            */
             
             /*
             // Simple class
