@@ -18,9 +18,40 @@ namespace template_test.UnitTests
 
         [TearDown] public void TestTearDown() {}
 
-        #region " Helper Methods "
+        #region " Plugin Creators "
 
+        public static Plugin CreatePlugin_CodeMirror(string dllRoot, string dllName, string[] dllRefs) {
+            string code = @"
+                using System;
+                namespace DynamicPlugins {
+                    public class CodeMirror {
+                    public int MirrorInt(int x) {
+                        return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);
+                    }
+                    }
+                }";
+            Plugin plugin = HelperPlugin.CreatePlugin("CodeMirror", "Return the input int.", 
+                dllRoot, dllName, new string[] {code}, "DynamicPlugins.CodeMirror", dllRefs);
 
+            return plugin;
+        }
+
+        public static Plugin CreatePlugin_CodeMultiplier(string dllRoot, string dllName, string[] dllRefs) {
+            string code = @"
+                using System;
+                namespace DynamicPlugins {
+                    public class CodeMultiplier {
+                    public int MultBy2(int x) {
+                        DynamicPlugins.CodeMirror obj = new DynamicPlugins.CodeMirror();
+                        return (int)obj.MirrorInt(x) * 2;
+                    }
+                    }
+                }";
+            Plugin plugin =  HelperPlugin.CreatePlugin("CodeMultiplier", "Return the input int multiplied by 2.", 
+                dllRoot, dllName, new string[] {code}, "DynamicPlugins.CodeMultiplier", dllRefs);
+
+            return plugin;
+        }
 
         #endregion
 
@@ -33,42 +64,21 @@ namespace template_test.UnitTests
                 string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
                 string subDir = @"PluginsTest";
                 string dllRoot = baseDir + subDir + @"\";
+
+                string mirrorName = "_TestHelper3_CodeMirror.dll";
+                string multName = "_TestHelper3_CodeMultiplier.dll";
+
                 //string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\PluginsTest\";   // path to bin
 
-                string code1 = @"
-                    using System;
-                    namespace DynamicPlugins {
-                      public class CodeMirror {
-                        public int MirrorInt(int x) {
-                          return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);
-                        }
-                      }
-                    }";
-                Plugin plugin1 = HelperPlugin.CreatePlugin("CodeMirror", "Return the input int.", dllRoot, "_TestHelper3_CodeMirror.dll", new string[] {code1}, 
-                    "DynamicPlugins.CodeMirror", null);
-
-
-                string code2 = @"
-                    using System;
-                    namespace DynamicPlugins {
-                      public class CodeMultiplier {
-                        public int MultBy2(int x) {
-                            DynamicPlugins.CodeMirror obj = new DynamicPlugins.CodeMirror();
-                            return (int)obj.MirrorInt(x) * 2;
-                        }
-                      }
-                    }";
-                Plugin plugin2 =  HelperPlugin.CreatePlugin("CodeMultiplier", "Return the input int multiplied by 2.", dllRoot, "_TestHelper3_CodeMultiplier.dll", new string[] {code2}, 
-                    "DynamicPlugins.CodeMultiplier", new string[] {"_TestHelper3_CodeMirror.dll"});
-
-
+                Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
+                Plugin plugin2 = CreatePlugin_CodeMultiplier(dllRoot, multName, new string[] {mirrorName});
                 List<Plugin> pluginSet = new List<Plugin>(){plugin1,plugin2};
+                
+                yield return new TestCaseData("Dual Class 1", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", 
+                    pluginSet, "7", mirrorName, "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});     
 
-                yield return new TestCaseData("Dual Class 1", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", pluginSet, "7", 
-                    "_TestHelper3_CodeMirror.dll", "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});     
-
-                yield return new TestCaseData("Dual Class 2", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", pluginSet, "14", 
-                    "_TestHelper3_CodeMultiplier.dll", "DynamicPlugins.CodeMultiplier", "MultBy2", new object[] {(int)7});     
+                yield return new TestCaseData("Dual Class 2", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner",
+                    pluginSet, "14", multName, "DynamicPlugins.CodeMultiplier", "MultBy2", new object[] {(int)7});     
             }
         }
 
@@ -78,22 +88,13 @@ namespace template_test.UnitTests
                 string subDir = @"PluginsTest";
                 string dllRoot = baseDir + subDir + @"\";
 
-                string code1 = @"
-                    using System;
-                    namespace DynamicPlugins {
-                      public class CodeMirror {
-                        public int MirrorInt(int x) {
-                          return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);
-                        }
-                      }
-                    }";
+                string mirrorName = "_TestHelper2_CodeMirror.dll";
 
-                Plugin plugin = HelperPlugin.CreatePlugin("CodeMirror", "Return the input int.", dllRoot, "_TestHelper2_CodeMirror.dll", new string[] {code1}, 
-                    "DynamicPlugins.CodeMirror", null);
+                Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
+                List<Plugin> pluginSet = new List<Plugin>(){plugin1};
 
-                List<Plugin> pluginSet = new List<Plugin>(){plugin};
-                yield return new TestCaseData("Simple Class calling main library.", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", pluginSet, "7", 
-                    "_TestHelper2_CodeMirror.dll", "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});                                    
+                yield return new TestCaseData("Simple Class calling main library.", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", 
+                    pluginSet, "7", mirrorName, "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});                                    
             }
         }
 
@@ -103,23 +104,13 @@ namespace template_test.UnitTests
                 string subDir = @"PluginsTest";
                 string dllRoot = baseDir + subDir + @"\";
 
-                string code1 = @"
-                    using System;
-                    namespace DynamicPlugins {
-                      public class CodeMirror {
-                        public int MirrorInt(int x) {
-                          return x;
-                        }
-                      }
-                    }";
+                string mirrorName = "_TestHelper1_CodeMirror.dll";
 
-                Plugin plugin = HelperPlugin.CreatePlugin("CodeMirror1", "Return the input int.", dllRoot, "_TestHelper1_CodeMirror.dll", new string[] {code1}, 
-                    "DynamicPlugins.CodeMirror", null);
+                Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
+                List<Plugin> pluginSet = new List<Plugin>(){plugin1};
 
-                List<Plugin> pluginSet = new List<Plugin>(){plugin};
-
-                yield return new TestCaseData("Simple Class", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", pluginSet, "7", 
-                    "_TestHelper1_CodeMirror.dll", "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});                                    
+                yield return new TestCaseData("Simple Class", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", 
+                    pluginSet, "7", mirrorName, "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});                                    
             }
         }
 
@@ -170,8 +161,27 @@ namespace template_test.UnitTests
 
         #endregion
 
-        #region " TestPluginDomain - Adds a layer of implementation to HelperPlugin "
+        #region " TestPluginDomain - Adds implementation to HelperPlugin "
 
+        #region " Test Inputs "
+
+        public static IEnumerable Input_TestPluginDomain1 {
+            get {
+                string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+                string subDir = @"PluginsTest";
+                string dllRoot = baseDir + subDir + @"\";
+
+                string mirrorName = "_TestPluginDomain1_CodeMirror.dll";
+
+                Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
+                List<Plugin> pluginSet = new List<Plugin>(){plugin1};
+
+                yield return new TestCaseData("Simple Class", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", pluginSet, "7", 
+                    "_TestPluginDomain1_CodeMirror.dll", "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});                                    
+            }
+        }
+
+        #endregion
 
         //[Ignore("")]
         [Test]
@@ -181,14 +191,10 @@ namespace template_test.UnitTests
             // Create our domain
             PluginDomain domain = new PluginDomain(domainName, domainBaseDir, domainSubDir, runnerNamespace);
 
+            // Before recompiling a plugin for a domain, we have to unload it
+            //      Not really needed here except for completeness of example
+            domain.ResetDomain();
 
-            // Compile & Verify Set
-
-            // Load Set
-
-            // GetReference (from pluginID)
-
-            /*
             // Compile Plugins - Fail if compile returns false  - removes existing DLL before attempting compile
             //      also set the plugin object to run when matched
             Plugin runPlugin = null;
@@ -219,7 +225,7 @@ namespace template_test.UnitTests
             PluginReference pluginReference = referenceSet[runPluginID];
             string sRes = HelperPlugin.RunMethodString(pluginReference.PluginRunner, runPlugin, runClassPath, runMethodName, runArgs);
             Assert.AreEqual(expected, sRes, "Method call returned an unexpected result: expected=" + expected + "   actual=" + sRes);
-            */
+
 
             // Unload our domain
             domain.Dispose();
@@ -227,10 +233,104 @@ namespace template_test.UnitTests
 
         #endregion
 
-        #region " TestPluginSystem "
+        #region " TestPluginSystem - Adds more implementation to HelperPlugin "
 
+        #region " Test Inputs "
+
+        public static IEnumerable Input_TestPluginSystem1 {
+            get {
+                string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+                string subDir = @"PluginsTest";
+                string dllRoot = baseDir + subDir + @"\";
+
+                string mirrorName = "_TestPluginSystem1_CodeMirror.dll";
+
+                Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
+                List<Plugin> pluginSet = new List<Plugin>(){plugin1};
+
+                yield return new TestCaseData("Simple Class", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", pluginSet); 
+                    //pluginSet, "7", "_TestPluginSystem1_CodeMirror.dll", "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});                                    
+                    
+            }
+        }
 
         #endregion
+
+        //[Ignore("")]
+        [Test]
+        [TestCaseSource("Input_TestPluginSystem1")]
+        public void TestPluginSystem(string TestName, string domainName, string domainBaseDir, string domainSubDir, string runnerNamespace, List<Plugin> pluginSet) {
+
+            // , List<Plugin> pluginSet, string expected, string runPluginID, string runClassPath, string runMethodName, object[] runArgs
+
+            PluginSystem system = new PluginSystem(domainName, domainBaseDir, domainSubDir, runnerNamespace);
+
+
+            // Compile all plugins
+
+            // Load all plugins
+
+
+            // Recompile / Reload affected domains
+
+
+
+            //PluginReference pluginReferenceA1 = pluginSystem.PluginAdd(oPluginA, "AppDomain1");            
+            //PluginReference pluginReferenceA2 = pluginSystem.PluginAdd(oPluginA, "AppDomain2");
+            //PluginReference pluginReferenceA3 = pluginSystem.PluginAdd(oPluginB, "AppDomain3");
+
+            //System.Console.WriteLine(HelperPlugin.RunMethodString(pluginReferenceA.PluginRunner, pluginReferenceA.Plugin, 
+            //  pluginReferenceA.Plugin.ClassNamespacePath, "MirrorInt", new object[] {(int)7}));
+
+            //oPluginB.IsCompiled = false; // simulate code change
+            //PluginReference pluginReferenceA2 = pluginSystem.PluginAdd(oPluginB, "AppDomain2");
+
+
+
+            /*
+            // Create our domain
+            PluginDomain domain = new PluginDomain(domainName, domainBaseDir, domainSubDir, runnerNamespace);
+
+            // Compile Plugins - Fail if compile returns false  - removes existing DLL before attempting compile
+            //      also set the plugin object to run when matched
+            Plugin runPlugin = null;
+            foreach(Plugin plugin in pluginSet) {
+                bool compileRes = domain.CompilePlugin(plugin);
+                Assert.True(compileRes, "Plugin compile failed: " + plugin.PluginID);
+                if(plugin.PluginID == runPluginID)
+                    runPlugin = plugin;
+            }
+            Assert.NotNull(runPlugin, "No plugin matched the run ID: "+ runPluginID);
+
+            // Check for the generated DLL's
+            foreach(Plugin plugin in pluginSet) {
+                Assert.True(System.IO.File.Exists(plugin.DllFilePath));
+            }
+
+
+            // Load Plugins - Fail if any references come back null
+            Dictionary<string, PluginReference> referenceSet = new Dictionary<string, PluginReference>();
+            foreach(Plugin plugin in pluginSet) {
+                PluginReference pluginRef = domain.LoadPlugin(plugin);    // The domain alreay stores its references
+                Assert.NotNull(pluginRef, "Plugin load failed: "+ plugin.PluginID);
+
+                referenceSet.Add(plugin.PluginID, pluginRef);
+            }
+
+            // Make the method call and check its result
+            PluginReference pluginReference = referenceSet[runPluginID];
+            string sRes = HelperPlugin.RunMethodString(pluginReference.PluginRunner, runPlugin, runClassPath, runMethodName, runArgs);
+            Assert.AreEqual(expected, sRes, "Method call returned an unexpected result: expected=" + expected + "   actual=" + sRes);
+
+
+            // Unload our domain
+            domain.Dispose();
+            */
+        }
+
+        #endregion
+
+
     }
 }
   

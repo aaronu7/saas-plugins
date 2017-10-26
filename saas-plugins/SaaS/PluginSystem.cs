@@ -68,17 +68,10 @@ namespace saas_plugins.SaaS
         }
         */
 
-        /// <summary>
-        /// Recompile and add the plugin to the default domain
-        /// </summary>
-        /// <param name="plugin"></param>
-        /// <param name="domainName">The domain name to add this plugin to.</param>
-        /// <returns></returns>
-        public PluginReference PluginAdd(Plugin plugin, string domainName) {
+        #region " Local Helpers "
 
-            PluginReference pluginReference = null;
-            bool compileTriggered = false;
-
+        protected PluginDomain CreateGetDomain(string domainName)
+        {
             if(domainName=="")
                 domainName = this._defaultDomainName;
 
@@ -94,46 +87,104 @@ namespace saas_plugins.SaaS
                 OnLogNotify("Domain Created: " + domainName);
             }
 
+            return pluginDomain;
+        }
+
+        protected void ResetReferencingDomains(Plugin plugin, PluginDomain pluginDomain, bool ignoreTargetDomain) {
+            foreach(PluginDomain dom in this._pluginDomainSet.Values) {
+                if(dom.PluginReferenceSet.ContainsKey(plugin.PluginID)) {
+                    if(ignoreTargetDomain && pluginDomain.InstanceDomainName == dom.InstanceDomainName) {
+                        // ignore this domain reload ... no need, the plugin did not already exist
+                    } else {
+                        dom.ResetDomain();
+                        OnLogNotify("Domain Reset: " + dom.InstanceDomainName);
+                    }
+                }
+            }
+        }
+
+        protected void ReloadReferencingDomains(Plugin plugin, PluginDomain pluginDomain, bool ignoreTargetDomain) {
+            foreach(PluginDomain dom in this._pluginDomainSet.Values) {
+                if(dom.PluginReferenceSet.ContainsKey(plugin.PluginID)) {
+                    if(ignoreTargetDomain && pluginDomain.InstanceDomainName == dom.InstanceDomainName) {
+                        // ignore this domain reload ... no need, the plugin did not already exist
+                    } else {
+                        dom.ReloadDomain();
+                        OnLogNotify("Domain Reloaded: " + dom.InstanceDomainName);
+                    }
+                }
+            }
+        }
+
+        protected bool CompilePlugin(PluginDomain pluginDomain, Plugin plugin) {
+            plugin.IsCompiled = pluginDomain.CompilePlugin(plugin);
+            if(plugin.IsCompiled) {
+                OnLogNotify("Plugin Compiled: " + plugin.PluginID);
+            } else {
+                OnLogNotify("Plugin FAILED to compile: " + plugin.PluginID);
+            }
+            return plugin.IsCompiled;
+        }
+
+        #endregion
+
+        public void PluginLoad(Plugin plugin, string domainName) {
+
+            // Compile ALL plugins first for better performance if many changes.
+
+            // Get or create the domain object
+            PluginDomain pluginDomain = CreateGetDomain(domainName);
+
+            // Compile Plugin (if not compiled)
+            if(plugin.IsCompiled) {
+                // Already compiled, simply Load the plugin
+                pluginDomain.LoadPlugin(plugin);      
+                OnLogNotify("Plugin loaded into domain: " + pluginDomain.InstanceDomainName + "." + plugin.PluginID);
+
+            } else {
+                bool isPreExisting = pluginDomain.HasPlugin(plugin);
+                bool ignoreTargetDomain = !isPreExisting;
+
+                // Reset all referencing domains (to allow recompiling)
+                ResetReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
+
+                // Recompile this plugin (uses a temporary domain)
+                bool compiledOK = CompilePlugin(pluginDomain, plugin);
+
+                // Load the plugin (if not pre-existing, otherwise it triggers in the reload)
+                if(!isPreExisting) {
+                    pluginDomain.LoadPlugin(plugin);      
+                    OnLogNotify("Plugin compiled and loaded into domain: " + pluginDomain.InstanceDomainName + "." + plugin.PluginID);
+                }
+
+                // reload all domains that reference this plugin
+                ReloadReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
+            }
+
+        }
+
+        #region " OLD PluginAdd "
+        /*
+        public PluginReference PluginAdd(Plugin plugin, string domainName) {
+
+            PluginReference pluginReference = null;
+            bool compileTriggered = false;
+
+
+            PluginDomain pluginDomain = CreateGetDomain(domainName);
+
             string refMatchKey = pluginDomain.InstanceDomainName + "." + plugin.PluginID;
 
             //--------------------------------
             // Compile Plugin if not already compiled
             if(!plugin.IsCompiled) {
                 
-                //--------------------------------
-                // Reset Domain
-                //      ONLY RESET THE DOMAIN IF IT HAS AN ACTIVE REFERENCE TO THIS PLUGIN
-                /*
-                if(pluginDomain.PluginReferenceSet.ContainsKey(plugin.PluginID)) {
-                    PluginReference domRef = pluginDomain.PluginReferenceSet[plugin.PluginID];
-                    if(domRef.PluginRunner != null) {
-                        pluginDomain.ResetDomain();
-                        OnLogNotify("Domain Reset: " + domainName);
-                    }
-                }
-                */
-
-                // Reset all domains that have an ACTIVE reference to this plugin
-                if(_pluginDomainReferences.ContainsKey(plugin.PluginID)) {
-                    foreach(PluginReference pluginRef in this._pluginDomainReferences[plugin.PluginID]) {
-                        if(pluginRef.PluginRunner != null) {
-                            pluginRef.PluginDomain.ResetDomain();
-                            OnLogNotify("Domain Reset: " + pluginRef.PluginDomain.InstanceDomainName);
-                        }
-                    }
-                }     
+                // Reset all referencing domains (to allow recompiling)
+                ResetReferencingDomains(plugin);
 
                 // Recompile this plugin (uses a temporary domain)
-                plugin.IsCompiled = pluginDomain.CompilePlugin(plugin);
-                if(plugin.IsCompiled) {
-                    compileTriggered = true;
-                    OnLogNotify("Plugin Compiled: " + plugin.PluginID);
-                } else {
-                    compileTriggered = false;
-                    OnLogNotify("Plugin FAILED to compile: " + plugin.PluginID);
-                }
+                compileTriggered = CompilePlugin(pluginDomain, plugin);
             }
-
 
             if(plugin.IsCompiled) {
                 //--------------------------------
@@ -194,10 +245,11 @@ namespace saas_plugins.SaaS
                     }
                 }
             }
-            
 
             return pluginReference;
         }
-        
+        */
+        #endregion
+
     }
 }

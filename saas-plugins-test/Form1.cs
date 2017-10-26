@@ -109,17 +109,27 @@ namespace template_test
             oPluginA.IsCompiled = false;
             oPluginB.IsCompiled = false;
 
-            PluginReference pluginReferenceA = pluginSystem.PluginAdd(oPluginA, "AppDomain1");            
-            PluginReference pluginReferenceC = pluginSystem.PluginAdd(oPluginC, "AppDomain1");
-            PluginReference pluginReferenceB = pluginSystem.PluginAdd(oPluginB, "AppDomain1");
+            pluginSystem.PluginLoad(oPluginA, "AppDomain1");
+            pluginSystem.PluginLoad(oPluginC, "AppDomain1");
+            pluginSystem.PluginLoad(oPluginB, "AppDomain1");
+
+            pluginSystem.PluginLoad(oPluginA, "AppDomain2");
+            pluginSystem.PluginLoad(oPluginA, "AppDomain3");
+
+            oPluginA.IsCompiled = false;
+            pluginSystem.PluginLoad(oPluginA, "AppDomain1");
+
+            //PluginReference pluginReferenceA = pluginSystem.PluginAdd(oPluginA, "AppDomain1");            
+            //PluginReference pluginReferenceC = pluginSystem.PluginAdd(oPluginC, "AppDomain1");
+            //PluginReference pluginReferenceB = pluginSystem.PluginAdd(oPluginB, "AppDomain1");
             
             //pluginReferenceB.PluginDomain.OutputAssemblies(pluginReferenceB);
 
-            System.Console.WriteLine(HelperPlugin.RunMethodString(pluginReferenceA.PluginRunner, pluginReferenceA.Plugin, pluginReferenceA.Plugin.ClassNamespacePath, 
-                "MirrorInt", new object[] {(int)7}));
+            //System.Console.WriteLine(HelperPlugin.RunMethodString(pluginReferenceA.PluginRunner, pluginReferenceA.Plugin, pluginReferenceA.Plugin.ClassNamespacePath, 
+            //    "MirrorInt", new object[] {(int)7}));
 
-            System.Console.WriteLine(HelperPlugin.RunMethodString(pluginReferenceB.PluginRunner, pluginReferenceB.Plugin, pluginReferenceB.Plugin.ClassNamespacePath, 
-                "MultBy2", new object[] {(int)7}));
+            //System.Console.WriteLine(HelperPlugin.RunMethodString(pluginReferenceB.PluginRunner, pluginReferenceB.Plugin, pluginReferenceB.Plugin.ClassNamespacePath, 
+            //    "MultBy2", new object[] {(int)7}));
             
 
             

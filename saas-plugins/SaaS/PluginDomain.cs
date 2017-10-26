@@ -112,6 +112,18 @@ namespace saas_plugins.SaaS
             }
         }
 
+        public bool HasPlugin(Plugin plugin) {
+            return this._pluginReferences.ContainsKey(plugin.PluginID);
+        }
+
+        public void ReloadDomain() {
+            foreach(PluginReference oRef in _pluginReferences.Values) {
+                if(oRef.PluginRunner == null) {
+                    LoadPlugin(oRef.Plugin);
+                }
+            }
+        }
+
         #region " LoadPlugin "
 
         public PluginReference LoadPlugin(Plugin plugin) {
