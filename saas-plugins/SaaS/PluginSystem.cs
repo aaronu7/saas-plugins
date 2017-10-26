@@ -15,8 +15,11 @@ namespace saas_plugins.SaaS
         private string _domainBasePath = "";
         private string _domainSubPath = "";
 
-        private Dictionary<string, PluginDomain> _pluginDomainSet = null;               // domainName -> PluginDomain
-        private Dictionary<string, List<PluginReference>> _pluginDomainReferences = null;  // pluginID   -> List<PluginDomain>
+        private PluginDomain _defaultDomain = null;
+        private Dictionary<string, PluginDomain> _pluginDomainSet = null;         // domainName -> PluginDomain
+        private Dictionary<string, Plugin> _pluginSet = null;               // pluginID -> Plugin
+
+        //private Dictionary<string, List<PluginReference>> _pluginDomainReferences = null;  // pluginID   -> List<PluginDomain>
 
 
         /// <summary>
@@ -33,7 +36,11 @@ namespace saas_plugins.SaaS
             this._pluginRunnerTypePath = pluginRunnerTypePath;
             //_pluginLookup = new Dictionary<string, Dictionary<string, Plugin>>();
             _pluginDomainSet = new Dictionary<string, PluginDomain>();
-            _pluginDomainReferences = new Dictionary<string, List<PluginReference>>();
+            _pluginSet = new Dictionary<string, Plugin>();
+            //_pluginDomainReferences = new Dictionary<string, List<PluginReference>>();
+
+            // Get or create the domain object
+            this._defaultDomain = CreateGetDomain(this._defaultDomainName);
         }
 
 
@@ -58,15 +65,42 @@ namespace saas_plugins.SaaS
             }
         }
 
+        #region " PluginSystemLoad "
 
-        /*
-        public PluginReference PluginCompile(Plugin plugin) {
-            // Recompile this plugin (uses a temporary domain)
-            pluginDomain.CompilePlugin(plugin);
-            plugin.IsCompiled = true;
-            OnLogNotify("Plugin Compiled: " + plugin.PluginID);
+        public void PluginSystemLoad(List<Plugin> pluginSet) {
+            foreach(Plugin plugin in pluginSet) {
+                PluginSystemLoad(plugin);
+            }
         }
-        */
+
+        public void PluginSystemLoad(Plugin plugin) {
+
+            if(this._pluginSet.ContainsKey(plugin.PluginID)) {
+                OnLogNotify("Plugin already exists in the system: " + plugin.PluginID);
+            } else {
+                if(plugin.IsCompiled) {
+                    // Already compiled, simply Load the plugin
+                    this._pluginSet.Add(plugin.PluginID, plugin);
+                    OnLogNotify("Plugin loaded into system: " + plugin.PluginID);
+
+                } else {
+
+                    // Recompile this plugin (uses a temporary domain)
+                    bool compiledOK = CompilePlugin(this._defaultDomain, plugin);
+
+                   if(compiledOK) {
+                        this._pluginSet.Add(plugin.PluginID, plugin);
+                        OnLogNotify("Plugin compiled and loaded into system: " + plugin.PluginID);
+                    } else {
+                        OnLogNotify("Plugin failed to compiled: " + plugin.PluginID);
+                    }
+
+                }
+            }
+        }
+
+        #endregion
+
 
         #region " Local Helpers "
 
@@ -117,10 +151,7 @@ namespace saas_plugins.SaaS
         }
 
         protected bool CompilePlugin(PluginDomain pluginDomain, Plugin plugin) {
-            plugin.IsCompiled = pluginDomain.CompilePlugin(plugin);
-            if(plugin.IsCompiled) {
-                OnLogNotify("Plugin Compiled: " + plugin.PluginID);
-            } else {
+            if(!pluginDomain.CompilePlugin(plugin)) {
                 OnLogNotify("Plugin FAILED to compile: " + plugin.PluginID);
             }
             return plugin.IsCompiled;
@@ -128,40 +159,94 @@ namespace saas_plugins.SaaS
 
         #endregion
 
-        public void PluginLoad(Plugin plugin, string domainName) {
+
+        public void PluginDomainLoad(string domainName, List<string> pluginSet) {
 
             // Compile ALL plugins first for better performance if many changes.
+            
+            foreach(string pluginID in pluginSet) {
+                if(!this._pluginSet.ContainsKey(pluginID)) {
+                    OnLogNotify("Plugin not found in the system: " + pluginID);
 
-            // Get or create the domain object
-            PluginDomain pluginDomain = CreateGetDomain(domainName);
+                } else {
+                    // Get the plugin
+                    Plugin plugin = this._pluginSet[pluginID];
 
-            // Compile Plugin (if not compiled)
-            if(plugin.IsCompiled) {
-                // Already compiled, simply Load the plugin
-                pluginDomain.LoadPlugin(plugin);      
-                OnLogNotify("Plugin loaded into domain: " + pluginDomain.InstanceDomainName + "." + plugin.PluginID);
+                    // Get or create the domain object
+                    PluginDomain pluginDomain = CreateGetDomain(domainName);
+
+                    // Simply Load the plugin
+                    if(pluginDomain.HasPlugin(plugin)) {
+                        OnLogNotify("Plugin already loaded into domain: " + pluginDomain.InstanceDomainName + "." + plugin.PluginID);
+
+                    } else {
+                        pluginDomain.LoadPlugin(plugin);      
+                        OnLogNotify("Plugin loaded into domain: " + pluginDomain.InstanceDomainName + "." + plugin.PluginID);
+                    }
+                }
+            }
+        }
+
+        public void SystemReload(string domainName, List<string> pluginSet) {
+            // Unload and then Reload all AppDomains
+
+            // Reset all referencing domains (to allow recompiling)
+            //ResetReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
+
+
+            // reload all domains that reference this plugin
+            //ReloadReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
+        }
+
+        public void SystemUpdate(string domainName, List<string> pluginSet) {
+            // Recompile/Load the list of plugins which require a recompile
+
+        }
+
+        /*
+        public void PluginRecompile(string pluginID, string domainName) {
+
+            // Compile ALL plugins first for better performance if many changes.
+            
+            if(!this._pluginSet.ContainsKey(pluginID)) {
+                OnLogNotify("Plugin not found in the system: " + pluginID);
 
             } else {
-                bool isPreExisting = pluginDomain.HasPlugin(plugin);
-                bool ignoreTargetDomain = !isPreExisting;
+                // Get the plugin
+                Plugin plugin = this._pluginSet[pluginID];
 
-                // Reset all referencing domains (to allow recompiling)
-                ResetReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
+                // Get or create the domain object
+                PluginDomain pluginDomain = CreateGetDomain(domainName);
 
-                // Recompile this plugin (uses a temporary domain)
-                bool compiledOK = CompilePlugin(pluginDomain, plugin);
-
-                // Load the plugin (if not pre-existing, otherwise it triggers in the reload)
-                if(!isPreExisting) {
+                // Compile Plugin (if not compiled)
+                if(plugin.IsCompiled) {
+                    // Already compiled, simply Load the plugin
                     pluginDomain.LoadPlugin(plugin);      
-                    OnLogNotify("Plugin compiled and loaded into domain: " + pluginDomain.InstanceDomainName + "." + plugin.PluginID);
-                }
+                    OnLogNotify("Plugin loaded into domain: " + pluginDomain.InstanceDomainName + "." + plugin.PluginID);
 
-                // reload all domains that reference this plugin
-                ReloadReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
+                } else {
+                    bool isPreExisting = pluginDomain.HasPlugin(plugin);
+                    bool ignoreTargetDomain = !isPreExisting;
+
+                    // Reset all referencing domains (to allow recompiling)
+                    ResetReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
+
+                    // Recompile this plugin (uses a temporary domain)
+                    bool compiledOK = CompilePlugin(pluginDomain, plugin);
+
+                    // Load the plugin (if not pre-existing, otherwise it triggers in the reload)
+                    if(!isPreExisting) {
+                        pluginDomain.LoadPlugin(plugin);      
+                        OnLogNotify("Plugin compiled and loaded into domain: " + pluginDomain.InstanceDomainName + "." + plugin.PluginID);
+                    }
+
+                    // reload all domains that reference this plugin
+                    ReloadReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
+                }
             }
 
         }
+        */
 
         #region " OLD PluginAdd "
         /*

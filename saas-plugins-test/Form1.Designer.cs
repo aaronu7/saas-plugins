@@ -32,11 +32,14 @@
             this.tbLog = new System.Windows.Forms.TextBox();
             this.btnTest = new System.Windows.Forms.Button();
             this.btnView = new System.Windows.Forms.Button();
+            this.btnUpdateAll = new System.Windows.Forms.Button();
+            this.btnUpdate1 = new System.Windows.Forms.Button();
+            this.btnUpdate2 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSubmit
             // 
-            this.btnSubmit.Location = new System.Drawing.Point(67, 89);
+            this.btnSubmit.Location = new System.Drawing.Point(915, 97);
             this.btnSubmit.Name = "btnSubmit";
             this.btnSubmit.Size = new System.Drawing.Size(223, 106);
             this.btnSubmit.TabIndex = 0;
@@ -54,7 +57,7 @@
             // 
             // btnTest
             // 
-            this.btnTest.Location = new System.Drawing.Point(923, 73);
+            this.btnTest.Location = new System.Drawing.Point(925, 239);
             this.btnTest.Name = "btnTest";
             this.btnTest.Size = new System.Drawing.Size(223, 106);
             this.btnTest.TabIndex = 4;
@@ -72,11 +75,44 @@
             this.btnView.UseVisualStyleBackColor = true;
             this.btnView.Click += new System.EventHandler(this.btnView_Click);
             // 
+            // btnUpdateAll
+            // 
+            this.btnUpdateAll.Location = new System.Drawing.Point(67, 61);
+            this.btnUpdateAll.Name = "btnUpdateAll";
+            this.btnUpdateAll.Size = new System.Drawing.Size(223, 106);
+            this.btnUpdateAll.TabIndex = 6;
+            this.btnUpdateAll.Text = "UpdateAll";
+            this.btnUpdateAll.UseVisualStyleBackColor = true;
+            this.btnUpdateAll.Click += new System.EventHandler(this.btnUpdateAll_Click);
+            // 
+            // btnUpdate1
+            // 
+            this.btnUpdate1.Location = new System.Drawing.Point(308, 61);
+            this.btnUpdate1.Name = "btnUpdate1";
+            this.btnUpdate1.Size = new System.Drawing.Size(223, 106);
+            this.btnUpdate1.TabIndex = 7;
+            this.btnUpdate1.Text = "Update1";
+            this.btnUpdate1.UseVisualStyleBackColor = true;
+            this.btnUpdate1.Click += new System.EventHandler(this.btnUpdate1_Click);
+            // 
+            // btnUpdate2
+            // 
+            this.btnUpdate2.Location = new System.Drawing.Point(551, 61);
+            this.btnUpdate2.Name = "btnUpdate2";
+            this.btnUpdate2.Size = new System.Drawing.Size(223, 106);
+            this.btnUpdate2.TabIndex = 8;
+            this.btnUpdate2.Text = "Update2";
+            this.btnUpdate2.UseVisualStyleBackColor = true;
+            this.btnUpdate2.Click += new System.EventHandler(this.btnUpdate2_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1249, 924);
+            this.Controls.Add(this.btnUpdate2);
+            this.Controls.Add(this.btnUpdate1);
+            this.Controls.Add(this.btnUpdateAll);
             this.Controls.Add(this.btnView);
             this.Controls.Add(this.btnTest);
             this.Controls.Add(this.tbLog);
@@ -96,6 +132,9 @@
         private System.Windows.Forms.TextBox tbLog;
         private System.Windows.Forms.Button btnTest;
         private System.Windows.Forms.Button btnView;
+        private System.Windows.Forms.Button btnUpdateAll;
+        private System.Windows.Forms.Button btnUpdate1;
+        private System.Windows.Forms.Button btnUpdate2;
     }
 }
 

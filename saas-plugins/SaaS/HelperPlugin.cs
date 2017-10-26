@@ -156,6 +156,7 @@ namespace saas_plugins.SaaS
 
             // Compile the file within the temp domain
             bool res = runner.CompileToFile(plugin.Code, plugin.DllFilePath, plugin.DllFileNameReferenceSet);
+            plugin.IsCompiled = res;
 
             // Discard the temp domain
             AppDomain.Unload(domainTemp);
