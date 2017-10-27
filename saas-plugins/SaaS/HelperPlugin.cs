@@ -16,6 +16,13 @@ namespace saas_plugins.SaaS
             return x;
         }
 
+        public static string ObjectToString(object obj) {
+            string sRes = "NULL";
+            if(obj!=null)
+                sRes = obj.ToString();
+            return sRes;
+        }
+
         #region " NOTEs Binding DLL Location Issue "
         /*
         // https://stackoverflow.com/questions/15883109/createinstanceandunwrap-fails-to-load-assembly

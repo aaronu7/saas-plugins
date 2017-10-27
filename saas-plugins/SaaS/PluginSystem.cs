@@ -55,15 +55,66 @@ namespace saas_plugins.SaaS
 
         #endregion
 
+        public object InvokeMethod(string domainName, string pluginID, string classNamespacePath, string functionName, object[] functionArgs) {
+            object res = null;
+
+            if(!this._pluginDomainSet.ContainsKey(domainName) || !this._pluginSet.ContainsKey(pluginID)) {
+                OnLogNotify("Domain/Plugin not found in the system: " + domainName + "." + pluginID);
+
+            } else {
+                // Get the domain/plugin
+                PluginDomain domain = this._pluginDomainSet[domainName];
+                Plugin plugin = this._pluginSet[pluginID];
+
+                res = domain.RunPlugin(plugin, classNamespacePath, functionName, functionArgs);
+            }
+
+            return res;
+        }
+
+        #region " Output/Get Assemblies "
+
         public void OutputAssemblies() {
             foreach(string key in _pluginDomainSet.Keys) {
                 foreach(string keyRef in this._pluginDomainSet[key].PluginReferenceSet.Keys) {
                     PluginReference pluginReference = this._pluginDomainSet[key].PluginReferenceSet[keyRef];
-                    pluginReference.OutputAssemblies();
+                    List<string> asmSet = pluginReference.GetAssemblies();
+
+                    System.Console.WriteLine("===================");
+                    System.Console.WriteLine("Domain: " + pluginReference.DomainName);
+                    System.Console.WriteLine("===================");
+                    foreach(string asm in asmSet) {
+                        string[] asmParts = asm.Split(',');
+                        System.Console.WriteLine(asmParts[0]);
+                    }
+
                     break;
                 }
             }
         }
+
+        public Dictionary<string, List<string>> GetAssemblies() {
+            Dictionary<string, List<string>> asmSets = new Dictionary<string, List<string>>();
+
+            foreach(string key in _pluginDomainSet.Keys) {
+                foreach(string keyRef in this._pluginDomainSet[key].PluginReferenceSet.Keys) {
+                    PluginReference pluginReference = this._pluginDomainSet[key].PluginReferenceSet[keyRef];
+                    List<string> asmSetFullNames = pluginReference.GetAssemblies();
+                    
+                    List<string> asmSet = new List<string>();
+                    foreach(string asm in asmSetFullNames) {
+                        string[] asmParts = asm.Split(',');
+                        asmSet.Add(asmParts[0]);
+                    }
+                    asmSets.Add(pluginReference.DomainName, asmSet);
+                    break;
+                }
+            }
+
+            return asmSets;
+        }
+
+        #endregion
 
         #region " PluginSystemLoad "
 
@@ -124,14 +175,32 @@ namespace saas_plugins.SaaS
             return pluginDomain;
         }
 
-        protected void ResetReferencingDomains(Plugin plugin, PluginDomain pluginDomain, bool ignoreTargetDomain) {
+        protected void UnloadReferencingDomains(List<string> pluginSet) {
             foreach(PluginDomain dom in this._pluginDomainSet.Values) {
-                if(dom.PluginReferenceSet.ContainsKey(plugin.PluginID)) {
+                if(dom.HasPlugin(pluginSet)) { 
+                    dom.ResetDomain();
+                    OnLogNotify("Domain Unloaded: " + dom.InstanceDomainName);
+                }
+            }
+        }
+        protected void ReloadReferencingDomains(List<string> pluginSet) {
+            foreach(PluginDomain dom in this._pluginDomainSet.Values) {
+                if(dom.HasPlugin(pluginSet)) { 
+                    dom.ReloadDomain();
+                    OnLogNotify("Domain Reloaded: " + dom.InstanceDomainName);
+                }
+            }
+        }
+
+        /*
+        protected void UnloadReferencingDomains(string[] pluginSet, PluginDomain pluginDomain, bool ignoreTargetDomain) {
+            foreach(PluginDomain dom in this._pluginDomainSet.Values) {
+                if(dom.HasPlugin(pluginSet)) { 
                     if(ignoreTargetDomain && pluginDomain.InstanceDomainName == dom.InstanceDomainName) {
                         // ignore this domain reload ... no need, the plugin did not already exist
                     } else {
                         dom.ResetDomain();
-                        OnLogNotify("Domain Reset: " + dom.InstanceDomainName);
+                        OnLogNotify("Domain Unloaded: " + dom.InstanceDomainName);
                     }
                 }
             }
@@ -149,7 +218,7 @@ namespace saas_plugins.SaaS
                 }
             }
         }
-
+        */
         protected bool CompilePlugin(PluginDomain pluginDomain, Plugin plugin) {
             if(!pluginDomain.CompilePlugin(plugin)) {
                 OnLogNotify("Plugin FAILED to compile: " + plugin.PluginID);
@@ -176,7 +245,7 @@ namespace saas_plugins.SaaS
                     PluginDomain pluginDomain = CreateGetDomain(domainName);
 
                     // Simply Load the plugin
-                    if(pluginDomain.HasPlugin(plugin)) {
+                    if(pluginDomain.HasPlugin(plugin.PluginID)) {
                         OnLogNotify("Plugin already loaded into domain: " + pluginDomain.InstanceDomainName + "." + plugin.PluginID);
 
                     } else {
@@ -187,23 +256,48 @@ namespace saas_plugins.SaaS
             }
         }
 
-        public void SystemReload(string domainName, List<string> pluginSet) {
+        public void SystemReload() {
             // Unload and then Reload all AppDomains
 
-            // Reset all referencing domains (to allow recompiling)
-            //ResetReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
+            // Unload ALL domains
+            foreach(PluginDomain dom in this._pluginDomainSet.Values) {
+                dom.ResetDomain();
+                OnLogNotify("Domain Unloaded: " + dom.InstanceDomainName);
+            }
 
-
-            // reload all domains that reference this plugin
-            //ReloadReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
+            // Reload ALL domains
+            foreach(PluginDomain dom in this._pluginDomainSet.Values) {
+                dom.ReloadDomain();
+                OnLogNotify("Domain Reloaded: " + dom.InstanceDomainName);
+            }
         }
 
-        public void SystemUpdate(string domainName, List<string> pluginSet) {
-            // Recompile/Load the list of plugins which require a recompile
+        public void SystemUpdate(List<string> pluginSet) {
+            // Recompile/Load the list of plugins -- No checks on IsCompiled, it will always attempt a recompile
 
+            UnloadReferencingDomains(pluginSet);
+
+            foreach(string pluginID in pluginSet) {
+                Plugin plugin = this._pluginSet[pluginID];
+
+                // Recompile this plugin (uses a temporary domain)
+                bool compiledOK = CompilePlugin(this._defaultDomain, plugin);
+
+                if(compiledOK) {
+                    OnLogNotify("Plugin recompiled: " + plugin.PluginID);
+                } else {
+                    OnLogNotify("Plugin failed to recompile: " + plugin.PluginID);
+                }
+            }
+
+            ReloadReferencingDomains(pluginSet);
         }
 
-        /*
+  
+
+        #region " OLD "
+
+      /*
         public void PluginRecompile(string pluginID, string domainName) {
 
             // Compile ALL plugins first for better performance if many changes.
@@ -229,7 +323,7 @@ namespace saas_plugins.SaaS
                     bool ignoreTargetDomain = !isPreExisting;
 
                     // Reset all referencing domains (to allow recompiling)
-                    ResetReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
+                    UnloadReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
 
                     // Recompile this plugin (uses a temporary domain)
                     bool compiledOK = CompilePlugin(pluginDomain, plugin);
@@ -248,7 +342,6 @@ namespace saas_plugins.SaaS
         }
         */
 
-        #region " OLD PluginAdd "
         /*
         public PluginReference PluginAdd(Plugin plugin, string domainName) {
 

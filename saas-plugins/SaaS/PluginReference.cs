@@ -18,17 +18,24 @@ namespace saas_plugins.SaaS
             this._pluginRunner = null;
             this._plugin = plugin;
         }
+        
+        public string DomainName
+        {
+            get {return this._pluginDomain.InstanceDomainName; }
+        }
 
-        public void OutputAssemblies() {
+        public List<string> GetAssemblies() {
+            List<string> asmSet = null;
             if(this.PluginRunner!=null) {
                 try {
-                    this.PluginRunner.OutputAssemblies();
+                    asmSet = this.PluginRunner.GetAssemblies();
                 } catch(Exception ex) {
                     System.Console.WriteLine(ex.Message);
                 }
             }
+            return asmSet;
         }
-
+        
         #region " Properties "
 
         public bool IsLoaded {

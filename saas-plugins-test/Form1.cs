@@ -49,16 +49,34 @@ namespace template_test
 
         private void Form1_Load(object sender, EventArgs e)
         {   
+            this.Width = 1000;
+            this.Height = 700;
+            this.Left = 50;
+            this.Top = 50;
         }
 
-        private void btnTest_Click(object sender, EventArgs e)
+
+        private void btnView_Click(object sender, EventArgs e)
         {
-            Test1();
-            //BuildSystemA();
+            pluginSystem.OutputAssemblies();
+            //System.Drawing.Color.Blue.ToArgb();
         }
 
-        private void btnSubmit_Click(object sender, EventArgs e)
-        {            
+        private void btnInvoke_Click(object sender, EventArgs e)
+        {
+            Plugin oPluginA = CreatePluginA(dllRoot);
+            Plugin oPluginC = CreatePluginC(dllRoot);
+            Plugin oPluginB = CreatePluginB(dllRoot);
+
+            object objA = pluginSystem.InvokeMethod("AppDomain1", oPluginA.PluginID, oPluginA.ClassNamespacePath, "MirrorInt", new object[] {7});
+            System.Console.WriteLine(HelperPlugin.ObjectToString(objA));
+
+            // Static class --- dosn't invoke
+            //object objC = pluginSystem.InvokeMethod("AppDomain1", oPluginC.PluginID, oPluginC.ClassNamespacePath, "GetValue", new object[] {7});
+            //System.Console.WriteLine(HelperPlugin.ObjectToString(objC));
+
+            object objB = pluginSystem.InvokeMethod("AppDomain1", oPluginB.PluginID, oPluginB.ClassNamespacePath, "MultBy2", new object[] {7});
+            System.Console.WriteLine(HelperPlugin.ObjectToString(objB));
         }
 
 
@@ -66,17 +84,47 @@ namespace template_test
 
         private void btnUpdateAll_Click(object sender, EventArgs e)
         {
-            BuildSystemAll();
+            // Recompile all plugins
+            tbLog.Text = "";
+            Plugin oPluginA = CreatePluginA(dllRoot);  // A simple public class
+            Plugin oPluginC = CreatePluginC(dllRoot);  // A static public class
+            Plugin oPluginB = CreatePluginB(dllRoot);
+            List<string> pluginSet = new List<string>() {oPluginA.PluginID, oPluginC.PluginID, oPluginB.PluginID};
+            pluginSystem.SystemUpdate(pluginSet);
         }
 
         private void btnUpdate1_Click(object sender, EventArgs e)
         {
-            BuildSystem1();
+            // Recompile plugin A
+            tbLog.Text = "";
+            Plugin oPluginA = CreatePluginA(dllRoot);  // A simple public class
+            List<string> pluginSet = new List<string>() {oPluginA.PluginID};
+            pluginSystem.SystemUpdate(pluginSet);
         }
 
         private void btnUpdate2_Click(object sender, EventArgs e)
         {
-            BuildSystem2();
+            // Recompile plugin B
+            tbLog.Text = "";
+            Plugin oPluginB = CreatePluginB(dllRoot);  // A simple public class
+            List<string> pluginSet = new List<string>() {oPluginB.PluginID};
+            pluginSystem.SystemUpdate(pluginSet);
+        }
+
+        private void btnUpdate3_Click(object sender, EventArgs e)
+        {
+            // Recompile plugin C
+            tbLog.Text = "";
+            Plugin oPluginC = CreatePluginC(dllRoot);  // A simple public class
+            List<string> pluginSet = new List<string>() {oPluginC.PluginID};
+            pluginSystem.SystemUpdate(pluginSet);
+        }
+
+        private void btnSystemReload_Click(object sender, EventArgs e)
+        {
+            // Unload / Reload ALL domains
+            tbLog.Text = "";
+            pluginSystem.SystemReload();
         }
 
         #endregion
@@ -121,36 +169,21 @@ namespace template_test
 
             // Load plugins into Domain(s)
             pluginSystem.PluginDomainLoad("AppDomain1", new List<string>() { oPluginA.PluginID, oPluginC.PluginID, oPluginB.PluginID});
-            pluginSystem.PluginDomainLoad("AppDomain2", new List<string>() { oPluginA.PluginID});
+            pluginSystem.PluginDomainLoad("AppDomain2", new List<string>() { oPluginA.PluginID, oPluginC.PluginID});
             pluginSystem.PluginDomainLoad("AppDomain3", new List<string>() { oPluginA.PluginID});
         }
 
-        protected void BuildSystemAll() {
-            tbLog.Text = "";
 
-            // Recompile all plugins
-        }
-
-        protected void BuildSystem1() {
-            tbLog.Text = "";
-
-            // Recompile plugin A
-        }
-
-        protected void BuildSystem2() {
-            tbLog.Text = "";
-
-            // Recompile plugin B
-        }
-        
         protected Plugin CreatePluginC(string dllRoot)
         {
             string code = @"
                 using System;
+                using System.Drawing;
                 namespace DynamicPlugins {
                   public static class RockStar {
                     public static int GetValue(int x) {
-                      return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);
+                      //return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);
+                      return Color.Blue.ToArgb();
                     }
                   }
                 }";
@@ -199,14 +232,12 @@ namespace template_test
             return HelperPlugin.CreatePlugin("CodeMirror", "Return the input int.", dllRoot, "_CodeMirror.dll", new string[] {code1}, 
                 "DynamicPlugins.CodeMirror", null);
         }
-        
+
+
+
+
+
         #endregion
-
-
-        private void btnView_Click(object sender, EventArgs e)
-        {
-            pluginSystem.OutputAssemblies();
-        }
 
 
     }

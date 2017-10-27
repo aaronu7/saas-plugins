@@ -101,7 +101,7 @@ namespace saas_plugins.SaaS
         */
 
         //AppDomain.CurrentDomain.AssemblyLoad
-
+        /*
         public void OutputAssemblies(PluginReference oPluginRef) {
             if(oPluginRef!=null && oPluginRef.PluginRunner!=null) {
                 try {
@@ -111,9 +111,19 @@ namespace saas_plugins.SaaS
                 }
             }
         }
+        */
 
-        public bool HasPlugin(Plugin plugin) {
-            return this._pluginReferences.ContainsKey(plugin.PluginID);
+        public bool HasPlugin(string pluginID) {
+            return this._pluginReferences.ContainsKey(pluginID);
+        }
+        public bool HasPlugin(List<string> pluginSet) {
+            bool hasPlugin = false;
+            foreach(string pluginID in pluginSet) {
+                hasPlugin = HasPlugin(pluginID);
+                if(hasPlugin)
+                    break;
+            }
+            return hasPlugin;
         }
 
         public void ReloadDomain() {
