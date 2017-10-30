@@ -1,4 +1,17 @@
 # saas-plugins
 
+DRAFT
+
+The saas-plugins module is a heavily refactored version of one used in a earlier Model Driven Engineering SaaS research project. This module is the foundation for model driven code generation and allows entire inter-related systems to be dynamically compiled and linked in C#.
+
 ![Alt text](readme-resources/class_flow.png?raw=true "Title")
 
+
+Dependancies:
+- Developed in VS2015 using the nunit package for unit testing.
+- Download the "NUnit 3 Test Adapter" extension to view example tests in the Test Explorer
+- Although a trivial application implements the module, examples of usage are best exemplified through the unit tests.
+
+
+Usage Notes:
+Although a trivial windows form example is included, this module is meant to run in a Web Application/API.
