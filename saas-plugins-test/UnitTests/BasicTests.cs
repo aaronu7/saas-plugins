@@ -20,6 +20,22 @@ namespace template_test.UnitTests
 
         #region " Plugin Creators "
 
+        static public Plugin CreatePlugin_RockStar(string dllRoot, string dllName, string[] dllRefs)
+        {
+            string code = @"
+                using System;
+                using System.Drawing;
+                namespace DynamicPlugins {
+                  public static class RockStar {
+                    public static int GetValue(int x) {
+                      return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);
+                    }
+                  }
+                }";
+            return HelperPlugin.CreatePlugin("RockStar", "Return the input int.", dllRoot, dllName, new string[] {code}, 
+                "DynamicPlugins.RockStar", dllRefs);
+        }
+
         public static Plugin CreatePlugin_CodeMirror(string dllRoot, string dllName, string[] dllRefs) {
             string code = @"
                 using System;
@@ -244,9 +260,14 @@ namespace template_test.UnitTests
                 string dllRoot = baseDir + subDir + @"\";
 
                 string mirrorName = "_TestPluginSystem1_CodeMirror.dll";
+                string multName = "_TestHelper3_CodeMultiplier.dll";
+                string rockName = "_TestHelper3_RockStar.dll";
 
                 Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
-                List<Plugin> pluginSet = new List<Plugin>(){plugin1};
+                Plugin plugin2 = CreatePlugin_RockStar(dllRoot, multName, null);
+                Plugin plugin3 = CreatePlugin_CodeMultiplier(dllRoot, multName, new string[] {mirrorName, rockName});
+
+                List<Plugin> pluginSet = new List<Plugin>(){plugin1, plugin2, plugin3};
 
                 yield return new TestCaseData("Simple Class", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", pluginSet); 
                     //pluginSet, "7", "_TestPluginSystem1_CodeMirror.dll", "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});                                    
@@ -263,69 +284,24 @@ namespace template_test.UnitTests
 
             // , List<Plugin> pluginSet, string expected, string runPluginID, string runClassPath, string runMethodName, object[] runArgs
 
-            PluginSystem system = new PluginSystem(domainName, domainBaseDir, domainSubDir, runnerNamespace);
+            // Load the plugins into the system
+            PluginSystem pluginSystem = new PluginSystem(domainName, domainBaseDir, domainSubDir, runnerNamespace);            
+            pluginSystem.PluginSystemLoad(pluginSet);
 
+            // Load the plugins into the domains
+            pluginSystem.PluginDomainLoad("AppDomain1", new List<string>() { pluginSet[0].PluginID, pluginSet[1].PluginID, pluginSet[2].PluginID});
+            pluginSystem.PluginDomainLoad("AppDomain2", new List<string>() { pluginSet[0].PluginID, pluginSet[1].PluginID});
+            pluginSystem.PluginDomainLoad("AppDomain3", new List<string>() { pluginSet[0].PluginID});
 
-            // Compile all plugins
+            object objA = pluginSystem.InvokeMethod("AppDomain1", pluginSet[0].PluginID, pluginSet[0].ClassNamespacePath, "MirrorInt", new object[] {7});
+            string sA = HelperPlugin.ObjectToString(objA);
+            Assert.NotNull(objA);
 
-            // Load all plugins
+            object objB = pluginSystem.InvokeMethod("AppDomain1", pluginSet[2].PluginID, pluginSet[2].ClassNamespacePath, "MultBy2", new object[] {7});
+            string sB = HelperPlugin.ObjectToString(objB);
+            Assert.NotNull(objB);
 
-
-            // Recompile / Reload affected domains
-
-
-
-            //PluginReference pluginReferenceA1 = pluginSystem.PluginAdd(oPluginA, "AppDomain1");            
-            //PluginReference pluginReferenceA2 = pluginSystem.PluginAdd(oPluginA, "AppDomain2");
-            //PluginReference pluginReferenceA3 = pluginSystem.PluginAdd(oPluginB, "AppDomain3");
-
-            //System.Console.WriteLine(HelperPlugin.RunMethodString(pluginReferenceA.PluginRunner, pluginReferenceA.Plugin, 
-            //  pluginReferenceA.Plugin.ClassNamespacePath, "MirrorInt", new object[] {(int)7}));
-
-            //oPluginB.IsCompiled = false; // simulate code change
-            //PluginReference pluginReferenceA2 = pluginSystem.PluginAdd(oPluginB, "AppDomain2");
-
-
-
-            /*
-            // Create our domain
-            PluginDomain domain = new PluginDomain(domainName, domainBaseDir, domainSubDir, runnerNamespace);
-
-            // Compile Plugins - Fail if compile returns false  - removes existing DLL before attempting compile
-            //      also set the plugin object to run when matched
-            Plugin runPlugin = null;
-            foreach(Plugin plugin in pluginSet) {
-                bool compileRes = domain.CompilePlugin(plugin);
-                Assert.True(compileRes, "Plugin compile failed: " + plugin.PluginID);
-                if(plugin.PluginID == runPluginID)
-                    runPlugin = plugin;
-            }
-            Assert.NotNull(runPlugin, "No plugin matched the run ID: "+ runPluginID);
-
-            // Check for the generated DLL's
-            foreach(Plugin plugin in pluginSet) {
-                Assert.True(System.IO.File.Exists(plugin.DllFilePath));
-            }
-
-
-            // Load Plugins - Fail if any references come back null
-            Dictionary<string, PluginReference> referenceSet = new Dictionary<string, PluginReference>();
-            foreach(Plugin plugin in pluginSet) {
-                PluginReference pluginRef = domain.LoadPlugin(plugin);    // The domain alreay stores its references
-                Assert.NotNull(pluginRef, "Plugin load failed: "+ plugin.PluginID);
-
-                referenceSet.Add(plugin.PluginID, pluginRef);
-            }
-
-            // Make the method call and check its result
-            PluginReference pluginReference = referenceSet[runPluginID];
-            string sRes = HelperPlugin.RunMethodString(pluginReference.PluginRunner, runPlugin, runClassPath, runMethodName, runArgs);
-            Assert.AreEqual(expected, sRes, "Method call returned an unexpected result: expected=" + expected + "   actual=" + sRes);
-
-
-            // Unload our domain
-            domain.Dispose();
-            */
+            string a = "";
         }
 
         #endregion
