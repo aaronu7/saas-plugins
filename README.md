@@ -10,7 +10,7 @@ This module was purposly designed to offer several layers of implementation:
 - TestCase-System: The PluginSystem layer offers a solution that can manage loading/unloading plugins spanning multiple domains.
 
 
-![Alt text](readme-resources/PluginSystem.png?raw=true "Title")<!-- .element height="50%" width="50%" -->
+![Alt text](readme-resources/PluginSystem.png?raw=true =250x250)
 
 
 Dependancies:
