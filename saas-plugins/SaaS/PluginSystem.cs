@@ -30,13 +30,12 @@ namespace saas_plugins.SaaS
         private Dictionary<string, PluginDomain> _pluginDomainSet = null;         // domainName -> PluginDomain
         private Dictionary<string, Plugin> _pluginSet = null;               // pluginID -> Plugin
 
-        //private Dictionary<string, List<PluginReference>> _pluginDomainReferences = null;  // pluginID   -> List<PluginDomain>
-
-
         /// <summary>
-        /// 
+        /// Instantiate a PluginSystem.
         /// </summary>
         /// <param name="defaultDomainName">ex. MyPluginDomain</param>
+        /// <param name="domainBasePath">The base path to find the plugin DLL's. ex: Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)</param>
+        /// <param name="domainSubPath">The subpath to find the plugin DLL's</param>
         /// <param name="pluginRunnerTypePath">ex. saas_plugins.SaaS.PluginRunner</param>
         public PluginSystem(string defaultDomainName, string domainBasePath, string domainSubPath, string pluginRunnerTypePath) {
             this._defaultDomainName = defaultDomainName;
@@ -45,10 +44,8 @@ namespace saas_plugins.SaaS
             this._domainSubPath = domainSubPath;
 
             this._pluginRunnerTypePath = pluginRunnerTypePath;
-            //_pluginLookup = new Dictionary<string, Dictionary<string, Plugin>>();
             _pluginDomainSet = new Dictionary<string, PluginDomain>();
             _pluginSet = new Dictionary<string, Plugin>();
-            //_pluginDomainReferences = new Dictionary<string, List<PluginReference>>();
 
             // Get or create the domain object
             this._defaultDomain = CreateGetDomain(this._defaultDomainName);
