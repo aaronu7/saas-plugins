@@ -55,6 +55,15 @@ namespace saas_plugins.SaaS
 
         #endregion
 
+        /// <summary>
+        /// Invoke a method in a running Plugin.
+        /// </summary>
+        /// <param name="domainName">The domain to target.</param>
+        /// <param name="pluginID">The plugin to target.</param>
+        /// <param name="classNamespacePath">The class namespace path.</param>
+        /// <param name="functionName">The function name.</param>
+        /// <param name="functionArgs">The function arguments.</param>
+        /// <returns></returns>
         public object InvokeMethod(string domainName, string pluginID, string classNamespacePath, string functionName, object[] functionArgs) {
             object res = null;
 
@@ -74,6 +83,9 @@ namespace saas_plugins.SaaS
 
         #region " Output/Get Assemblies "
 
+        /// <summary>
+        /// Output a list of running assemblies for each active domain.
+        /// </summary>
         public void OutputAssemblies() {
             foreach(string key in _pluginDomainSet.Keys) {
                 foreach(string keyRef in this._pluginDomainSet[key].PluginReferenceSet.Keys) {
@@ -93,6 +105,10 @@ namespace saas_plugins.SaaS
             }
         }
 
+        /// <summary>
+        /// Get a list of running assemblies for each active domain.
+        /// </summary>
+        /// <returns>A dictionary with domainName keys and items containing lists of running assemblies.</returns>
         public Dictionary<string, List<string>> GetAssemblies() {
             Dictionary<string, List<string>> asmSets = new Dictionary<string, List<string>>();
 
@@ -118,12 +134,20 @@ namespace saas_plugins.SaaS
 
         #region " PluginSystemLoad "
 
+        /// <summary>
+        /// Load a set of plugins into the system.
+        /// </summary>
+        /// <param name="pluginSet"></param>
         public void PluginSystemLoad(List<Plugin> pluginSet) {
             foreach(Plugin plugin in pluginSet) {
                 PluginSystemLoad(plugin);
             }
         }
 
+        /// <summary>
+        /// Load the given plugin into the system.
+        /// </summary>
+        /// <param name="plugin"></param>
         public void PluginSystemLoad(Plugin plugin) {
 
             if(this._pluginSet.ContainsKey(plugin.PluginID)) {
@@ -229,6 +253,11 @@ namespace saas_plugins.SaaS
         #endregion
 
 
+        /// <summary>
+        /// Load a set of plugins into the specified domain. This will create the domain if it does not already exist.
+        /// </summary>
+        /// <param name="domainName"></param>
+        /// <param name="pluginSet"></param>
         public void PluginDomainLoad(string domainName, List<string> pluginSet) {
 
             // Compile ALL plugins first for better performance if many changes.
@@ -256,6 +285,9 @@ namespace saas_plugins.SaaS
             }
         }
 
+        /// <summary>
+        /// Unload all domains and plugins and then reload all domains and plugins.
+        /// </summary>
         public void SystemReload() {
             // Unload and then Reload all AppDomains
 
@@ -272,6 +304,10 @@ namespace saas_plugins.SaaS
             }
         }
 
+        /// <summary>
+        /// Unload all domains referencing any of the specified plugins. Recompile these plugins. Reload all referencing domains.
+        /// </summary>
+        /// <param name="pluginSet"></param>
         public void SystemUpdate(List<string> pluginSet) {
             // Recompile/Load the list of plugins -- No checks on IsCompiled, it will always attempt a recompile
 
@@ -292,142 +328,5 @@ namespace saas_plugins.SaaS
 
             ReloadReferencingDomains(pluginSet);
         }
-
-  
-
-        #region " OLD "
-
-      /*
-        public void PluginRecompile(string pluginID, string domainName) {
-
-            // Compile ALL plugins first for better performance if many changes.
-            
-            if(!this._pluginSet.ContainsKey(pluginID)) {
-                OnLogNotify("Plugin not found in the system: " + pluginID);
-
-            } else {
-                // Get the plugin
-                Plugin plugin = this._pluginSet[pluginID];
-
-                // Get or create the domain object
-                PluginDomain pluginDomain = CreateGetDomain(domainName);
-
-                // Compile Plugin (if not compiled)
-                if(plugin.IsCompiled) {
-                    // Already compiled, simply Load the plugin
-                    pluginDomain.LoadPlugin(plugin);      
-                    OnLogNotify("Plugin loaded into domain: " + pluginDomain.InstanceDomainName + "." + plugin.PluginID);
-
-                } else {
-                    bool isPreExisting = pluginDomain.HasPlugin(plugin);
-                    bool ignoreTargetDomain = !isPreExisting;
-
-                    // Reset all referencing domains (to allow recompiling)
-                    UnloadReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
-
-                    // Recompile this plugin (uses a temporary domain)
-                    bool compiledOK = CompilePlugin(pluginDomain, plugin);
-
-                    // Load the plugin (if not pre-existing, otherwise it triggers in the reload)
-                    if(!isPreExisting) {
-                        pluginDomain.LoadPlugin(plugin);      
-                        OnLogNotify("Plugin compiled and loaded into domain: " + pluginDomain.InstanceDomainName + "." + plugin.PluginID);
-                    }
-
-                    // reload all domains that reference this plugin
-                    ReloadReferencingDomains(plugin, pluginDomain, ignoreTargetDomain);
-                }
-            }
-
-        }
-        */
-
-        /*
-        public PluginReference PluginAdd(Plugin plugin, string domainName) {
-
-            PluginReference pluginReference = null;
-            bool compileTriggered = false;
-
-
-            PluginDomain pluginDomain = CreateGetDomain(domainName);
-
-            string refMatchKey = pluginDomain.InstanceDomainName + "." + plugin.PluginID;
-
-            //--------------------------------
-            // Compile Plugin if not already compiled
-            if(!plugin.IsCompiled) {
-                
-                // Reset all referencing domains (to allow recompiling)
-                ResetReferencingDomains(plugin);
-
-                // Recompile this plugin (uses a temporary domain)
-                compileTriggered = CompilePlugin(pluginDomain, plugin);
-            }
-
-            if(plugin.IsCompiled) {
-                //--------------------------------
-                // Load this plugin into THIS domain (This will create the reference if it DNE)
-                pluginReference = pluginDomain.LoadPlugin(plugin);      
-                OnLogNotify("Plugin loaded into domain: " + pluginReference.PluginDomain.InstanceDomainName + "." + plugin.PluginID);
-            
-                //--------------------------------
-                // Add this reference to our domain web
-                if(!_pluginDomainReferences.ContainsKey(plugin.PluginID)) {
-                    // Start a new reference set
-                    List<PluginReference> pluginReferenceSet = new List<PluginReference>();
-                    pluginReferenceSet.Add(pluginReference);
-                    this._pluginDomainReferences.Add(plugin.PluginID, pluginReferenceSet);
-                    OnLogNotify("ReferenceSet Started: " + domainName + "." + plugin.PluginID);
-                } else {
-                    // reference set exists .... search for this exact reference
-                    List<PluginReference> RefSet = this._pluginDomainReferences[plugin.PluginID];
-                    PluginReference pluginFound = null;
-
-                    foreach(PluginReference pluginRef in RefSet) {
-                        string refKey     = pluginRef.PluginDomain.InstanceDomainName + "." + pluginRef.Plugin.PluginID;
-                    
-                        if(refMatchKey == refKey) {
-                            // Already exists -break and don't create a new one
-                            pluginFound = pluginRef;
-                            break;
-                        }
-                    }
-                    if(pluginFound==null) {
-                        RefSet.Add(pluginReference);
-                        OnLogNotify("Reference Add to existing set: " + domainName + "." + plugin.PluginID);
-                    } else {
-                        OnLogNotify("Reference already exists: " + domainName + "." + plugin.PluginID);             // issues with multiple domains
-                    }
-                }
-
-                if(compileTriggered) {
-                    // SKIP THE FOLLOWING ON A FULL REBUILD
-
-                    // Reload all references that exist IN THIS domain (except the one we are going to compile)
-                    foreach(string key in pluginDomain.PluginReferenceSet.Keys) {
-                        if(key != plugin.PluginID) {
-                            PluginReference plugRef = pluginDomain.LoadPlugin(pluginDomain.PluginReferenceSet[key].Plugin);
-                            OnLogNotify("---- Reloading: " + domainName + "." + pluginDomain.PluginReferenceSet[key].Plugin.PluginID);
-                        }
-                    }
-
-                    // Reload all OTHER affected domains
-                    List<PluginReference> domRefSet = this._pluginDomainReferences[plugin.PluginID];
-                    foreach(PluginReference pluginRef in domRefSet) {
-                        string refKey  = pluginRef.PluginDomain.InstanceDomainName + "." + pluginRef.Plugin.PluginID;
-
-                        if(refMatchKey != refKey) {
-                            // Reload this domain
-                            OnLogNotify("Trigger domain reload: " + pluginRef.PluginDomain.InstanceDomainName);
-                        }
-                    }
-                }
-            }
-
-            return pluginReference;
-        }
-        */
-        #endregion
-
     }
 }

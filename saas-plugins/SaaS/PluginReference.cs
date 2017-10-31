@@ -19,11 +19,18 @@ namespace saas_plugins.SaaS
             this._plugin = plugin;
         }
         
+        /// <summary>
+        /// The domain name that this reference exists in.
+        /// </summary>
         public string DomainName
         {
             get {return this._pluginDomain.InstanceDomainName; }
         }
 
+        /// <summary>
+        /// A list of assemblies running in this AppDomain.
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetAssemblies() {
             List<string> asmSet = null;
             if(this.PluginRunner!=null) {
@@ -38,20 +45,33 @@ namespace saas_plugins.SaaS
         
         #region " Properties "
 
+        /// <summary>
+        /// Is this reference currently loaded in the AppDomain.
+        /// </summary>
         public bool IsLoaded {
             get {return this._isLoaded; }
             set {this._isLoaded = value; }
         }
 
+        /// <summary>
+        /// The PluginDomain to which this PluginReference exists.
+        /// </summary>
         public PluginDomain PluginDomain {
             get {return this._pluginDomain; }
             set {this._pluginDomain = value; }
         }
 
+        /// <summary>
+        /// The PluginRunner linking this reference to the running AppDomain.
+        /// </summary>
         public PluginRunner PluginRunner {
             get {return this._pluginRunner; }
             set {this._pluginRunner = value; }
         }
+
+        /// <summary>
+        /// The Plugin object.
+        /// </summary>
         public Plugin Plugin {
             get {return this._plugin; }
         }
