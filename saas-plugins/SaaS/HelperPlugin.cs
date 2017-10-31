@@ -23,32 +23,6 @@ namespace saas_plugins.SaaS
             return sRes;
         }
 
-        #region " NOTEs Binding DLL Location Issue "
-        /*
-        // https://stackoverflow.com/questions/15883109/createinstanceandunwrap-fails-to-load-assembly
-        Use the LoadFrom context (by using the CreateInstanceFromXXX methods).
-
-        Add the Mytypes folder to the AppDomainSetup.PrivateBinPath used to create the AppDomain. This way the Load context will be able to resolve the assebmlies located there.
-
-        Subscribe to the AppDomain.AssemblyResolve event and resolve the assemblies yourself by looking for them and loading them from the Mytypes folder.
-        Deploy all your assemblies in the base directory of your application.
-        */
-
-        /*
-            // alternate dll directories seem to cause issues ...
-            //  --- need to explore bindings and see where we can override this
-            //  --- explore variants for loading assembly into AppDomain
-            */
-
-        /* App.config
-         
-          <runtime>
-            <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
-              <probing privatePath="bin;bin\DynamicPlugins"/>
-            </assemblyBinding>
-          </runtime>
-          */
-        #endregion
 
         #region " Create AppDomain "
 
