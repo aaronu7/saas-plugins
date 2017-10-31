@@ -1,6 +1,6 @@
 # saas-plugins
 
-The saas-plugins module is a heavily refactored version of one used in a earlier Model Driven Engineering SaaS research project. This module is the foundation for executing model driven generated code and allows entire inter-related systems to be dynamically compiled and linked in C# without unloading the controlling application.
+The saas-plugins module is a heavily refactored version of one used in a earlier Model Driven Engineering SaaS research project. This module is the foundation for executing model driven generated code and allows entire inter-related systems to be dynamically compiled and linked in C# without unloading the controlling application. To achieve this, the design implements a method for loading and managing plugins in seperate AppDomains which can be easily unloaded to free memory allocations and file locks on target plugin DLL's.
 
 This module was purposely designed to offer several layers of implementation:
 - TestCase-Helper: The HelperPlugin class layer is a static class which can be used independently of the proposed implementation.
