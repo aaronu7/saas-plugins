@@ -31,56 +31,84 @@ namespace saas_plugins.SaaS
             this._dllFileNameReferenceSet = dllFileNameReferenceSet;
             this._classNamespacePath = classNamespacePath;
             this._code = code;
-
-            //_pluginDomainReferences = new Dictionary<string, List<PluginReference>>();
         }
 
         public override string ToString() {return this.Name;}
-
-        //public Dictionary<string, List<PluginReference>> PluginDomainReferences {get {return this._pluginDomainReferences; }}
-
+        
+        #region " Properties "
+        
+        /// <summary>
+        /// An identifier used to uniquely ID this plugin.
+        /// </summary>
         public string PluginID {get {return this._dllFileName; }}
 
-        #region " Properties "
 
+        /// <summary>
+        /// Get/Set if the current plugin code matches the existing DLL. If false, the DLL should be recompiled.
+        /// </summary>
         public bool IsCompiled {
             get {return this._isCompiled;}
             set {this._isCompiled = value;}
         }
 
+        /// <summary>
+        /// The full file path to the plugins DLL.
+        /// </summary>
         public string DllFilePath {
             get {return  this._dllFileDir + this._dllFileName;}
         }
 
+        /// <summary>
+        /// The directory path to the plugins DLL.
+        /// </summary>
         public string DllFileDir {
             get {return this._dllFileDir;}
             set {this._dllFileDir = value;}
         }
+
+        /// <summary>
+        /// The file name for this DLL.
+        /// </summary>
         public string DllFileName {
             get {return this._dllFileName;}
             set {this._dllFileName = value;}
         }
         
+        /// <summary>
+        /// A set of references to add when compiling this DLL.
+        /// </summary>
         public List<string> DllFileNameReferenceSet {
             get {return this._dllFileNameReferenceSet;}
             set {this._dllFileNameReferenceSet = value;}
         }
 
+        /// <summary>
+        /// The friendly name for this plugin.
+        /// </summary>
         public string Name {
             get {return this._name;}
             set {this._name = value;}
         }
 
+        /// <summary>
+        /// A description of this plugin.
+        /// </summary>
         public string Description {
             get {return this._description;}
             set {this._description = value;}
         }
 
+        /// <summary>
+        /// A classnamespace path for this plugin.
+        /// </summary>
         public string ClassNamespacePath {
             get {return this._classNamespacePath;}
             set {this._classNamespacePath = value;}
         }
 
+        /// <summary>
+        /// A set of source code files used in compiling this plugin.
+        /// </summary>
         public string[] Code {
             get {return this._code;}
             set {this._code = value;}

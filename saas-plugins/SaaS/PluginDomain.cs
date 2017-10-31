@@ -84,35 +84,6 @@ namespace saas_plugins.SaaS
             //this._domain.AssemblyResolve += _domain_AssemblyResolve;
         }
 
-        /*
-        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            foreach (var moduleDir in _moduleDirectories)
-            {
-                var di = new DirectoryInfo(moduleDir);
-                var module = di.GetFiles().FirstOrDefault(i => i.Name == args.Name+".dll");
-                if (module != null)
-                {
-                    return Assembly.LoadFrom(module.FullName);
-                }
-            }
-            return null;
-        }
-        */
-
-        //AppDomain.CurrentDomain.AssemblyLoad
-        /*
-        public void OutputAssemblies(PluginReference oPluginRef) {
-            if(oPluginRef!=null && oPluginRef.PluginRunner!=null) {
-                try {
-                    oPluginRef.PluginRunner.OutputAssemblies();
-                } catch(Exception ex) {
-                    System.Console.WriteLine(ex.Message);
-                }
-            }
-        }
-        */
-
         public bool HasPlugin(string pluginID) {
             return this._pluginReferences.ContainsKey(pluginID);
         }

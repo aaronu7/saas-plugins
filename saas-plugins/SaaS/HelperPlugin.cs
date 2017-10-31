@@ -26,6 +26,14 @@ namespace saas_plugins.SaaS
 
         #region " Create AppDomain "
 
+        /// <summary>
+        /// Use this to properly create an AppDomain that overrides the default dll location.
+        /// </summary>
+        /// <param name="domainName">The name for this AppDomain.</param>
+        /// <param name="baseDirectory">The base directory to expect DLL's (ex. Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))</param>
+        /// <param name="subDirectory">The sub directory to expect DLL's.</param>
+        /// <param name="configFile">A configuration file (ex. AppDomain.CurrentDomain.SetupInformation.ConfigurationFile)</param>
+        /// <returns></returns>
         public static AppDomain CreateAppDomain(string domainName, string baseDirectory, string subDirectory, string configFile) {
             AppDomainSetup appSetup = new AppDomainSetup()
             {
@@ -45,12 +53,21 @@ namespace saas_plugins.SaaS
 
         #region " RunPlugin "
 
-        public static object RunMethodObject(PluginRunner runner, Plugin plugin, string classNamespacePath, string functionName, object[] functionArgs) {
+        /// <summary>
+        /// Execute a class method in another domain using a PluginRunner.
+        /// </summary>
+        /// <param name="runner">The PluginRunner MarshalObject used to execute the method.</param>
+        /// <param name="plugin">The Plugin object.</param>
+        /// <param name="classPath">The namespace path to the target class.</param>
+        /// <param name="methodName">The function name in the target class.</param>
+        /// <param name="args">An object array of arguments to pass to the function call.</param>
+        /// <returns></returns>
+        public static object RunMethodObject(PluginRunner runner, Plugin plugin, string classPath, string methodName, object[] args) {
             object result = null;
 
             if(runner != null) {
                 try {
-                    result = runner.Run(plugin.ClassNamespacePath, functionName, functionArgs);
+                    result = runner.Run(plugin.ClassNamespacePath, methodName, args);
                 } catch(Exception ex) {
                     System.Console.WriteLine("RUN ERROR: " + ex.Message);
                     System.Console.WriteLine("RUN ERROR: " + ex.InnerException.Message);
@@ -60,6 +77,15 @@ namespace saas_plugins.SaaS
             return result;
         }
 
+        /// <summary>
+        /// Execute a class method in another domain using a PluginRunner. Return a string value.
+        /// </summary>
+        /// <param name="runner">The PluginRunner MarshalObject used to execute the method.</param>
+        /// <param name="plugin">The Plugin object.</param>
+        /// <param name="classPath">The namespace path to the target class.</param>
+        /// <param name="methodName">The function name in the target class.</param>
+        /// <param name="args">An object array of arguments to pass to the function call.</param>
+        /// <returns>Return a string value.</returns>
         public static string RunMethodString(PluginRunner runner, Plugin plugin, string classPath, string methodName, object[] args) {
             object res = RunMethodObject(runner, plugin, classPath, methodName, args);
             string sRes = "NULL";
@@ -115,6 +141,14 @@ namespace saas_plugins.SaaS
 
         #region " CompilePlugin "
 
+        /// <summary>
+        /// Compile a plugins DLL file using a temporary AppDomain and PluginRunner.
+        /// </summary>
+        /// <param name="plugin">The plugin to compile.</param>
+        /// <param name="tempDomainName">The name of the temporary AppDomain.</param>
+        /// <param name="compilerRunnerNamespace">The namespace path to the PluginRunner.</param>
+        /// <param name="removeExistingFirst">If set to true, then delete the existing DLL should it already exist.</param>
+        /// <returns></returns>
         static public bool CompilePlugin(Plugin plugin, string tempDomainName, string compilerRunnerNamespace, bool removeExistingFirst) {
             
             // Remove any previously generated DLL's
@@ -150,6 +184,12 @@ namespace saas_plugins.SaaS
 
         #region " LoadPlugin "
 
+        /// <summary>
+        /// Load a plugin into an AppDomain by creating and returing a PluginRunner instance.
+        /// </summary>
+        /// <param name="plugin">The plugin to load.</param>
+        /// <param name="domain">The AppDomain to load the plugin into.</param>
+        /// <returns>A PluginRunner instance.</returns>
         public static PluginRunner LoadPlugin(Plugin plugin, AppDomain domain)
         {
             // Load into the Plugin domain
@@ -172,96 +212,6 @@ namespace saas_plugins.SaaS
 
         #endregion
 
-
-        /*
-        public static object CompileQuickRun(string asmDLLName, string compilerRunnerNamespace, 
-            string instanceDomainName, List<string> referencedAssemblySet, string code, 
-            string classTypeString, 
-            string functionCall, object[] functionArgs) {
-
-            //RunExpression("ad2csv.dll", "ad2csv.SaaS.CompilerRunner", "MyDomain", "code goes here", "ad2csv.SaaS.CompilerRunner.CSCodeEvaler", "EvalCode", new object[0]);
-
-            AppDomain domain = AppDomain.CreateDomain(instanceDomainName);
-            PluginRunner cr = (PluginRunner)domain.CreateInstanceFromAndUnwrap(asmDLLName, compilerRunnerNamespace);
-
-            object result = null;
-            if(cr.CompileInMemory(code, referencedAssemblySet)) {
-                result = cr.Run(classTypeString, functionCall, functionArgs);
-            }
-
-            //AppDomain.Unload(tempD);
-            AppDomain.Unload(domain);
-            return result;
-        }
-        */
-
-        /*
-    public static bool CompileDLL(Plugin oPlugin, string mainDllFileName, string tmpInstanceDomain, string compilerRunnerNamespace) {
-
-        // Create a temp domain and create our plugin runner
-        AppDomain domain = AppDomain.CreateDomain(tmpInstanceDomain);
-        PluginRunner cr = (PluginRunner)domain.CreateInstanceFromAndUnwrap(mainDllFileName, compilerRunnerNamespace);
-
-        // Compile the file within the temp domain
-        string dllFilePath = oPlugin.DllFileDir + oPlugin.DllFileName;
-        bool res = cr.CompileToFile(oPlugin.Code, dllFilePath, oPlugin.DllFileNameReferenceSet);
-
-        // Discard the temp domain
-        AppDomain.Unload(domain);
-        return res;
-    }
-    */
-
-        /*
-
-        public void LoadPlugin(Plugin oPlugin) {
-            // Load into the Plugin domain
-            string dllFilePath = oPlugin.DllFileDir + oPlugin.DllFileName;
-            PluginRunner loader = (PluginRunner)this._domain.CreateInstanceAndUnwrap(typeof(PluginRunner).Assembly.FullName, typeof(PluginRunner).FullName);
-            string asmName = loader.Load(dllFilePath);
-            
-            this._runnerSet.Add(oPlugin.DllFileName, loader);
-            System.Console.WriteLine("Plugin Added: " + oPlugin.DllFileName);
-        }
-
-        public void CompilePlugin(Plugin oPlugin) {
-            
-            // Reset the domain if we are trying to compile an RUNNING plugin  
-            if(this._runnerSet.ContainsKey(oPlugin.DllFileName)) {
-                this.ResetDomain();
-                System.Console.WriteLine("Domain Reseting");
-            }
-
-
-            // Compile the DLL  -will destroy its temporary app domain
-            //HelperPlugin.CompileDLL(oPlugin, "saas_plugins.dll", "tmpCompileDomain", this._compilerRunnerNamespace);
-
-            string mainDllFileName = Assembly.GetExecutingAssembly().GetName(false).Name + ".dll"; // "saas_plugins.dll"
-
-            // Create a temp domain and create our plugin runner
-            AppDomain domain = AppDomain.CreateDomain(this._instanceDomainTemp);
-            PluginRunner cr = (PluginRunner)domain.CreateInstanceFromAndUnwrap(mainDllFileName, this._compilerRunnerNamespace);
-
-            // Compile the file within the temp domain
-            string dllFilePath = oPlugin.DllFileDir + oPlugin.DllFileName;
-            bool res = cr.CompileToFile(oPlugin.Code, dllFilePath, oPlugin.DllFileNameReferenceSet);
-
-            // Discard the temp domain
-            AppDomain.Unload(domain);
-        }
-
-        public object RunPlugin(Plugin oPlugin, string classNamespacePath, string functionName, object[] functionArgs) {
-            object result = null;
-            if(!this._runnerSet.ContainsKey(oPlugin.DllFileName)) {
-                System.Console.WriteLine("Plugin Not Found: " + oPlugin.DllFileName);
-            } else {
-                System.Console.WriteLine("Plugin Function Called: " + oPlugin.DllFileName);
-                PluginRunner cr = this._runnerSet[oPlugin.DllFileName];
-                result = cr.Run(oPlugin.ClassNamespacePath, functionName, functionArgs);
-            }
-            return result;
-        }
-        */
     }
 
 
