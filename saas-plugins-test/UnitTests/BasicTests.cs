@@ -260,11 +260,11 @@ namespace template_test.UnitTests
                 string dllRoot = baseDir + subDir + @"\";
 
                 string mirrorName = "_TestPluginSystem1_CodeMirror.dll";
-                string multName = "_TestHelper3_CodeMultiplier.dll";
-                string rockName = "_TestHelper3_RockStar.dll";
+                string multName = "_TestPluginSystem1_CodeMultiplier.dll";
+                string rockName = "_TestPluginSystem1_RockStar.dll";
 
                 Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
-                Plugin plugin2 = CreatePlugin_RockStar(dllRoot, multName, null);
+                Plugin plugin2 = CreatePlugin_RockStar(dllRoot, rockName, null);
                 Plugin plugin3 = CreatePlugin_CodeMultiplier(dllRoot, multName, new string[] {mirrorName, rockName});
 
                 List<Plugin> pluginSet = new List<Plugin>(){plugin1, plugin2, plugin3};
@@ -296,12 +296,12 @@ namespace template_test.UnitTests
             object objA = pluginSystem.InvokeMethod("AppDomain1", pluginSet[0].PluginID, pluginSet[0].ClassNamespacePath, "MirrorInt", new object[] {7});
             string sA = HelperPlugin.ObjectToString(objA);
             Assert.NotNull(objA);
+            Assert.AreEqual("7", sA, "Expected: 7  but got: " + sA);
 
             object objB = pluginSystem.InvokeMethod("AppDomain1", pluginSet[2].PluginID, pluginSet[2].ClassNamespacePath, "MultBy2", new object[] {7});
             string sB = HelperPlugin.ObjectToString(objB);
             Assert.NotNull(objB);
-
-            string a = "";
+            Assert.AreEqual("14", sB, "Expected: 14  but got: " + sB);
         }
 
         #endregion
