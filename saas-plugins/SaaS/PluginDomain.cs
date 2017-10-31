@@ -1,9 +1,19 @@
-﻿using System;
+﻿/****************************** PluginDomain ******************************\
+This class provides the entity model of a "PluginDomain". A PluginDomain
+is used to help manage AppDomains and the plugins loaded into them.
+
+Copyright (c) Aaron Ulrich
+This source is subject to the Apache License Version 2.0, January 2004
+See http://www.apache.org/licenses/.
+All other rights reserved.
+
+THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, 
+EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+\***************************************************************************/
+
+using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace saas_plugins.SaaS
 {

@@ -1,6 +1,21 @@
-﻿using System;
+﻿/****************************** HelperPlugin ******************************\
+This static class provides the core functions required to load and interact
+with plugins in separate AppDomains. It deals with AppDomain Creation, 
+Plugin Function Invocations, Plugin DLL compilation, and loading plugin
+DLL's into AppDomains at runtime.
+
+Copyright (c) Aaron Ulrich
+This source is subject to the Apache License Version 2.0, January 2004
+See http://www.apache.org/licenses/.
+All other rights reserved.
+
+THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, 
+EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+\***************************************************************************/
+
+using System;
 using System.Reflection;
-using System.Text;
 using System.Collections.Generic;
 using System.IO;
 

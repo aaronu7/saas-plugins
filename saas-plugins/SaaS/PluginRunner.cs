@@ -1,4 +1,18 @@
-﻿using System;
+﻿/****************************** PluginRunner ******************************\
+The PluginRunner class is a type of MarshalByRefObject that allows us to 
+interact with a Plugin that has been loaded into a different AppDomain.
+
+Copyright (c) Aaron Ulrich
+This source is subject to the Apache License Version 2.0, January 2004
+See http://www.apache.org/licenses/.
+All other rights reserved.
+
+THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, 
+EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+\***************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.CodeDom.Compiler;
 using System.Reflection;

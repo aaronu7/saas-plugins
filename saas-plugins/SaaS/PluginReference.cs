@@ -1,8 +1,19 @@
-﻿using System;
+﻿/****************************** PluginReference ******************************\
+This class provides the entity model of a "PluginReference". A PluginReference
+represents an instance of a Plugin that has been loaded into a PluginDomain.
+
+Copyright (c) Aaron Ulrich
+This source is subject to the Apache License Version 2.0, January 2004
+See http://www.apache.org/licenses/.
+All other rights reserved.
+
+THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, 
+EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+\***************************************************************************/
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace saas_plugins.SaaS
 {
