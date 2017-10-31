@@ -71,7 +71,7 @@ namespace template_test.UnitTests
 
         #endregion
 
-        #region " TestHelper - Tests the HelperPlugin static class - The raw functionality without any imposed implementation. " 
+        #region " TestCase-Helper - Tests the HelperPlugin static class - The raw functionality without any imposed implementation. " 
 
         #region " Test Inputs "
 
@@ -177,7 +177,7 @@ namespace template_test.UnitTests
 
         #endregion
 
-        #region " TestPluginDomain - Adds implementation to HelperPlugin "
+        #region " TestCase-Domain - Adds implementation to HelperPlugin "
 
         #region " Test Inputs "
 
@@ -249,7 +249,7 @@ namespace template_test.UnitTests
 
         #endregion
 
-        #region " TestPluginSystem - Adds more implementation to HelperPlugin "
+        #region " TestCase-System - Adds more implementation to HelperPlugin "
 
         #region " Test Inputs "
 
