@@ -29,13 +29,68 @@ namespace saas_plugins.SaaS
             this._pluginRunner = null;
             this._plugin = plugin;
         }
-        
+
+        public override string ToString()
+        {
+            return this._plugin.ToString();
+        }
+
         /// <summary>
         /// The domain name that this reference exists in.
         /// </summary>
         public string DomainName
         {
             get {return this._pluginDomain.InstanceDomainName; }
+        }
+
+
+       
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetTypeMethodParams(string typeName, string methodName) {
+            List<string> set = null;
+            if(this.PluginRunner!=null) {
+                try {
+                    set = this.PluginRunner.GetTypeMethodParams(typeName, methodName);
+                } catch(Exception ex) {
+                    System.Console.WriteLine(ex.Message);
+                }
+            }
+            return set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetTypeMethods(string typeName) {
+            List<string> set = null;
+            if(this.PluginRunner!=null) {
+                try {
+                    set = this.PluginRunner.GetTypeMethods(typeName);
+                } catch(Exception ex) {
+                    System.Console.WriteLine(ex.Message);
+                }
+            }
+            return set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetPluginAssemblyTypes() {
+            List<string> typeSet = null;
+            if(this.PluginRunner!=null) {
+                try {
+                    typeSet = this.PluginRunner.GetPluginAssemblyTypes();
+                } catch(Exception ex) {
+                    System.Console.WriteLine(ex.Message);
+                }
+            }
+            return typeSet;
         }
 
         /// <summary>

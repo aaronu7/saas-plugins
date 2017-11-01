@@ -41,6 +41,11 @@ namespace saas_plugins.SaaS
             this._pluginReferences = new Dictionary<string, PluginReference>();
         }
 
+        public override string ToString()
+        {
+            return this._instanceDomain;
+        }
+
         /// <summary>
         /// Dispose with unload the running domain.
         /// </summary>
@@ -62,6 +67,82 @@ namespace saas_plugins.SaaS
         /// </summary>
         public Dictionary<string, PluginReference> PluginReferenceSet {
             get { return this._pluginReferences; }
+        }
+
+        #endregion
+
+        #region " Get Assembly / Reflection details "
+
+        /// <summary>
+        /// Get a list of running assemblies from a specified domain
+        /// </summary>
+        /// <returns>A dictionary with domainName keys and items containing lists of running assemblies.</returns>
+        public List<string> GetAssemblies() {
+            List<string> asmSet = new List<string>();
+
+            PluginReference pluginReference = GetFirstReference();
+
+            if(pluginReference != null) {
+                List<string> asmSetFullNames = pluginReference.GetAssemblies();
+                foreach(string asm in asmSetFullNames) {
+                    string[] asmParts = asm.Split(',');
+                    asmSet.Add(asmParts[0]);
+                }
+            }
+            
+            return asmSet;
+        }
+
+        /// <summary>
+        /// Get a list of available types in the plugins assembly
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetPluginAssemblyTypes() {
+            List<string> asmTypes = new List<string>();
+            PluginReference pluginReference = GetFirstReference();
+            if(pluginReference != null) {
+                asmTypes = pluginReference.GetPluginAssemblyTypes();
+            }
+            
+            return asmTypes;
+        }
+
+        /// <summary>
+        /// Get a list of available methods
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetPluginAssemblyTypeMethods(string typeName) {
+            List<string> asmTypes = new List<string>();
+            PluginReference pluginReference = GetFirstReference();
+            if(pluginReference != null) {
+                asmTypes = pluginReference.GetTypeMethods(typeName);
+            }
+            
+            return asmTypes;
+        }
+
+        /// <summary>
+        /// Get a list of required params
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetPluginAssemblyTypeMethodParams(string typeName, string methodName) {
+            List<string> asmTypes = new List<string>();
+            PluginReference pluginReference = GetFirstReference();
+            if(pluginReference != null) {
+                asmTypes = pluginReference.GetTypeMethodParams(typeName, methodName);
+            }
+            
+            return asmTypes;
+        }
+
+
+        protected PluginReference GetFirstReference() {
+            PluginReference pluginReference = null;
+            foreach(string keyRef in this.PluginReferenceSet.Keys) {
+                pluginReference = this.PluginReferenceSet[keyRef];
+                break;
+            }
+            return pluginReference;
         }
 
         #endregion

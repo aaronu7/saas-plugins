@@ -180,6 +180,7 @@ namespace template_test
                 using System;
                 using System.Drawing;
                 namespace DynamicPlugins {
+
                   public static class RockStar {
                     public static int GetValue(int x) {
                       //return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);

@@ -11,6 +11,7 @@ EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 \***************************************************************************/
 
+using System;
 using System.Collections.Generic;
 
 namespace saas_plugins.SaaS
@@ -25,13 +26,15 @@ namespace saas_plugins.SaaS
         private string _classNamespacePath = "";
         private string[] _code = null;
 
+        private Int32 _compileOrder = 0;
+
         private bool _isCompiled = false;
 
         // MetaData (ex. Function calls and parameters) 
 
         public Plugin(string name, string description, 
             string dllFileDir, string dllFileName, List<string> dllFileNameReferenceSet, 
-            string classNamespacePath, string[] code) {
+            string classNamespacePath, string[] code, Int32 compileOrder) {
 
             this._name = name;
             this._description = description;
@@ -40,9 +43,10 @@ namespace saas_plugins.SaaS
             this._dllFileNameReferenceSet = dllFileNameReferenceSet;
             this._classNamespacePath = classNamespacePath;
             this._code = code;
+            this._compileOrder = compileOrder;
         }
 
-        public override string ToString() {return this.Name;}
+        public override string ToString() {return this.PluginID;}
         
         #region " Properties "
         
@@ -51,6 +55,13 @@ namespace saas_plugins.SaaS
         /// </summary>
         public string PluginID {get {return this._dllFileName; }}
 
+        /// <summary>
+        /// Get/Set in where this compilation should occur in a sequence of plugins
+        /// </summary>
+        public Int32 CompileOrder {
+            get {return this._compileOrder;}
+            set {this._compileOrder = value;}
+        }        
 
         /// <summary>
         /// Get/Set if the current plugin code matches the existing DLL. If false, the DLL should be recompiled.

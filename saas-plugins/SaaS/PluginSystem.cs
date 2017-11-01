@@ -63,6 +63,22 @@ namespace saas_plugins.SaaS
 
         #endregion
 
+        #region " Properties "
+
+        public Dictionary<string, PluginDomain> DomainSet {
+            get {return this._pluginDomainSet; }
+        }
+
+        public Dictionary<string, Plugin> PluginSet {
+            get {return this._pluginSet; }
+        }
+
+        public Dictionary<string, PluginReference> GetDomainPluginReferenceSet(string domainName) {
+            return this.DomainSet[domainName].PluginReferenceSet;
+        }
+
+        #endregion
+
         /// <summary>
         /// Invoke a method in a running Plugin.
         /// </summary>
@@ -137,6 +153,30 @@ namespace saas_plugins.SaaS
 
             return asmSets;
         }
+
+        /*
+        /// <summary>
+        /// Get a list of running assemblies from a specified domain
+        /// </summary>
+        /// <returns>A dictionary with domainName keys and items containing lists of running assemblies.</returns>
+        public List<string> GetAssemblies(string domainName) {
+            List<string> asmSet = new List<string>();
+
+            if(this._pluginDomainSet.ContainsKey(domainName)) {
+                foreach(string keyRef in this._pluginDomainSet[domainName].PluginReferenceSet.Keys) {
+                    PluginReference pluginReference = this._pluginDomainSet[domainName].PluginReferenceSet[keyRef];
+                    List<string> asmSetFullNames = pluginReference.GetAssemblies();
+                    foreach(string asm in asmSetFullNames) {
+                        string[] asmParts = asm.Split(',');
+                        asmSet.Add(asmParts[0]);
+                    }
+                    break;
+                }
+            }
+            
+            return asmSet;
+        }
+        */
 
         #endregion
 

@@ -116,6 +116,11 @@ namespace saas_plugins.SaaS
 
         public static Plugin CreatePlugin(string name, string desc, string dllRoot, string dllFileName, string[] code, string codeNamespacePath, string[] dllCustomRefs)
         {
+            return CreatePlugin(name, desc, dllRoot, dllFileName, code, codeNamespacePath, dllCustomRefs, 0);
+        }
+
+        public static Plugin CreatePlugin(string name, string desc, string dllRoot, string dllFileName, string[] code, string codeNamespacePath, string[] dllCustomRefs, Int32 compileOrder)
+        {
             // alternate dll directories seem to cause issues ...
             //  --- need to explore bindings and see where we can override this
             //  --- explore variants for loading assembly into AppDomain
@@ -147,7 +152,7 @@ namespace saas_plugins.SaaS
             
             //string plugginRoot = Application.StartupPath + @"\";
             System.IO.Directory.CreateDirectory(dllRoot);
-            Plugin oPlugin = new Plugin("", "", dllRoot, dllFileName, referencedAssemblySet, codeNamespacePath, code);
+            Plugin oPlugin = new Plugin("", "", dllRoot, dllFileName, referencedAssemblySet, codeNamespacePath, code, compileOrder);
 
             return oPlugin;
         }

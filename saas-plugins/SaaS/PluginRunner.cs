@@ -41,6 +41,78 @@ namespace saas_plugins.SaaS
             return null;
         }
 
+
+
+
+
+        /// <summary>
+        /// Return a set of parameters for a method
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetTypeMethodParams(string typeName, string methodName) {
+            List<string> set = new List<string>();
+            try {
+                
+                Type tp = assembly.GetType(typeName);
+                if(tp != null) {
+                    MethodInfo info = tp.GetMethod(methodName);
+                    if(info != null) {
+                        string entry = info.ReturnType.ToString() + ":RETURN";
+                        set.Add(entry);
+
+                        foreach (ParameterInfo param in info.GetParameters()) {
+                            entry = param.ParameterType.ToString() + ":" + param.Name;
+                            set.Add(entry);
+                        }
+                    }
+                }
+            } catch(Exception ex) {
+                System.Console.WriteLine(ex.Message);
+            }
+            return set;
+        }
+
+        /// <summary>
+        /// Return a list of available methods for a plugins type
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetTypeMethods(string typeName) {
+            List<string> set = new List<string>();
+            try {
+                
+                Type tp = assembly.GetType(typeName);
+                if(tp != null) {
+                    //MethodInfo[] methodInfoSet = tp.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+                    MethodInfo[] methodInfoSet = tp.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                    foreach (MethodInfo info in methodInfoSet) {
+                        set.Add(info.Name);
+                    }
+                }
+            } catch(Exception ex) {
+                System.Console.WriteLine(ex.Message);
+            }
+            return set;
+        }
+
+
+        /// <summary>
+        /// Return a list of available types in the plugins loaded assembly
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetPluginAssemblyTypes() {
+            List<string> typeSet = new List<string>();
+            try {
+                foreach (Type type in assembly.GetTypes()) {
+                    //Console.WriteLine(type.FullName);
+                    typeSet.Add(type.FullName);
+                }
+            } catch(Exception ex) {
+                System.Console.WriteLine(ex.Message);
+            }
+            return typeSet;
+        }
+
+
         /// <summary>
         /// Return a list of assembly FullName properties running in this AppDomain (can be split on commas)
         /// </summary>
@@ -124,14 +196,19 @@ namespace saas_plugins.SaaS
             CSharpCodeProvider codeProvider = new CSharpCodeProvider();
             CompilerParameters parameters = new CompilerParameters();
 
+            // Determine the xml filePath
+            string xmlFileName = System.IO.Path.GetFileNameWithoutExtension(dllFilePath) + ".xml";
+            string xmlFilePath = System.IO.Path.GetDirectoryName(dllFilePath) + @"\" + xmlFileName;
+
             // Configure the parameter options (to file)
             parameters.OutputAssembly = dllFilePath;            // AppData/Local/Temp/
             parameters.GenerateInMemory = false;
             parameters.GenerateExecutable = false;
+
             foreach(string asm in referencedAssemblySet) {
                 parameters.ReferencedAssemblies.Add(asm);
             }
-            parameters.CompilerOptions = "/t:library";
+            parameters.CompilerOptions = "/t:library /doc:" + xmlFilePath;
 
             // Compile from the source code
             CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, code);
