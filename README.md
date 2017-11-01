@@ -17,7 +17,8 @@ Dependencies:
 
 Future Considerations:
 - Extend reflection mechanism to better interact with static class methods.
-- Explore other trivial interfaces.
+- Extend unit tests to verify reflection methods.
+- Explore other trivial interfaces with minimal dependancies.
 - Add a basic web service API example.
 - Extend usage cases with more complex designs.
 - Use the metadata from the xml generated during the compile process.
