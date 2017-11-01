@@ -6,7 +6,7 @@ This module was purposely designed to offer several layers of implementation:
 - TestCase-Helper: The HelperPlugin class layer is a static class which can be used independently of the proposed implementation.
 - TestCase-Domain: The PluginDomain layer offers a minimal implementation capable of managing plugins within a single domain.
 - TestCase-System: The PluginSystem layer offers a solution that can manage loading/unloading plugins spanning multiple domains.
-- Although a trivial windows form example is included, this module is meant to run in a Web Application/API.
+- Although a trivial interactive windows form example is included, this module is meant to run in a Web Application/API.
 
 ![Alt text](readme-resources/PluginSystem.png?raw=true "Title")
 
@@ -16,8 +16,8 @@ Dependencies:
 - Download the "NUnit 3 Test Adapter" extension to view example tests in the Test Explorer
 
 Future Considerations:
-- Elaborate on the trivial WinForm... make it more interactive.
+- Explore other trivial interfaces (WinForms
 - Add a basic web service API example.
 - Extend usage cases with more complex designs.
-- Elaborate on metadata details for function calls... or export xml from comments during compile.
+- Use the metadata from the xml generated during the compile process.
 - Add a "plugin publisher" solution

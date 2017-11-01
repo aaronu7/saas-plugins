@@ -44,6 +44,7 @@ namespace saas_plugins.SaaS
 
 
 
+        #region " Reflection "
 
         /// <summary>
         /// Return a set of parameters for a method
@@ -82,8 +83,8 @@ namespace saas_plugins.SaaS
                 
                 Type tp = assembly.GetType(typeName);
                 if(tp != null) {
-                    //MethodInfo[] methodInfoSet = tp.GetMethods(BindingFlags.Public | BindingFlags.Instance);
-                    MethodInfo[] methodInfoSet = tp.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                    //MethodInfo[] methodInfoSet = tp.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                    MethodInfo[] methodInfoSet = tp.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly);
                     foreach (MethodInfo info in methodInfoSet) {
                         set.Add(info.Name);
                     }
@@ -131,6 +132,8 @@ namespace saas_plugins.SaaS
             }
             return asmSet;
         }
+
+        #endregion
 
         /// <summary>
         /// This will invoke the target method with the given parameters.

@@ -44,7 +44,8 @@ namespace saas_plugins.SaaS
         }
 
 
-       
+        #region " Reflection "
+
         /// <summary>
         /// 
         /// </summary>
@@ -108,7 +109,9 @@ namespace saas_plugins.SaaS
             }
             return asmSet;
         }
-        
+
+        #endregion
+
         #region " Properties "
 
         /// <summary>

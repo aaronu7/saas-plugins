@@ -31,10 +31,10 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpSourceCode = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.lbFileNames = new System.Windows.Forms.ListBox();
+            this.lbPlugins = new System.Windows.Forms.ListBox();
             this.tbSourceCode = new System.Windows.Forms.TextBox();
             this.tpPluginSystem = new System.Windows.Forms.TabPage();
-            this.lbMethods = new System.Windows.Forms.ListBox();
+            this.lbMethodParams = new System.Windows.Forms.ListBox();
             this.label5 = new System.Windows.Forms.Label();
             this.lbClasses = new System.Windows.Forms.ListBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -44,9 +44,15 @@
             this.lbDomains = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.tpInteract = new System.Windows.Forms.TabPage();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tbLog = new System.Windows.Forms.TextBox();
+            this.btnRunMethod = new System.Windows.Forms.Button();
+            this.tbParams = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.btnRecompileCode = new System.Windows.Forms.Button();
+            this.btnCompileAll = new System.Windows.Forms.Button();
+            this.btnSystemReload = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tpSourceCode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -58,13 +64,16 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tpSourceCode);
             this.tabControl1.Controls.Add(this.tpPluginSystem);
-            this.tabControl1.Controls.Add(this.tpInteract);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -92,26 +101,26 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.lbFileNames);
+            this.splitContainer1.Panel1.Controls.Add(this.lbPlugins);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.tbSourceCode);
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer3);
             this.splitContainer1.Size = new System.Drawing.Size(1752, 843);
             this.splitContainer1.SplitterDistance = 528;
             this.splitContainer1.TabIndex = 0;
             // 
-            // lbFileNames
+            // lbPlugins
             // 
-            this.lbFileNames.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbFileNames.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbFileNames.FormattingEnabled = true;
-            this.lbFileNames.ItemHeight = 31;
-            this.lbFileNames.Location = new System.Drawing.Point(0, 0);
-            this.lbFileNames.Name = "lbFileNames";
-            this.lbFileNames.Size = new System.Drawing.Size(528, 843);
-            this.lbFileNames.TabIndex = 0;
-            this.lbFileNames.SelectedIndexChanged += new System.EventHandler(this.lbFileNames_SelectedIndexChanged);
+            this.lbPlugins.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbPlugins.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbPlugins.FormattingEnabled = true;
+            this.lbPlugins.ItemHeight = 31;
+            this.lbPlugins.Location = new System.Drawing.Point(0, 0);
+            this.lbPlugins.Name = "lbPlugins";
+            this.lbPlugins.Size = new System.Drawing.Size(528, 843);
+            this.lbPlugins.TabIndex = 0;
+            this.lbPlugins.SelectedIndexChanged += new System.EventHandler(this.lbFileNames_SelectedIndexChanged);
             // 
             // tbSourceCode
             // 
@@ -121,14 +130,19 @@
             this.tbSourceCode.Multiline = true;
             this.tbSourceCode.Name = "tbSourceCode";
             this.tbSourceCode.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbSourceCode.Size = new System.Drawing.Size(1220, 843);
+            this.tbSourceCode.Size = new System.Drawing.Size(1220, 736);
             this.tbSourceCode.TabIndex = 0;
             this.tbSourceCode.WordWrap = false;
             this.tbSourceCode.TextChanged += new System.EventHandler(this.tbSourceCode_TextChanged);
             // 
             // tpPluginSystem
             // 
-            this.tpPluginSystem.Controls.Add(this.lbMethods);
+            this.tpPluginSystem.Controls.Add(this.btnSystemReload);
+            this.tpPluginSystem.Controls.Add(this.btnCompileAll);
+            this.tpPluginSystem.Controls.Add(this.label6);
+            this.tpPluginSystem.Controls.Add(this.tbParams);
+            this.tpPluginSystem.Controls.Add(this.btnRunMethod);
+            this.tpPluginSystem.Controls.Add(this.lbMethodParams);
             this.tpPluginSystem.Controls.Add(this.label5);
             this.tpPluginSystem.Controls.Add(this.lbClasses);
             this.tpPluginSystem.Controls.Add(this.label4);
@@ -146,24 +160,24 @@
             this.tpPluginSystem.Text = "Plugin System";
             this.tpPluginSystem.UseVisualStyleBackColor = true;
             // 
-            // lbMethods
+            // lbMethodParams
             // 
-            this.lbMethods.FormattingEnabled = true;
-            this.lbMethods.ItemHeight = 25;
-            this.lbMethods.Location = new System.Drawing.Point(969, 436);
-            this.lbMethods.Name = "lbMethods";
-            this.lbMethods.Size = new System.Drawing.Size(286, 129);
-            this.lbMethods.TabIndex = 9;
+            this.lbMethodParams.FormattingEnabled = true;
+            this.lbMethodParams.ItemHeight = 25;
+            this.lbMethodParams.Location = new System.Drawing.Point(934, 362);
+            this.lbMethodParams.Name = "lbMethodParams";
+            this.lbMethodParams.Size = new System.Drawing.Size(685, 129);
+            this.lbMethodParams.TabIndex = 9;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(964, 395);
+            this.label5.Location = new System.Drawing.Point(929, 321);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(175, 25);
+            this.label5.Size = new System.Drawing.Size(290, 25);
             this.label5.TabIndex = 8;
-            this.label5.Text = "Plugin Methods";
+            this.label5.Text = "Plugin Method Parameters";
             // 
             // lbClasses
             // 
@@ -171,7 +185,7 @@
             this.lbClasses.ItemHeight = 25;
             this.lbClasses.Location = new System.Drawing.Point(842, 188);
             this.lbClasses.Name = "lbClasses";
-            this.lbClasses.Size = new System.Drawing.Size(724, 129);
+            this.lbClasses.Size = new System.Drawing.Size(777, 104);
             this.lbClasses.TabIndex = 7;
             this.lbClasses.SelectedIndexChanged += new System.EventHandler(this.lbClasses_SelectedIndexChanged);
             // 
@@ -181,9 +195,9 @@
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(837, 147);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(169, 25);
+            this.label4.Size = new System.Drawing.Size(241, 25);
             this.label4.TabIndex = 6;
-            this.label4.Text = "Plugin Classes";
+            this.label4.Text = "Plugin Class Methods";
             // 
             // lbAssemblies
             // 
@@ -244,15 +258,6 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Domains";
             // 
-            // tpInteract
-            // 
-            this.tpInteract.Location = new System.Drawing.Point(8, 39);
-            this.tpInteract.Name = "tpInteract";
-            this.tpInteract.Size = new System.Drawing.Size(1758, 849);
-            this.tpInteract.TabIndex = 2;
-            this.tpInteract.Text = "Plugin Interaction";
-            this.tpInteract.UseVisualStyleBackColor = true;
-            // 
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -282,6 +287,83 @@
             this.tbLog.Size = new System.Drawing.Size(1774, 329);
             this.tbLog.TabIndex = 1;
             // 
+            // btnRunMethod
+            // 
+            this.btnRunMethod.Location = new System.Drawing.Point(1447, 526);
+            this.btnRunMethod.Name = "btnRunMethod";
+            this.btnRunMethod.Size = new System.Drawing.Size(172, 83);
+            this.btnRunMethod.TabIndex = 10;
+            this.btnRunMethod.Text = "Run Method";
+            this.btnRunMethod.UseVisualStyleBackColor = true;
+            this.btnRunMethod.Click += new System.EventHandler(this.btnRunMethod_Click);
+            // 
+            // tbParams
+            // 
+            this.tbParams.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbParams.Location = new System.Drawing.Point(934, 569);
+            this.tbParams.Name = "tbParams";
+            this.tbParams.Size = new System.Drawing.Size(432, 38);
+            this.tbParams.TabIndex = 11;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(929, 526);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(466, 25);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "Method Call Arguments (comma separated)";
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.btnRecompileCode);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.tbSourceCode);
+            this.splitContainer3.Size = new System.Drawing.Size(1220, 843);
+            this.splitContainer3.SplitterDistance = 103;
+            this.splitContainer3.TabIndex = 1;
+            // 
+            // btnRecompileCode
+            // 
+            this.btnRecompileCode.Location = new System.Drawing.Point(24, 17);
+            this.btnRecompileCode.Name = "btnRecompileCode";
+            this.btnRecompileCode.Size = new System.Drawing.Size(248, 77);
+            this.btnRecompileCode.TabIndex = 0;
+            this.btnRecompileCode.Text = "Compile";
+            this.btnRecompileCode.UseVisualStyleBackColor = true;
+            this.btnRecompileCode.Click += new System.EventHandler(this.btnRecompileCode_Click);
+            // 
+            // btnCompileAll
+            // 
+            this.btnCompileAll.Location = new System.Drawing.Point(38, 20);
+            this.btnCompileAll.Name = "btnCompileAll";
+            this.btnCompileAll.Size = new System.Drawing.Size(248, 77);
+            this.btnCompileAll.TabIndex = 14;
+            this.btnCompileAll.Text = "Compile ALL";
+            this.btnCompileAll.UseVisualStyleBackColor = true;
+            this.btnCompileAll.Click += new System.EventHandler(this.btnCompileAll_Click_1);
+            // 
+            // btnSystemReload
+            // 
+            this.btnSystemReload.Location = new System.Drawing.Point(332, 20);
+            this.btnSystemReload.Name = "btnSystemReload";
+            this.btnSystemReload.Size = new System.Drawing.Size(248, 77);
+            this.btnSystemReload.TabIndex = 15;
+            this.btnSystemReload.Text = "System Reload";
+            this.btnSystemReload.UseVisualStyleBackColor = true;
+            this.btnSystemReload.Click += new System.EventHandler(this.btnSystemReload_Click);
+            // 
             // frmTest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -295,7 +377,6 @@
             this.tpSourceCode.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.tpPluginSystem.ResumeLayout(false);
@@ -305,6 +386,11 @@
             this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            this.splitContainer3.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -314,9 +400,8 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tpSourceCode;
         private System.Windows.Forms.TabPage tpPluginSystem;
-        private System.Windows.Forms.TabPage tpInteract;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ListBox lbFileNames;
+        private System.Windows.Forms.ListBox lbPlugins;
         private System.Windows.Forms.TextBox tbSourceCode;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TextBox tbLog;
@@ -328,7 +413,14 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ListBox lbClasses;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ListBox lbMethods;
+        private System.Windows.Forms.ListBox lbMethodParams;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button btnRunMethod;
+        private System.Windows.Forms.TextBox tbParams;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.Button btnRecompileCode;
+        private System.Windows.Forms.Button btnSystemReload;
+        private System.Windows.Forms.Button btnCompileAll;
     }
 }

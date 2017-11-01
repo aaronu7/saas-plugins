@@ -71,7 +71,7 @@ namespace saas_plugins.SaaS
 
         #endregion
 
-        #region " Get Assembly / Reflection details "
+        #region " Reflection "
 
         /// <summary>
         /// Get a list of running assemblies from a specified domain
@@ -275,7 +275,7 @@ namespace saas_plugins.SaaS
                 PluginRunner cr = this._pluginReferences[plugin.PluginID].PluginRunner;
                 if(cr != null) {
                     try {
-                        result = cr.Run(plugin.ClassNamespacePath, functionName, functionArgs);
+                        result = cr.Run(classNamespacePath, functionName, functionArgs);
                     } catch(Exception ex) {
                         System.Console.WriteLine("RUN ERROR: " + ex.Message);
                         System.Console.WriteLine("RUN ERROR: " + ex.InnerException.Message);

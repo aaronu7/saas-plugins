@@ -30,6 +30,12 @@ namespace saas_plugins_test
             this.splitContainer2.SplitterDistance = this.Height / 2;
             this.tabControl1.SelectedTab = tpPluginSystem;
             InitSystem();
+
+            lbDomains.SelectedIndex = 1;
+            lbDomainPlugins.SelectedIndex = 2;
+            lbClasses.SelectedIndex = 0;
+            tbParams.Text = "7";
+            btnRunMethod.BackColor = System.Drawing.Color.Yellow;
         }
 
         #region " InitSystem "
@@ -54,9 +60,13 @@ namespace saas_plugins_test
         }
 
         private void PluginSystem_LogNotify(string message) {
-            tbLog.Text = message + Environment.NewLine + tbLog.Text;
+            LogWrite(message);
         }
 
+        protected void LogWrite(string message)
+        {
+            tbLog.Text = message + Environment.NewLine + tbLog.Text;
+        }
         #endregion
 
         #region " LoadPluginsFromSource "
@@ -67,12 +77,12 @@ namespace saas_plugins_test
 
             string[] fileSet = System.IO.Directory.GetFiles(fullPath);
             List<Plugin> pluginSet = new List<Plugin>();
-            lbFileNames.Items.Clear();
+            lbPlugins.Items.Clear();
             foreach(string file in fileSet) {
                 Plugin plugin = CreatePlugin(file, dllRoot);
                 if(plugin!=null) {
                     pluginSet.Add(plugin);
-                    lbFileNames.Items.Add(plugin);
+                    lbPlugins.Items.Add(plugin);
                 }
             }
 
@@ -132,20 +142,33 @@ namespace saas_plugins_test
 
         private void lbFileNames_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(lbFileNames.SelectedIndex == -1) {
+            if(lbPlugins.SelectedIndex == -1) {
                 tbSourceCode.Text = "";
             } else {
-                Plugin plugin = (Plugin)lbFileNames.SelectedItem;
+                Plugin plugin = (Plugin)lbPlugins.SelectedItem;
                 tbSourceCode.Text = plugin.Code[0];
             }
         }
 
         private void tbSourceCode_TextChanged(object sender, EventArgs e)
         {
-            if(lbFileNames.SelectedIndex != -1) {
-                Plugin plugin = (Plugin)lbFileNames.SelectedItem;
+            if(lbPlugins.SelectedIndex != -1) {
+                Plugin plugin = (Plugin)lbPlugins.SelectedItem;
                 plugin.IsCompiled = false;
                 plugin.Code = new string[] {tbSourceCode.Text};
+            }
+        }
+
+        private void btnRecompileCode_Click(object sender, EventArgs e)
+        {
+            if(lbPlugins.SelectedIndex != -1) {
+                // Recompile just this plugin
+                tbLog.Text = "";
+                Plugin plugin = (Plugin)lbPlugins.SelectedItem;
+
+                List<string> pluginSet = new List<string>() {plugin.PluginID};
+                pluginSystem.SystemUpdate(pluginSet);
+                UpdateDomainSet();
             }
         }
 
@@ -153,10 +176,33 @@ namespace saas_plugins_test
 
         #region " Plugin System "
 
+        private void btnCompileAll_Click_1(object sender, EventArgs e)
+        {
+            // Recompile all plugins
+            tbLog.Text = "";
+            List<string> pluginSet = new List<string>();
+            foreach(Plugin plugin in lbPlugins.Items) {
+                pluginSet.Add(plugin.PluginID);
+            }
+            pluginSystem.SystemUpdate(pluginSet);
+            UpdateDomainSet();
+        }
+
+        private void btnSystemReload_Click(object sender, EventArgs e)
+        {
+            // Unload / Reload ALL domains
+            tbLog.Text = "";
+            pluginSystem.SystemReload();
+        }
+
+
         protected void UpdateDomainSet()
         {
             lbDomains.Items.Clear();
             lbDomainPlugins.Items.Clear();
+            lbAssemblies.Items.Clear();
+            lbClasses.Items.Clear();
+            lbMethodParams.Items.Clear();
             foreach(string domainName in pluginSystem.DomainSet.Keys) {
                 lbDomains.Items.Add(pluginSystem.DomainSet[domainName]);
             }
@@ -187,6 +233,8 @@ namespace saas_plugins_test
         private void lbDomains_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateDomainPluginSet();
+            lbClasses.Items.Clear();
+            lbMethodParams.Items.Clear();
         }
 
 
@@ -194,15 +242,16 @@ namespace saas_plugins_test
         {
             // reflection on this plugin
             lbClasses.Items.Clear();
+            lbMethodParams.Items.Clear();
             if(lbDomains.SelectedIndex != -1) {
-                PluginReference domain = (PluginReference)lbDomainPlugins.SelectedItem;
+                PluginReference pluginRef = (PluginReference)lbDomainPlugins.SelectedItem;
 
-                List<string> typeSet = domain.GetPluginAssemblyTypes();
+                List<string> typeSet = pluginRef.GetPluginAssemblyTypes();
                 if(typeSet != null) {
                     foreach(string tp in typeSet) {
                         //lbClasses.Items.Add(tp);
 
-                        List<string> methodSet = domain.GetTypeMethods(tp);
+                        List<string> methodSet = pluginRef.GetTypeMethods(tp);
                         foreach(string method in methodSet) {
                             lbClasses.Items.Add(tp + "." + method);
                         }
@@ -220,26 +269,88 @@ namespace saas_plugins_test
 
         private void lbClasses_SelectedIndexChanged(object sender, EventArgs e)
         {
-
-        }
-
-
-        /*
-
-        private void lbClasses_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            lbMethods.Items.Clear();
+            lbMethodParams.Items.Clear();
             if(lbClasses.SelectedIndex != -1) {
-                PluginReference domain = (PluginReference)lbDomainPlugins.SelectedItem;
-                string typeName = (string)lbClasses.SelectedItem;
-                List<string> methodSet = domain.GetTypeMethods(typeName);
+                PluginReference pluginRef = (PluginReference)lbDomainPlugins.SelectedItem;
+                string classMethodPath = (string)lbClasses.SelectedItem;
+                string methodName = "";
+                string classPath = "";
+                GetClassMethodParts(classMethodPath, ref classPath, ref methodName);
 
-                foreach(string method in methodSet) {
-
+                List<string> paramSet = pluginRef.GetTypeMethodParams(classPath, methodName);
+                foreach(string param in paramSet) {
+                    lbMethodParams.Items.Add(param);
                 }
             }
         }
-        */
+
+
+        private void btnRunMethod_Click(object sender, EventArgs e)
+        {
+            tbLog.Text = "";
+            
+            btnRunMethod.BackColor = tpPluginSystem.BackColor;
+            if(lbClasses.SelectedIndex != -1) {
+                PluginDomain domain = (PluginDomain)lbDomains.SelectedItem;
+                PluginReference pluginRef = (PluginReference)lbDomainPlugins.SelectedItem;
+                string classMethodPath = (string)lbClasses.SelectedItem;
+                string methodName = "";
+                string classPath = "";
+                GetClassMethodParts(classMethodPath, ref classPath, ref methodName);
+
+                // Build the argument objects
+                List<string> paramSet = pluginRef.GetTypeMethodParams(classPath, methodName);
+                string[] paramValues = tbParams.Text.Split(',');
+                List<object> args = new List<object>();
+                bool isOK = true;
+
+                if(paramSet.Count-1 != paramValues.Length) {
+                    LogWrite("Run Result: ERROR");
+                } else {
+                    try {
+                        for(int ix=1; ix<paramSet.Count; ix++) {
+                            string dataType = paramSet[ix].Split(':')[0];
+                            string dataValue = paramValues[ix-1];
+                            if(dataType=="System.Int32") {
+                                Int32 i32Value = Int32.Parse(dataValue);
+                                args.Add(i32Value);
+                            } else if(dataType=="System.Int64") {
+                                args.Add(Int64.Parse(dataValue));
+                            } else if(dataType=="System.String") {
+                                args.Add(dataValue);
+                            } else {
+                                LogWrite("Run type not supported: " + dataType);
+                                isOK = false;
+                            }
+                        }
+                        if(isOK) {
+                            object objA = pluginSystem.InvokeMethod(domain.InstanceDomainName, 
+                                pluginRef.Plugin.PluginID, 
+                                classPath, methodName, args.ToArray<object>());
+
+                            LogWrite("Run Result: " + HelperPlugin.ObjectToString(objA));
+                        }
+
+                    } catch {
+                        LogWrite("Run Result: ERROR");
+                    }
+                }
+            }
+        }
+
+        protected void GetClassMethodParts(string classMethodPath, ref string classPath, ref string methodName)
+        {
+            string[] parts = classMethodPath.Split('.');
+            methodName = parts[parts.Length-1];
+                
+            parts[parts.Length-1] = "";
+            foreach(string part in parts) {
+                if(part != "") {
+                    classPath = (classPath == "" ? part : classPath + "." + part);
+                }
+            }
+        }
+
         #endregion
 
 
