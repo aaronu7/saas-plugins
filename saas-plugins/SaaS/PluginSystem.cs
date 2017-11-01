@@ -114,7 +114,7 @@ namespace saas_plugins.SaaS
             foreach(string key in _pluginDomainSet.Keys) {
                 foreach(string keyRef in this._pluginDomainSet[key].PluginReferenceSet.Keys) {
                     PluginReference pluginReference = this._pluginDomainSet[key].PluginReferenceSet[keyRef];
-                    List<string> asmSet = pluginReference.GetAssemblies();
+                    List<string> asmSet = pluginReference.GetDomainAssemblies();
 
                     System.Console.WriteLine("===================");
                     System.Console.WriteLine("Domain: " + pluginReference.DomainName);
@@ -139,7 +139,7 @@ namespace saas_plugins.SaaS
             foreach(string key in _pluginDomainSet.Keys) {
                 foreach(string keyRef in this._pluginDomainSet[key].PluginReferenceSet.Keys) {
                     PluginReference pluginReference = this._pluginDomainSet[key].PluginReferenceSet[keyRef];
-                    List<string> asmSetFullNames = pluginReference.GetAssemblies();
+                    List<string> asmSetFullNames = pluginReference.GetDomainAssemblies();
                     
                     List<string> asmSet = new List<string>();
                     foreach(string asm in asmSetFullNames) {

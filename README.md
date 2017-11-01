@@ -16,8 +16,14 @@ Dependencies:
 - Download the "NUnit 3 Test Adapter" extension to view example tests in the Test Explorer
 
 Future Considerations:
-- Explore other trivial interfaces (WinForms
+- Extend reflection mechanism to better interact with static class methods.
+- Explore other trivial interfaces.
 - Add a basic web service API example.
 - Extend usage cases with more complex designs.
 - Use the metadata from the xml generated during the compile process.
 - Add a "plugin publisher" solution
+
+
+Screenshot of the trivial interactive interface:
+
+![Alt text](readme-resources/ScreenShot.png?raw=true "Title")

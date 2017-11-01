@@ -100,7 +100,7 @@ namespace saas_plugins.SaaS
         /// Return a list of available types in the plugins loaded assembly
         /// </summary>
         /// <returns></returns>
-        public List<string> GetPluginAssemblyTypes() {
+        public List<string> GetTypes() {
             List<string> typeSet = new List<string>();
             try {
                 foreach (Type type in assembly.GetTypes()) {
@@ -118,7 +118,7 @@ namespace saas_plugins.SaaS
         /// Return a list of assembly FullName properties running in this AppDomain (can be split on commas)
         /// </summary>
         /// <returns></returns>
-        public List<string> GetAssemblies() {
+        public List<string> GetDomainAssemblies() {
             List<string> asmSet = null;
             try {
                 Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();

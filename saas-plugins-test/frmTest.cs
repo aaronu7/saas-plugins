@@ -223,7 +223,7 @@ namespace saas_plugins_test
             lbAssemblies.Items.Clear();
             if(lbDomains.SelectedIndex != -1) {
                 PluginDomain domain = (PluginDomain)lbDomains.SelectedItem;
-                List<string> asmSet = domain.GetAssemblies();
+                List<string> asmSet = domain.GetDomainAssemblies();
                 foreach(string asm in asmSet) {
                     lbAssemblies.Items.Add(asm);
                 }
@@ -246,7 +246,7 @@ namespace saas_plugins_test
             if(lbDomains.SelectedIndex != -1) {
                 PluginReference pluginRef = (PluginReference)lbDomainPlugins.SelectedItem;
 
-                List<string> typeSet = pluginRef.GetPluginAssemblyTypes();
+                List<string> typeSet = pluginRef.GetTypes();
                 if(typeSet != null) {
                     foreach(string tp in typeSet) {
                         //lbClasses.Items.Add(tp);

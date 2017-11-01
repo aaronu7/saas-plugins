@@ -77,13 +77,13 @@ namespace saas_plugins.SaaS
         /// Get a list of running assemblies from a specified domain
         /// </summary>
         /// <returns>A dictionary with domainName keys and items containing lists of running assemblies.</returns>
-        public List<string> GetAssemblies() {
+        public List<string> GetDomainAssemblies() {
             List<string> asmSet = new List<string>();
 
             PluginReference pluginReference = GetFirstReference();
 
             if(pluginReference != null) {
-                List<string> asmSetFullNames = pluginReference.GetAssemblies();
+                List<string> asmSetFullNames = pluginReference.GetDomainAssemblies();
                 foreach(string asm in asmSetFullNames) {
                     string[] asmParts = asm.Split(',');
                     asmSet.Add(asmParts[0]);
@@ -97,11 +97,11 @@ namespace saas_plugins.SaaS
         /// Get a list of available types in the plugins assembly
         /// </summary>
         /// <returns></returns>
-        public List<string> GetPluginAssemblyTypes() {
+        public List<string> GetTypes() {
             List<string> asmTypes = new List<string>();
             PluginReference pluginReference = GetFirstReference();
             if(pluginReference != null) {
-                asmTypes = pluginReference.GetPluginAssemblyTypes();
+                asmTypes = pluginReference.GetTypes();
             }
             
             return asmTypes;
@@ -111,7 +111,7 @@ namespace saas_plugins.SaaS
         /// Get a list of available methods
         /// </summary>
         /// <returns></returns>
-        public List<string> GetPluginAssemblyTypeMethods(string typeName) {
+        public List<string> GetTypeMethods(string typeName) {
             List<string> asmTypes = new List<string>();
             PluginReference pluginReference = GetFirstReference();
             if(pluginReference != null) {
@@ -125,7 +125,7 @@ namespace saas_plugins.SaaS
         /// Get a list of required params
         /// </summary>
         /// <returns></returns>
-        public List<string> GetPluginAssemblyTypeMethodParams(string typeName, string methodName) {
+        public List<string> GetTypeMethodParams(string typeName, string methodName) {
             List<string> asmTypes = new List<string>();
             PluginReference pluginReference = GetFirstReference();
             if(pluginReference != null) {

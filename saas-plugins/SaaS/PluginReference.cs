@@ -82,11 +82,11 @@ namespace saas_plugins.SaaS
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<string> GetPluginAssemblyTypes() {
+        public List<string> GetTypes() {
             List<string> typeSet = null;
             if(this.PluginRunner!=null) {
                 try {
-                    typeSet = this.PluginRunner.GetPluginAssemblyTypes();
+                    typeSet = this.PluginRunner.GetTypes();
                 } catch(Exception ex) {
                     System.Console.WriteLine(ex.Message);
                 }
@@ -98,11 +98,11 @@ namespace saas_plugins.SaaS
         /// A list of assemblies running in this AppDomain.
         /// </summary>
         /// <returns></returns>
-        public List<string> GetAssemblies() {
+        public List<string> GetDomainAssemblies() {
             List<string> asmSet = null;
             if(this.PluginRunner!=null) {
                 try {
-                    asmSet = this.PluginRunner.GetAssemblies();
+                    asmSet = this.PluginRunner.GetDomainAssemblies();
                 } catch(Exception ex) {
                     System.Console.WriteLine(ex.Message);
                 }
