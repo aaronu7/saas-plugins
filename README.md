@@ -28,4 +28,4 @@ Screenshots of the trivial interactive interface:
 
 ![Alt text](readme-resources/ScreenShot.png?raw=true "Title")
 
-![Alt text](readme-resources/ScreenShot.png?raw=true "Title")
+![Alt text](readme-resources/ScreenShot2.png?raw=true "Title")
