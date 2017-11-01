@@ -16,7 +16,8 @@ Dependencies:
 - Download the "NUnit 3 Test Adapter" extension to view example tests in the Test Explorer
 
 Future Considerations:
-- Elaborate on the trivial WinForm.
+- Elaborate on the trivial WinForm... make it more interactive.
 - Add a basic web service API example.
 - Extend usage cases with more complex designs.
-- Elaborate on metadata details for function calls.
+- Elaborate on metadata details for function calls... or export xml from comments during compile.
+- Add a "plugin publisher" solution
