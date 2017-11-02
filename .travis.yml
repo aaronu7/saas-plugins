@@ -2,7 +2,7 @@ language: csharp
 solution: metais.sln
 install:
   - nuget restore metais.sln
-  - nuget install nunit-console
+  - nuget install NUnit.Runners -Version 3.7.0 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Debug metais.sln
-  - nunit-console metais/bin/Debug/MetaIS.dll
+  - ./testrunner/NUnit.ConsoleRunner.3.7.0/tools/nunit3-console.exe metais/bin/Debug/MetaIS.dll
