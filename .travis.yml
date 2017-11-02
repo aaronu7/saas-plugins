@@ -1,0 +1,9 @@
+language: csharp
+script:
+  - xbuild /p:Configuration=Debug saas-plugins.sln
+before_install:
+  - sudo apt-get install nunit-console
+before_script:
+  - nuget restore saas-plugins.sln
+after_script:
+  - nunit-console saas-plugins-test/bin/Debug/saas_plugins_test.exe
