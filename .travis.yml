@@ -1,9 +1,8 @@
 language: csharp
+solution: metais.sln
+install:
+  - nuget restore metais.sln
+  - nuget install NUnit.Runners -Version 3.8.0 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Debug metais.sln
-before_install:
-  - sudo apt-get install nunit-console
-before_script:
-  - nuget restore metais.sln
-after_script:
-  - nunit-console metais/bin/Debug/MetaIS.dll
+  - mono ./testrunner/NUnit.Runners.3.8.0/tools/nunit-console.exe ./metais/bin/Debug/MetaIS.dll
