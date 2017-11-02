@@ -28,10 +28,10 @@ namespace MetaIS_Test.SaaS.Plugins
         //[Ignore("")]
         [Test]
         public void TestTrivial() {
-            Assert.IsTrue(false);
+            Assert.IsTrue(true);
         }
 
-        /*
+        
         #region " Plugin Creators "
 
         static public Plugin CreatePlugin_RockStar(string dllRoot, string dllName, string[] dllRefs)
@@ -316,12 +316,9 @@ namespace MetaIS_Test.SaaS.Plugins
             string sB = HelperPlugin.ObjectToString(objB);
             Assert.NotNull(objB);
             Assert.AreEqual("14", sB, "Expected: 14  but got: " + sB);
-
-            Assert.IsTrue(false);
         }
 
         #endregion
-        */
 
     }
 }
