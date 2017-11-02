@@ -306,6 +306,8 @@ namespace template_test.UnitTests
             string sB = HelperPlugin.ObjectToString(objB);
             Assert.NotNull(objB);
             Assert.AreEqual("14", sB, "Expected: 14  but got: " + sB);
+
+            Assert.IsTrue(false);
         }
 
         #endregion
