@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaIS_Test", "MetaIS_Test\MetaIS_Test.csproj", "{7AA0E3F9-063E-4D3E-BBB6-765223CC1503}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaIS_TestApp", "MetaIS_TestApp\MetaIS_TestApp.csproj", "{1684EE60-65C7-4806-8CD1-AA4FBD56052C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaIS", "MetaIS\MetaIS.csproj", "{8795B1E0-491E-4E45-A4A7-7EF48D79178D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7AA0E3F9-063E-4D3E-BBB6-765223CC1503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AA0E3F9-063E-4D3E-BBB6-765223CC1503}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AA0E3F9-063E-4D3E-BBB6-765223CC1503}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AA0E3F9-063E-4D3E-BBB6-765223CC1503}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1684EE60-65C7-4806-8CD1-AA4FBD56052C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1684EE60-65C7-4806-8CD1-AA4FBD56052C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1684EE60-65C7-4806-8CD1-AA4FBD56052C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1684EE60-65C7-4806-8CD1-AA4FBD56052C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8795B1E0-491E-4E45-A4A7-7EF48D79178D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8795B1E0-491E-4E45-A4A7-7EF48D79178D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8795B1E0-491E-4E45-A4A7-7EF48D79178D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8795B1E0-491E-4E45-A4A7-7EF48D79178D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
