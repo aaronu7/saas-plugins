@@ -22,6 +22,13 @@ namespace template_test.UnitTests
 
         [TearDown] public void TestTearDown() {}
 
+        //[Ignore("")]
+        [Test]
+        public void TestTrivial() {
+            Assert.IsTrue(true);
+        }
+
+        /*
         #region " Plugin Creators "
 
         static public Plugin CreatePlugin_RockStar(string dllRoot, string dllName, string[] dllRefs)
@@ -311,7 +318,7 @@ namespace template_test.UnitTests
         }
 
         #endregion
-
+        */
 
     }
 }
