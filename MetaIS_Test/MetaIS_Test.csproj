@@ -47,15 +47,9 @@
     <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test\SaaS\Plugins\BasicTests.cs" />
-    <Content Include="Test\SaaS\Plugins\Files\RockStar.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Test\SaaS\Plugins\Files\CodeMultiplier.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Test\SaaS\Plugins\Files\CodeMirror.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Include="Test\SaaS\Plugins\Files\RockStar.cs" />
+    <None Include="Test\SaaS\Plugins\Files\CodeMultiplier.cs" />
+    <None Include="Test\SaaS\Plugins\Files\CodeMirror.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\metais\metais.csproj">
