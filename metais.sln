@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "metais", "metais\metais.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "metais-testapp", "metais-testapp\metais-testapp.csproj", "{1684EE60-65C7-4806-8CD1-AA4FBD56052C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "metais-test", "metais-test\metais-test.csproj", "{7AA0E3F9-063E-4D3E-BBB6-765223CC1503}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1684EE60-65C7-4806-8CD1-AA4FBD56052C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1684EE60-65C7-4806-8CD1-AA4FBD56052C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1684EE60-65C7-4806-8CD1-AA4FBD56052C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AA0E3F9-063E-4D3E-BBB6-765223CC1503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AA0E3F9-063E-4D3E-BBB6-765223CC1503}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AA0E3F9-063E-4D3E-BBB6-765223CC1503}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AA0E3F9-063E-4D3E-BBB6-765223CC1503}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

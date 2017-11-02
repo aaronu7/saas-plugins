@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+
 using System;
 using System.Reflection;
 using System.IO;
@@ -10,7 +11,7 @@ using MetaIS.SaaS.Plugins;
 
 // Install-Package NUnit.Runners -Version 3.7.0
 
-namespace template_test.UnitTests
+namespace MetaIS_Test.SaaS.Plugins
 {
     [TestFixture]
     public class BasicTests
