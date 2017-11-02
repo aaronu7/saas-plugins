@@ -52,16 +52,16 @@
     <None Include="Test\SaaS\Plugins\Files\CodeMirror.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\metais\metais.csproj">
-      <Project>{8795b1e0-491e-4e45-a4a7-7ef48d79178d}</Project>
-      <Name>metais</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MetaIS\MetaIS.csproj">
+      <Project>{8795b1e0-491e-4e45-a4a7-7ef48d79178d}</Project>
+      <Name>MetaIS</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
