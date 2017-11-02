@@ -201,7 +201,7 @@ namespace MetaIS.SaaS.Plugins
 
             // Determine the xml filePath
             string xmlFileName = System.IO.Path.GetFileNameWithoutExtension(dllFilePath) + ".xml";
-            string xmlFilePath = System.IO.Path.GetDirectoryName(dllFilePath) + @"\" + xmlFileName;
+            string xmlFilePath = System.IO.Path.GetDirectoryName(dllFilePath) + @"/" + xmlFileName;
 
             // Configure the parameter options (to file)
             parameters.OutputAssembly = dllFilePath;            // AppData/Local/Temp/

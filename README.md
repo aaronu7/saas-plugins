@@ -37,9 +37,9 @@ This module was purposely designed to offer several layers of implementation:
 ### Project Dependencies
 - Developed in VS2015 using the nunit package for unit testing.
 - Download the "NUnit 3 Test Adapter" extension to view example tests in the Test Explorer
----- Install-Package NUnit.Runners -Version 3.7.0
----- install-package nunit.consolerunner -Version 3.7.0
-
+---- Install-Package NUnit.Runners -Version 3.7.0       ????
+---- install-package nunit.consolerunner -Version 3.7.0 ????
+---- System and System.Drawing were added and set to copy local (for better linking with plugins)
 
 ### Future Considerations
 - Extend reflection mechanism to better interact with static class methods.
