@@ -7,8 +7,8 @@
     <ProjectGuid>{7AA0E3F9-063E-4D3E-BBB6-765223CC1503}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>metais_test</RootNamespace>
-    <AssemblyName>metais-test</AssemblyName>
+    <RootNamespace>MetaIS_Test</RootNamespace>
+    <AssemblyName>MetaIS_Test</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
