@@ -28,7 +28,7 @@ namespace MetaIS_Test.SaaS.Plugins
         //[Ignore("")]
         [Test]
         public void TestTrivial() {
-            Assert.IsTrue(true);
+            Assert.IsTrue(false);
         }
 
         /*
