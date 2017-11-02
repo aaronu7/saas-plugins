@@ -18,7 +18,7 @@ using System.CodeDom.Compiler;
 using System.Reflection;
 using Microsoft.CSharp;
 
-namespace saas_plugins.SaaS
+namespace MetaIS.SaaS.Plugins
 {
     public class PluginRunner : MarshalByRefObject
     {

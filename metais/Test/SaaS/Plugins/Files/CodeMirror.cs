@@ -19,7 +19,7 @@ namespace DynamicPlugins {
         /// <param name="x">The input value to return.</param>
         /// <returns>Return the input value.</returns>
         public int MirrorInt(int x) {
-            return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);
+            return MetaIS.SaaS.Plugins.HelperPlugin.GetMirrorValue(x);
         }
     }
 }

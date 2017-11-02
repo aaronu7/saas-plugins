@@ -6,13 +6,17 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-using saas_plugins.SaaS;
+using MetaIS.SaaS.Plugins;
 
 namespace template_test.UnitTests
 {
     [TestFixture]
     public class BasicTests
     {
+        //const string testFilesSubPath = @"\Test\SaaS\Plugins\Files\";
+        const string runnerNameSpace = @"MetaIS.SaaS.Plugins.PluginRunner";
+        const string pluginsSubDir = @"PluginsTest";
+
         [SetUp] public void Setup() {
         }
 
@@ -28,7 +32,7 @@ namespace template_test.UnitTests
                 namespace DynamicPlugins {
                   public static class RockStar {
                     public static int GetValue(int x) {
-                      return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);
+                      return MetaIS.SaaS.Plugins.HelperPlugin.GetMirrorValue(x);
                     }
                   }
                 }";
@@ -42,7 +46,7 @@ namespace template_test.UnitTests
                 namespace DynamicPlugins {
                     public class CodeMirror {
                     public int MirrorInt(int x) {
-                        return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);
+                        return MetaIS.SaaS.Plugins.HelperPlugin.GetMirrorValue(x);
                     }
                     }
                 }";
@@ -78,7 +82,7 @@ namespace template_test.UnitTests
         public static IEnumerable Input_TestHelper3 {
             get {
                 string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
-                string subDir = @"PluginsTest";
+                string subDir = pluginsSubDir;
                 string dllRoot = baseDir + subDir + @"\";
 
                 string mirrorName = "_TestHelper3_CodeMirror.dll";
@@ -90,10 +94,10 @@ namespace template_test.UnitTests
                 Plugin plugin2 = CreatePlugin_CodeMultiplier(dllRoot, multName, new string[] {mirrorName});
                 List<Plugin> pluginSet = new List<Plugin>(){plugin1,plugin2};
                 
-                yield return new TestCaseData("Dual Class 1", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", 
+                yield return new TestCaseData("Dual Class 1", "TestDomain", baseDir, subDir, runnerNameSpace, 
                     pluginSet, "7", mirrorName, "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});     
 
-                yield return new TestCaseData("Dual Class 2", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner",
+                yield return new TestCaseData("Dual Class 2", "TestDomain", baseDir, subDir, runnerNameSpace,
                     pluginSet, "14", multName, "DynamicPlugins.CodeMultiplier", "MultBy2", new object[] {(int)7});     
             }
         }
@@ -101,7 +105,7 @@ namespace template_test.UnitTests
         public static IEnumerable Input_TestHelper2 {
             get {
                 string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
-                string subDir = @"PluginsTest";
+                string subDir = pluginsSubDir;
                 string dllRoot = baseDir + subDir + @"\";
 
                 string mirrorName = "_TestHelper2_CodeMirror.dll";
@@ -109,7 +113,7 @@ namespace template_test.UnitTests
                 Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
                 List<Plugin> pluginSet = new List<Plugin>(){plugin1};
 
-                yield return new TestCaseData("Simple Class calling main library.", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", 
+                yield return new TestCaseData("Simple Class calling main library.", "TestDomain", baseDir, subDir, runnerNameSpace, 
                     pluginSet, "7", mirrorName, "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});                                    
             }
         }
@@ -117,7 +121,7 @@ namespace template_test.UnitTests
         public static IEnumerable Input_TestHelper1 {
             get {
                 string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
-                string subDir = @"PluginsTest";
+                string subDir = pluginsSubDir;
                 string dllRoot = baseDir + subDir + @"\";
 
                 string mirrorName = "_TestHelper1_CodeMirror.dll";
@@ -125,7 +129,7 @@ namespace template_test.UnitTests
                 Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
                 List<Plugin> pluginSet = new List<Plugin>(){plugin1};
 
-                yield return new TestCaseData("Simple Class", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", 
+                yield return new TestCaseData("Simple Class", "TestDomain", baseDir, subDir, runnerNameSpace, 
                     pluginSet, "7", mirrorName, "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});                                    
             }
         }
@@ -184,7 +188,7 @@ namespace template_test.UnitTests
         public static IEnumerable Input_TestPluginDomain1 {
             get {
                 string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
-                string subDir = @"PluginsTest";
+                string subDir = pluginsSubDir;
                 string dllRoot = baseDir + subDir + @"\";
 
                 string mirrorName = "_TestPluginDomain1_CodeMirror.dll";
@@ -192,7 +196,7 @@ namespace template_test.UnitTests
                 Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
                 List<Plugin> pluginSet = new List<Plugin>(){plugin1};
 
-                yield return new TestCaseData("Simple Class", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", pluginSet, "7", 
+                yield return new TestCaseData("Simple Class", "TestDomain", baseDir, subDir, runnerNameSpace, pluginSet, "7", 
                     "_TestPluginDomain1_CodeMirror.dll", "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});                                    
             }
         }
@@ -256,7 +260,7 @@ namespace template_test.UnitTests
         public static IEnumerable Input_TestPluginSystem1 {
             get {
                 string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
-                string subDir = @"PluginsTest";
+                string subDir = pluginsSubDir;
                 string dllRoot = baseDir + subDir + @"\";
 
                 string mirrorName = "_TestPluginSystem1_CodeMirror.dll";
@@ -269,7 +273,7 @@ namespace template_test.UnitTests
 
                 List<Plugin> pluginSet = new List<Plugin>(){plugin1, plugin2, plugin3};
 
-                yield return new TestCaseData("Simple Class", "TestDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner", pluginSet); 
+                yield return new TestCaseData("Simple Class", "TestDomain", baseDir, subDir, runnerNameSpace, pluginSet); 
                     //pluginSet, "7", "_TestPluginSystem1_CodeMirror.dll", "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});                                    
                     
             }

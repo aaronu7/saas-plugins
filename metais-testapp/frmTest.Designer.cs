@@ -1,4 +1,4 @@
-﻿namespace saas_plugins_test
+﻿namespace MetaIS_Test
 {
     partial class frmTest
     {

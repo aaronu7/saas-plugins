@@ -14,7 +14,7 @@ WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 using System;
 using System.Collections.Generic;
 
-namespace saas_plugins.SaaS
+namespace MetaIS.SaaS.Plugins
 {
     public class Plugin
     {

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "saas-plugins", "saas-plugins\saas-plugins.csproj", "{8795B1E0-491E-4E45-A4A7-7EF48D79178D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "metais", "metais\metais.csproj", "{8795B1E0-491E-4E45-A4A7-7EF48D79178D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "saas-plugins-test", "saas-plugins-test\saas-plugins-test.csproj", "{1684EE60-65C7-4806-8CD1-AA4FBD56052C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "metais-testapp", "metais-testapp\metais-testapp.csproj", "{1684EE60-65C7-4806-8CD1-AA4FBD56052C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

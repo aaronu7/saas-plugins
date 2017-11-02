@@ -5,13 +5,16 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 
-using saas_plugins.SaaS;
+using MetaIS.SaaS.Plugins;
 
-namespace saas_plugins_test
+namespace MetaIS_Test
 {
     public partial class frmTest : Form
     {
         PluginSystem pluginSystem = null;
+        const string testFilesSubPath = @"\Test\SaaS\Plugins\Files\";
+        const string runnerNameSpace = @"MetaIS.SaaS.Plugins.PluginRunner";
+        const string pluginsSubDir = @"Plugins";
 
         public frmTest()
         {
@@ -43,11 +46,11 @@ namespace saas_plugins_test
         protected void InitSystem()
         {
             string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
-            string subDir = @"Plugins";
+            string subDir = pluginsSubDir;
             //srcDir = @"PluginSource";
             string dllRoot = baseDir + subDir + @"\";
 
-            pluginSystem = new PluginSystem("MyDefaultDomain", baseDir, subDir, "saas_plugins.SaaS.PluginRunner");
+            pluginSystem = new PluginSystem("MyDefaultDomain", baseDir, subDir, runnerNameSpace);
             pluginSystem.LogNotify += PluginSystem_LogNotify;
 
             List<Plugin> pluginSet = LoadPluginsFromSource(dllRoot);
@@ -73,7 +76,7 @@ namespace saas_plugins_test
 
         protected List<Plugin> LoadPluginsFromSource(string dllRoot) {
             string binFolderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string fullPath = binFolderPath + @"\UnitTests\Files\";
+            string fullPath = binFolderPath + testFilesSubPath;
 
             string[] fileSet = System.IO.Directory.GetFiles(fullPath);
             List<Plugin> pluginSet = new List<Plugin>();

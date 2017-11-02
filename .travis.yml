@@ -1,9 +1,9 @@
 language: csharp
 script:
-  - xbuild /p:Configuration=Debug saas-plugins.sln
+  - xbuild /p:Configuration=Debug metais.sln
 before_install:
   - sudo apt-get install nunit-console
 before_script:
-  - nuget restore saas-plugins.sln
+  - nuget restore metais.sln
 after_script:
-  - nunit-console saas-plugins-test/bin/Debug/saas_plugins_test.exe
+  - nunit-console metais/bin/Debug/MetaIS.dll

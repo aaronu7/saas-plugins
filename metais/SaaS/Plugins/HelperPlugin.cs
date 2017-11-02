@@ -19,7 +19,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.IO;
 
-namespace saas_plugins.SaaS
+namespace MetaIS.SaaS.Plugins
 {
     // OLD version caused a massive memory leak because the assemblies are never released
     //  from the application.... this version uses an AppDomain to resolve this.
@@ -140,7 +140,7 @@ namespace saas_plugins.SaaS
 
             string projectRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
             //referencedAssemblySet.Add(dllRoot + "saas_plugins.dll");    // unit tests need this expicit
-            referencedAssemblySet.Add(projectRoot + "saas_plugins.dll");    // unit tests need this expicit
+            referencedAssemblySet.Add(projectRoot + "MetaIS.dll");    // unit tests need this expicit
 
             if(dllCustomRefs != null) {
                 foreach(string reference in dllCustomRefs) { 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace saas_plugins_test
+namespace MetaIS_Test
 {
     static class Program
     {

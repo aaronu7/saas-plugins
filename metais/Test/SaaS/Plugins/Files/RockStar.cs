@@ -21,7 +21,7 @@ namespace DynamicPlugins {
         /// <returns>Return the input value x.</returns>
         public static int GetValue(int x)
         {
-            return saas_plugins.SaaS.HelperPlugin.GetMirrorValue(x);
+            return MetaIS.SaaS.Plugins.HelperPlugin.GetMirrorValue(x);
         }
     }
 }

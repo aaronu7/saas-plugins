@@ -7,8 +7,8 @@
     <ProjectGuid>{8795B1E0-491E-4E45-A4A7-7EF48D79178D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>saas_plugins</RootNamespace>
-    <AssemblyName>saas_plugins</AssemblyName>
+    <RootNamespace>MetaIS</RootNamespace>
+    <AssemblyName>MetaIS</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=3.8.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.8.1\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices" />
@@ -41,31 +45,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SaaS\PluginReference.cs" />
-    <Compile Include="SaaS\PluginSystem.cs" />
-    <Compile Include="SaaS\_OLD\DllLoader.cs" />
-    <Compile Include="SaaS\Plugin.cs" />
-    <Compile Include="SaaS\PluginDomain.cs" />
-    <Compile Include="SaaS\PluginRunner.cs" />
-    <Compile Include="SaaS\HelperPlugin.cs" />
+    <Compile Include="SaaS\Plugins\PluginReference.cs" />
+    <Compile Include="SaaS\Plugins\PluginSystem.cs" />
+    <Compile Include="SaaS\Plugins\Plugin.cs" />
+    <Compile Include="SaaS\Plugins\PluginDomain.cs" />
+    <Compile Include="SaaS\Plugins\PluginRunner.cs" />
+    <Compile Include="SaaS\Plugins\HelperPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="SaaS\_OLD\Form1.cs">
-      <SubType>Form</SubType>
-    </None>
-    <None Include="SaaS\_OLD\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </None>
-    <None Include="SaaS\_OLD\Plugin.cs" />
-    <None Include="SaaS\_OLD\PluginDomain.cs" />
-    <None Include="SaaS\_OLD\PluginRunner.cs" />
+    <Compile Include="Test\SaaS\Plugins\BasicTests.cs" />
+    <Content Include="Test\SaaS\Plugins\Files\RockStar.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Test\SaaS\Plugins\Files\CodeMultiplier.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Test\SaaS\Plugins\Files\CodeMirror.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Db\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SaaS\_OLD\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
