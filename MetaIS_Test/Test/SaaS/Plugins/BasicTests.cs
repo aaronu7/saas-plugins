@@ -88,7 +88,7 @@ namespace MetaIS_Test.SaaS.Plugins
         #region " TestCase-Helper - Tests the HelperPlugin static class - The raw functionality without any imposed implementation. " 
 
         #region " Test Inputs "
-        /*
+        
         public static IEnumerable Input_TestHelper3 {
             get {
                 string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
@@ -127,7 +127,7 @@ namespace MetaIS_Test.SaaS.Plugins
                     pluginSet, "7", mirrorName, "DynamicPlugins.CodeMirror", "MirrorInt", new object[] {(int)7});                                    
             }
         }
-        */
+        
 
         public static IEnumerable Input_TestHelper1 {
             get {
@@ -196,8 +196,6 @@ namespace MetaIS_Test.SaaS.Plugins
 
         #endregion
 
-
-        /*
         #region " TestCase-Domain - Adds implementation to HelperPlugin "
 
         #region " Test Inputs "
@@ -326,7 +324,7 @@ namespace MetaIS_Test.SaaS.Plugins
         }
 
         #endregion
-        */
+
     }
 }
   
