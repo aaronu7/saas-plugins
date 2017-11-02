@@ -141,8 +141,8 @@ namespace MetaIS.SaaS.Plugins
             string projectRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
             //referencedAssemblySet.Add(dllRoot + "saas_plugins.dll");    // unit tests need this expicit
 
-            referencedAssemblySet.Add(projectRoot + "system.dll");
-            referencedAssemblySet.Add(projectRoot + "system.drawing.dll");
+            referencedAssemblySet.Add(projectRoot + "System.dll");
+            referencedAssemblySet.Add(projectRoot + "System.Drawing.dll");
             referencedAssemblySet.Add(projectRoot + "MetaIS.dll");    // unit tests need this expicit
 
             if(dllCustomRefs != null) {
