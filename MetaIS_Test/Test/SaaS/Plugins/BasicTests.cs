@@ -91,9 +91,9 @@ namespace MetaIS_Test.SaaS.Plugins
         
         public static IEnumerable Input_TestHelper3 {
             get {
-                string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+                string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
                 string subDir = pluginsSubDir;
-                string dllRoot = baseDir + subDir + @"\";
+                string dllRoot = baseDir + subDir + @"/";
 
                 string mirrorName = "_TestHelper3_CodeMirror.dll";
                 string multName = "_TestHelper3_CodeMultiplier.dll";
@@ -114,9 +114,9 @@ namespace MetaIS_Test.SaaS.Plugins
 
         public static IEnumerable Input_TestHelper2 {
             get {
-                string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+                string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
                 string subDir = pluginsSubDir;
-                string dllRoot = baseDir + subDir + @"\";
+                string dllRoot = baseDir + subDir + @"/";
 
                 string mirrorName = "_TestHelper2_CodeMirror.dll";
 
@@ -202,9 +202,9 @@ namespace MetaIS_Test.SaaS.Plugins
 
         public static IEnumerable Input_TestPluginDomain1 {
             get {
-                string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+                string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
                 string subDir = pluginsSubDir;
-                string dllRoot = baseDir + subDir + @"\";
+                string dllRoot = baseDir + subDir + @"/";
 
                 string mirrorName = "_TestPluginDomain1_CodeMirror.dll";
 
@@ -274,9 +274,9 @@ namespace MetaIS_Test.SaaS.Plugins
 
         public static IEnumerable Input_TestPluginSystem1 {
             get {
-                string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+                string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
                 string subDir = pluginsSubDir;
-                string dllRoot = baseDir + subDir + @"\";
+                string dllRoot = baseDir + subDir + @"/";
 
                 string mirrorName = "_TestPluginSystem1_CodeMirror.dll";
                 string multName = "_TestPluginSystem1_CodeMultiplier.dll";
