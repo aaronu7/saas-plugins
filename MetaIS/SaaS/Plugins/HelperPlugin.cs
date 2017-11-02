@@ -185,7 +185,7 @@ namespace MetaIS.SaaS.Plugins
 
             // More explicit DLL path for Unit Testing
             string mainDllFileName = Assembly.GetExecutingAssembly().GetName(false).Name + ".dll"; // "saas_plugins.dll"
-            string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+            string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
             string dllPath = dllRoot + mainDllFileName;
             PluginRunner runner = (PluginRunner)domainTemp.CreateInstanceFromAndUnwrap(dllPath, compilerRunnerNamespace);
 

@@ -136,6 +136,8 @@ namespace MetaIS_Test.SaaS.Plugins
                 string dllRoot = baseDir + subDir + @"/";
 
                 // "/home/travis/build/aaronu7/saas-plugins/MetaIS_Test/bin/Release\\"
+                // "/home/travis/build/aaronu7/saas-plugins/MetaIS_Test/bin/Release/"
+
 
                 string mirrorName = "_TestHelper1_CodeMirror.dll";
 
