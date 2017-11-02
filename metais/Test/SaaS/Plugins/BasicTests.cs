@@ -8,6 +8,8 @@ using System.Collections.Generic;
 
 using MetaIS.SaaS.Plugins;
 
+// Install-Package NUnit.Runners -Version 3.7.0
+
 namespace template_test.UnitTests
 {
     [TestFixture]

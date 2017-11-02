@@ -5,4 +5,5 @@ install:
   - nuget install NUnit.Runners -Version 3.7.0 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Debug metais.sln
-  - ./testrunner/NUnit.ConsoleRunner.3.7.0/tools/nunit3-console.exe metais/bin/Debug/MetaIS.dll
+  - ./testrunner/NUnit.ConsoleRunner.3.7.0/tools/nunit3-console.exe ./metais/bin/Debug/MetaIS.dll
+  
