@@ -15,8 +15,9 @@ SaaS-Plugins is a C# project that deals with the runtime code compilation and ma
  
 ## Installation
 
-Install-Package MetaIS.SaaS.Plugins
-
+```
+PM&gt; Install-Package MetaIS.SaaS.Plugins
+```
 
 ## Usage
 
