@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/aaronu7/saas-plugins</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>SaaS-Plugins is a C# project that deals with the runtime code compilation and management of plugin assemblies across multiple AppDomains while allowing for recompiles without restarting the controlling application.</description>
-    <releaseNotes>Initial release.</releaseNotes>
+    <releaseNotes></releaseNotes>
     <copyright>Copyright (c) 2017 "Aaron Ulrich &lt;ace@gis.ca&gt;"</copyright>
 	<language>en-US</language>
     <tags>saas plugins compiler dynamic-code runtime-code appdomains code-generation</tags>

@@ -13,7 +13,7 @@ SaaS-Plugins is a C# project that deals with the runtime code compilation and ma
  - Manages the unloading/reloading of affected AppDomains when an assembly is recompiled. 
 
 
-### Purpose
+#### Purpose
 1.) This module can be extended to a Software as a Service (SaaS) model in which the plugins are licensed modules that extend a clients service which is running in a specific AppDomain. In such a model each client AppDomain is composed of various plugins which compose the clients specific service (ex. entities, workflows, triggers, security, etc). Although each plugin can be handcrafted, the true realization of this technique occurs by building the system model using code generation from meta-models (MDE/MDD/MDA).
 
 2.) In its simplest form this module can offer plugins that allow significant application alterations without a project recompile (or an application restart) and with the full power of .NET available to each plugin.
@@ -28,7 +28,7 @@ PM> Install-Package MetaIS.SaaS.Plugins
 
 ## Usage
 
-### Basic Initialization: create a plugin and add it to a domain.
+#### Basic Initialization: create a plugin and add it to a domain.
 ```cs
 // The code for this plugin
 string code = @"
@@ -64,7 +64,7 @@ pluginSystem.PluginSystemLoad(pluginSet);
 pluginSystem.PluginDomainLoad("AppDomain1", new List<string>() { pluginSet[0].PluginID });
 ```
 
-### Invoke method: building on the above we can invoke a method in the dynamically created assembly.
+#### Invoke method: building on the above we can invoke a method in the dynamically created assembly.
 ```cs
 object objA = pluginSystem.InvokeMethod("AppDomain1", plugin.PluginID, plugin.ClassNamespacePath, 
 	"MirrorInt", new object[] {7});
@@ -76,7 +76,7 @@ System.Console.WriteLine(sA);
 //Assert.AreEqual("7", sA, "Expected: 7  but got: " + sA);
 ```
 
-### Re-compile plugin: building on the above we can alter the code, update the system, and run the invoke
+#### Re-compile plugin: building on the above we can alter the code, update the system, and run the invoke
 ```cs
 // Alter the code
 plugin.Code = new string[] {
@@ -111,30 +111,30 @@ PM> Install-Package NUnit -Version 3.6.1
 PM> Install-Package NUnit3TestAdapter -Version 3.7.0
 ```
 
-##### Class Diagram
+#### Class Diagram
 ![Alt text](readme-resources/PluginSystem.png?raw=true "Title")
 
-##### Primary Use Cases
+#### Primary Use Cases
 - Generator/Developer adds a new plugin to system. The plugin compiles and becomes available to load into client AppDomains.
 - Generator/Developer updates a plugin in system.  All AppDomains using the plugin unload, the plugin recompiles, the affected AppDomains reload.
 - Generator/Developer loads a plugin into AppDomain. The assembly is loaded and becomes accessible in the AppDomain.
 - Generator/Developer removes a plugin from system. NYI.
 - Generator/Developer unloads a plugin from an AppDomain. NYI.
 
-##### Test Cases
+#### Test Cases
 This module was purposely designed to offer several layers of implementation:
 - TestCase-Helper: The HelperPlugin class layer is a static class which can be used independently of the proposed implementation.
 - TestCase-Domain: The PluginDomain layer offers a minimal implementation capable of managing plugins within a single domain.
 - TestCase-System: The PluginSystem layer offers a solution that can manage loading/unloading plugins spanning multiple domains.
 - Trivial interactive windows form: demonstrates loading and dynamic interaction with runtime compiled plugins.
 
-##### Future Considerations
+#### Future Considerations
 - Extend PluginSystem to load from a data model (link to CSV project).
 - Extend unit tests to verify reflection methods.
 - Extend use cases with more complex designs.
 - Use the metadata from the xml generated during the compile process to annotate data in the plugin.
 
-##### Module History
+#### Module History
 The saas-plugins module is a heavily refactored/refined version of one used in a earlier Model Driven Engineering (MDE) SaaS research project. This modules predecessor was the foundation for integrating model driven generated code and allowed entire inter-related systems to be dynamically compiled and linked in C# without unloading the controlling SaaS application.
 
 ## License
