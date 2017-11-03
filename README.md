@@ -21,7 +21,7 @@ PM> Install-Package MetaIS.SaaS.Plugins
 
 ## Usage
 
-### Basic example: create a plugin, add it to a domain and invoke its method.
+### Basic Initialization: create a plugin and add it to a domain.
 ```cs
 // The code for this plugin
 string code = @"
@@ -55,9 +55,11 @@ pluginSystem.PluginSystemLoad(pluginSet);
 
 // Load the plugin into a domain
 pluginSystem.PluginDomainLoad("AppDomain1", new List<string>() { pluginSet[0].PluginID });
+```
 
-// Invoke method and verify 
-object objA = pluginSystem.InvokeMethod("AppDomain1", pluginSet[0].PluginID, pluginSet[0].ClassNamespacePath, "MirrorInt", new object[] {7});
+### Invoke method: building on the above we can invoke a method in the dynamically created assembly.
+```cs
+object objA = pluginSystem.InvokeMethod("AppDomain1", plugin.PluginID, plugin.ClassNamespacePath, "MirrorInt", new object[] {7});
 string sA = HelperPlugin.ObjectToString(objA);
 System.Console.WriteLine(sA);
 
@@ -66,6 +68,30 @@ System.Console.WriteLine(sA);
 //Assert.AreEqual("7", sA, "Expected: 7  but got: " + sA);
 ```
 
+### Re-compile plugin: building on the above we can alter the code, update the system, and run the invoke
+```cs
+// Alter the code
+plugin.Code = new string[] {
+@"using System;
+	namespace DynamicPlugins {
+		public class CodeMirror {
+			public int MirrorInt(int x) {return x*2;}
+		}
+}" };
+
+// Trigger a re-compile (unloads then reloads all affected domains)
+List<string> pluginIdSet = new List<string>() {plugin.PluginID};
+pluginSystem.SystemUpdate(pluginIdSet);
+
+// Invoke method and verify 
+object objB = pluginSystem.InvokeMethod("AppDomain1", pluginSet[0].PluginID, pluginSet[0].ClassNamespacePath, "MirrorInt", new object[] {7});
+string sB = HelperPlugin.ObjectToString(objB);
+System.Console.WriteLine(sB);
+
+// NUnit Assert
+//Assert.NotNull(objB);
+//Assert.AreEqual("14", sB, "Expected: 14  but got: " + sB);
+```
 
 ## License
 

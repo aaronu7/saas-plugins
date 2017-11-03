@@ -47,16 +47,16 @@ namespace MetaIS_Test.SaaS.Plugins
 		            }
 	            }";
 
+            // Get the path to the core and plugin DLL's
+            string coreBinDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string pluginSubPath = @"/PluginsTest/";
+            string pluginDir = coreBinDir + pluginSubPath;
+
             // Core references are located in the bin folder and are not plugins
             string[] coreRefs = new string[] {"System.dll", "MetaIS.SaaS.Plugins.dll"};
 
             // Plugin references are DLL's that have been compiled and linked at runtime
             string[] pluginRefs = null;
-
-            // Get the path to the core and plugin DLL's
-            string coreBinDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string pluginSubPath = @"/PluginsTest/";
-            string pluginDir = coreBinDir + pluginSubPath;
 
             // Call the plugin creation helper to create a plugin
             Plugin plugin = HelperPlugin.CreatePlugin("CodeMirror.dll", coreBinDir, pluginDir, 
@@ -75,10 +75,31 @@ namespace MetaIS_Test.SaaS.Plugins
             object objA = pluginSystem.InvokeMethod("AppDomain1", pluginSet[0].PluginID, pluginSet[0].ClassNamespacePath, "MirrorInt", new object[] {7});
             string sA = HelperPlugin.ObjectToString(objA);
             System.Console.WriteLine(sA);
-
             // NUnit Assert
             //Assert.NotNull(objA);
             //Assert.AreEqual("7", sA, "Expected: 7  but got: " + sA);
+
+
+
+            // Change code and re-compile
+            plugin.Code = new string[] {
+            @"using System;
+	            namespace DynamicPlugins {
+		            public class CodeMirror {
+			            public int MirrorInt(int x) {return x*2;}
+		            }
+	        }" };
+            List<string> pluginIdSet = new List<string>() {plugin.PluginID};
+            pluginSystem.SystemUpdate(pluginIdSet);
+
+            // Invoke method and verify 
+            object objB = pluginSystem.InvokeMethod("AppDomain1", pluginSet[0].PluginID, pluginSet[0].ClassNamespacePath, "MirrorInt", new object[] {7});
+            string sB = HelperPlugin.ObjectToString(objB);
+            System.Console.WriteLine(sB);
+            // NUnit Assert
+            Assert.NotNull(objB);
+            Assert.AreEqual("14", sB, "Expected: 14  but got: " + sB);
+
         }
 
         #endregion
