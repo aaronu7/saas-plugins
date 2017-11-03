@@ -102,17 +102,7 @@ System.Console.WriteLine(sB);
 //Assert.AreEqual("14", sB, "Expected: 14  but got: " + sB);
 ```
 
-## Class Diagram
-![Alt text](readme-resources/PluginSystem.png?raw=true "Title")
-
-### Primary Use Cases
-- Generator/Developer adds a new plugin to system. The plugin compiles and becomes available to load into client AppDomains.
-- Generator/Developer updates a plugin in system.  All AppDomains using the plugin unload, the plugin recompiles, the affected AppDomains reload.
-- Generator/Developer loads a plugin into AppDomain. The assembly is loaded and becomes accessible in the AppDomain.
-- Generator/Developer removes a plugin from system. NYI.
-- Generator/Developer unloads a plugin from an AppDomain. NYI.
-
-### Developer Environment & Notes
+## Developer Environment & Notes
 - Developed in VS2015 using the nunit package for unit testing.
 - System and System.Drawing were added and set to copy local for better linking with plugins.
 - The following nunit versions were found to work best with Travis CI integration.
@@ -120,6 +110,16 @@ System.Console.WriteLine(sB);
 PM> Install-Package NUnit -Version 3.6.1
 PM> Install-Package NUnit3TestAdapter -Version 3.7.0
 ```
+
+##### Class Diagram
+![Alt text](readme-resources/PluginSystem.png?raw=true "Title")
+
+##### Primary Use Cases
+- Generator/Developer adds a new plugin to system. The plugin compiles and becomes available to load into client AppDomains.
+- Generator/Developer updates a plugin in system.  All AppDomains using the plugin unload, the plugin recompiles, the affected AppDomains reload.
+- Generator/Developer loads a plugin into AppDomain. The assembly is loaded and becomes accessible in the AppDomain.
+- Generator/Developer removes a plugin from system. NYI.
+- Generator/Developer unloads a plugin from an AppDomain. NYI.
 
 ##### Test Cases
 This module was purposely designed to offer several layers of implementation:
