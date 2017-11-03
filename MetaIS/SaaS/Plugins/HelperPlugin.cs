@@ -143,7 +143,7 @@ namespace MetaIS.SaaS.Plugins
 
             referencedAssemblySet.Add(projectRoot + "System.dll");
             referencedAssemblySet.Add(projectRoot + "System.Drawing.dll");
-            referencedAssemblySet.Add(projectRoot + "MetaIS.dll");    // unit tests need this expicit
+            referencedAssemblySet.Add(projectRoot + "MetaIS.SaaS.Plugins.dll");    // unit tests need this expicit
 
             if(dllCustomRefs != null) {
                 foreach(string reference in dllCustomRefs) { 
