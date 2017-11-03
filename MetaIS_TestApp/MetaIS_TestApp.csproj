@@ -36,14 +36,18 @@
     <StartupObject>MetaIS_Test.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+    <Reference Include="System">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -90,6 +94,10 @@
     <ProjectReference Include="..\MetaIS\MetaIS.csproj">
       <Project>{8795b1e0-491e-4e45-a4a7-7ef48d79178d}</Project>
       <Name>MetaIS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MetaIS_Test\MetaIS_Test.csproj">
+      <Project>{7aa0e3f9-063e-4d3e-bbb6-765223cc1503}</Project>
+      <Name>MetaIS_Test</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -51,9 +51,15 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test\SaaS\Plugins\BasicTests.cs" />
-    <None Include="Test\SaaS\Plugins\Files\RockStar.cs" />
-    <None Include="Test\SaaS\Plugins\Files\CodeMultiplier.cs" />
-    <None Include="Test\SaaS\Plugins\Files\CodeMirror.cs" />
+    <None Include="Test\SaaS\Plugins\Files\RockStar.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Test\SaaS\Plugins\Files\CodeMultiplier.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Test\SaaS\Plugins\Files\CodeMirror.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -2,9 +2,25 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/aaronu7/saas-plugins.svg?branch=master)](https://travis-ci.org/aaronu7/saas-plugins) [![NuGet](https://img.shields.io/nuget/v/MetaIS.SaaS.Plugins.svg)](https://www.nuget.org/packages/MetaIS.SaaS.Plugins/)
 
-
-
 SaaS-Plugins is a C# project that deals with the runtime code compilation and management of plugin assemblies across multiple AppDomains while allowing for recompiles without restarting the controlling application.
+
+
+## Features
+
+ - Dynamically compiles C# code at runtime.
+ - Dynamically loads/unloads C# assemblies at runtime.
+ - Manages the complexity of interacting with remoted objects accross multiple AppDomains.
+ - Manages the unloading/reloading of affected AppDomains when an assembly is recompiled. 
+
+ 
+### Installation
+
+Install-Package MetaIS.SaaS.Plugins
+
+
+### Usage
+
+
 
 
 

@@ -12,7 +12,7 @@ namespace MetaIS_Test
     public partial class frmTest : Form
     {
         PluginSystem pluginSystem = null;
-        const string testFilesSubPath = @"\Test\SaaS\Plugins\Files\";
+        const string testFilesSubPath = @"/Test/SaaS/Plugins/Files/";
         const string runnerNameSpace = @"MetaIS.SaaS.Plugins.PluginRunner";
         const string pluginsSubDir = @"Plugins";
 
@@ -34,21 +34,25 @@ namespace MetaIS_Test
             this.tabControl1.SelectedTab = tpPluginSystem;
             InitSystem();
 
-            lbDomains.SelectedIndex = 1;
-            lbDomainPlugins.SelectedIndex = 2;
-            lbClasses.SelectedIndex = 0;
-            tbParams.Text = "7";
-            btnRunMethod.BackColor = System.Drawing.Color.Yellow;
+            if(lbDomains.Items.Count > 0) {
+                lbDomains.SelectedIndex = 1;
+                lbDomainPlugins.SelectedIndex = 2;
+                lbClasses.SelectedIndex = 0;
+                tbParams.Text = "7";
+                btnRunMethod.BackColor = System.Drawing.Color.Yellow;
+            } else {
+                tbLog.Text = "*** FAILED TO LOAD EXAMPLE ***";
+            }
         }
 
         #region " InitSystem "
 
         protected void InitSystem()
         {
-            string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
+            string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
             string subDir = pluginsSubDir;
             //srcDir = @"PluginSource";
-            string dllRoot = baseDir + subDir + @"\";
+            string dllRoot = baseDir + subDir + @"/";
 
             pluginSystem = new PluginSystem("MyDefaultDomain", baseDir, subDir, runnerNameSpace);
             pluginSystem.LogNotify += PluginSystem_LogNotify;
@@ -56,10 +60,12 @@ namespace MetaIS_Test
             List<Plugin> pluginSet = LoadPluginsFromSource(dllRoot);
 
             // Load plugins into example Domain(s)
-            pluginSystem.PluginDomainLoad("AppDomain1", new List<string>() { pluginSet[0].PluginID, pluginSet[1].PluginID, pluginSet[2].PluginID});
-            pluginSystem.PluginDomainLoad("AppDomain2", new List<string>() { pluginSet[0].PluginID, pluginSet[1].PluginID});
-            pluginSystem.PluginDomainLoad("AppDomain3", new List<string>() { pluginSet[0].PluginID});
-            UpdateDomainSet();
+            if(pluginSet!=null && pluginSet.Count == 3) {
+                pluginSystem.PluginDomainLoad("AppDomain1", new List<string>() { pluginSet[0].PluginID, pluginSet[1].PluginID, pluginSet[2].PluginID});
+                pluginSystem.PluginDomainLoad("AppDomain2", new List<string>() { pluginSet[0].PluginID, pluginSet[1].PluginID});
+                pluginSystem.PluginDomainLoad("AppDomain3", new List<string>() { pluginSet[0].PluginID});
+                UpdateDomainSet();
+            }
         }
 
         private void PluginSystem_LogNotify(string message) {
@@ -77,22 +83,26 @@ namespace MetaIS_Test
         protected List<Plugin> LoadPluginsFromSource(string dllRoot) {
             string binFolderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string fullPath = binFolderPath + testFilesSubPath;
+            List<Plugin> pluginSetSorted = null;
 
-            string[] fileSet = System.IO.Directory.GetFiles(fullPath);
-            List<Plugin> pluginSet = new List<Plugin>();
-            lbPlugins.Items.Clear();
-            foreach(string file in fileSet) {
-                Plugin plugin = CreatePlugin(file, dllRoot);
-                if(plugin!=null) {
-                    pluginSet.Add(plugin);
-                    lbPlugins.Items.Add(plugin);
+            if(!System.IO.Directory.Exists(fullPath)) {
+                System.Console.WriteLine("File path not found: " + fullPath);
+            } else {
+                string[] fileSet = System.IO.Directory.GetFiles(fullPath);
+                List<Plugin> pluginSet = new List<Plugin>();
+                lbPlugins.Items.Clear();
+                foreach(string file in fileSet) {
+                    Plugin plugin = CreatePlugin(file, dllRoot);
+                    if(plugin!=null) {
+                        pluginSet.Add(plugin);
+                        lbPlugins.Items.Add(plugin);
+                    }
                 }
+
+                // compile order matters -- a production solution should determine order based on the web of references
+                pluginSetSorted = pluginSet.OrderBy(o=>o.CompileOrder).ToList();
+                pluginSystem.PluginSystemLoad(pluginSetSorted);
             }
-
-            // compile order matters -- a production solution should determine order based on the web of references
-            List<Plugin> pluginSetSorted = pluginSet.OrderBy(o=>o.CompileOrder).ToList();
-            pluginSystem.PluginSystemLoad(pluginSetSorted);
-
             return pluginSetSorted;
         }
 
