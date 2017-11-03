@@ -21,6 +21,7 @@ PM> Install-Package MetaIS.SaaS.Plugins
 
 ## Usage
 
+### Basic example: create a plugin, add it to a domain and invoke its method.
 ```cs
 // The code for this plugin
 string code = @"
@@ -39,11 +40,30 @@ string[] pluginRefs = null;
 
 // Get the path to the core and plugin DLL's
 string coreBinDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-string pluginDir = coreBinDir + @"/PluginsTest/";
+string pluginSubPath = @"/PluginsTest/";
+string pluginDir = coreBinDir + pluginSubPath;
 
 // Call the plugin creation helper to create a plugin
-Plugin plugin = HelperPlugin.CreatePlugin("CodeMirror", "Return the input int.", coreBinDir,
-	pluginDir, "CodeMirror.dll", new string[] {code}, "DynamicPlugins.CodeMirror", coreRefs, pluginRefs, 1);
+Plugin plugin = HelperPlugin.CreatePlugin("CodeMirror.dll", coreBinDir, pluginDir, 
+	new string[] {code}, "DynamicPlugins.CodeMirror", coreRefs, pluginRefs, 1);
+
+List<Plugin> pluginSet = new List<Plugin>(){plugin};
+
+// Load the plugins into the system
+PluginSystem pluginSystem = new PluginSystem("AppDomain1", coreBinDir, pluginSubPath);            
+pluginSystem.PluginSystemLoad(pluginSet);
+
+// Load the plugin into a domain
+pluginSystem.PluginDomainLoad("AppDomain1", new List<string>() { pluginSet[0].PluginID });
+
+// Invoke method and verify 
+object objA = pluginSystem.InvokeMethod("AppDomain1", pluginSet[0].PluginID, pluginSet[0].ClassNamespacePath, "MirrorInt", new object[] {7});
+string sA = HelperPlugin.ObjectToString(objA);
+System.Console.WriteLine(sA);
+
+// NUnit Assert
+//Assert.NotNull(objA);
+//Assert.AreEqual("7", sA, "Expected: 7  but got: " + sA);
 ```
 
 

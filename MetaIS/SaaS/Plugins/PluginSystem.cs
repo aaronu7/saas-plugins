@@ -51,6 +51,26 @@ namespace MetaIS.SaaS.Plugins
             this._defaultDomain = CreateGetDomain(this._defaultDomainName);
         }
 
+        /// <summary>
+        /// Instantiate a PluginSystem.
+        /// </summary>
+        /// <param name="defaultDomainName">ex. MyPluginDomain</param>
+        /// <param name="domainBasePath">The base path to find the plugin DLL's. ex: Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)</param>
+        /// <param name="domainSubPath">The subpath to find the plugin DLL's</param>
+        public PluginSystem(string defaultDomainName, string domainBasePath, string domainSubPath) {
+            this._defaultDomainName = defaultDomainName;
+            this._defaultDomainNameTemp = this._defaultDomainName + "TEMP";
+            this._domainBasePath = domainBasePath;
+            this._domainSubPath = domainSubPath;
+
+            this._pluginRunnerTypePath = @"MetaIS.SaaS.Plugins.PluginRunner";
+            _pluginDomainSet = new Dictionary<string, PluginDomain>();
+            _pluginSet = new Dictionary<string, Plugin>();
+
+            // Get or create the domain object
+            this._defaultDomain = CreateGetDomain(this._defaultDomainName);
+        }
+
 
         #region " Events "
 
