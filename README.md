@@ -15,13 +15,25 @@ SaaS-Plugins is a C# project that deals with the runtime code compilation and ma
  
 ## Installation
 
-```
-PM&gt; Install-Package MetaIS.SaaS.Plugins
+```bash
+PM> Install-Package MetaIS.SaaS.Plugins
 ```
 
 ## Usage
 
-
+```cs
+string code = @"
+	using System;
+	namespace DynamicPlugins {
+		public class CodeMirror {
+		public int MirrorInt(int x) {
+			return MetaIS.SaaS.Plugins.HelperPlugin.GetMirrorValue(x);
+		}
+		}
+	}";
+Plugin plugin = HelperPlugin.CreatePlugin("CodeMirror", "Return the input int.", 
+	dllRoot, dllName, new string[] {code}, "DynamicPlugins.CodeMirror", dllRefs);
+```
 
 
 ## License
