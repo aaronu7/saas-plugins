@@ -2,9 +2,13 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/aaronu7/saas-plugins.svg?branch=master)](https://travis-ci.org/aaronu7/saas-plugins)
 
+[![NuGet](https://img.shields.io/nuget/v/MetaIS.SaaS.Plugins.svg)](https://www.nuget.org/packages/MetaIS.SaaS.Plugins/)
+
 
 
 SaaS-Plugins is a C# project that deals with the runtime code compilation and management of plugin assemblies across multiple AppDomains while allowing for recompiles without restarting the controlling application.
+
+
 
 ### History
 The saas-plugins module is a heavily refactored/refined version of one used in a earlier Model Driven Engineering (MDE) SaaS research project. This modules predecessor was the foundation for integrating model driven generated code and allowed entire inter-related systems to be dynamically compiled and linked in C# without unloading the controlling SaaS application.
@@ -37,8 +41,8 @@ This module was purposely designed to offer several layers of implementation:
 ### Project Dependencies
 - Developed in VS2015 using the nunit package for unit testing.
 - Download the "NUnit 3 Test Adapter" extension to view example tests in the Test Explorer
----- Install-Package NUnit.Runners -Version 3.7.0       ????
----- install-package nunit.consolerunner -Version 3.7.0 ????
+---- Install-Package NUnit -Version 3.6.1
+---- Install-Package NUnit3TestAdapter -Version 3.7.0
 ---- System and System.Drawing were added and set to copy local (for better linking with plugins)
 
 ### Future Considerations

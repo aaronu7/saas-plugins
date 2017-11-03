@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>MetaIS.SaaS.Plugins</id>
+    <version>0.1</version>
+    <title>SaaS Plugins Module</title>
+    <authors>Aaron Ulrich</authors>
+    <owners>Aaron Ulrich</owners>
+    <licenseUrl>https://github.com/aaronu7/saas-plugins/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/aaronu7/saas-plugins</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>SaaS-Plugins is a C# project that deals with the runtime code compilation and management of plugin assemblies across multiple AppDomains while allowing for recompiles without restarting the controlling application.</description>
+    <releaseNotes>Initial release.</releaseNotes>
+    <copyright>Copyright (c) 2017 "Aaron Ulrich &lt;ace@gis.ca&gt;"</copyright>
+	<language>en-US</language>
+    <tags>saas plugins compiler dynamic-code runtime-code appdomains code-generation</tags>
+  </metadata>
+</package>
