@@ -69,15 +69,20 @@ namespace MetaIS_Test.SaaS.Plugins
             pluginSystem.PluginSystemLoad(pluginSet);
 
             // Load the plugin into a domain
-            pluginSystem.PluginDomainLoad("AppDomain1", new List<string>() { pluginSet[0].PluginID });
+            pluginSystem.PluginDomainLoad("AppDomain1", new List<string>() { plugin.PluginID });
+
+
 
             // Invoke method and verify 
-            object objA = pluginSystem.InvokeMethod("AppDomain1", pluginSet[0].PluginID, pluginSet[0].ClassNamespacePath, "MirrorInt", new object[] {7});
+            object objA = pluginSystem.InvokeMethod("AppDomain1", plugin.PluginID, plugin.ClassNamespacePath, 
+                "MirrorInt", new object[] {7});
             string sA = HelperPlugin.ObjectToString(objA);
             System.Console.WriteLine(sA);
+            
             // NUnit Assert
             //Assert.NotNull(objA);
             //Assert.AreEqual("7", sA, "Expected: 7  but got: " + sA);
+
 
 
 
@@ -93,9 +98,11 @@ namespace MetaIS_Test.SaaS.Plugins
             pluginSystem.SystemUpdate(pluginIdSet);
 
             // Invoke method and verify 
-            object objB = pluginSystem.InvokeMethod("AppDomain1", pluginSet[0].PluginID, pluginSet[0].ClassNamespacePath, "MirrorInt", new object[] {7});
+            object objB = pluginSystem.InvokeMethod("AppDomain1", plugin.PluginID, plugin.ClassNamespacePath, 
+                "MirrorInt", new object[] {7});
             string sB = HelperPlugin.ObjectToString(objB);
             System.Console.WriteLine(sB);
+
             // NUnit Assert
             Assert.NotNull(objB);
             Assert.AreEqual("14", sB, "Expected: 14  but got: " + sB);
