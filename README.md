@@ -13,12 +13,24 @@ SaaS-Plugins is a C# project that deals with the runtime code compilation and ma
  - Manages the unloading/reloading of affected AppDomains when an assembly is recompiled. 
 
  
-### Installation
+## Installation
 
 Install-Package MetaIS.SaaS.Plugins
 
 
-### Usage
+## Usage
+
+
+
+
+## License
+
+This module is released under the permissive [MIT License](http://revolunet.mit-license.org). Contributions are always welcome.
+
+
+## Contributors
+
+Created by [@Aaron Ulrich](https://github.com/aaronu7)
 
 
 
