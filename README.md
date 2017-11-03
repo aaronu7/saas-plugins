@@ -129,13 +129,10 @@ This module was purposely designed to offer several layers of implementation:
 - Trivial interactive windows form: demonstrates loading and dynamic interaction with runtime compiled plugins.
 
 ##### Future Considerations
-- Extend reflection mechanism to better interact with static class methods.
+- Extend PluginSystem to load from a data model (link to CSV project).
 - Extend unit tests to verify reflection methods.
-- Explore other trivial interfaces with minimal dependencies.
-- Add a basic web service API example.
-- Extend usage cases with more complex designs.
-- Use the metadata from the xml generated during the compile process.
-- Add a "plugin publisher" solution
+- Extend use cases with more complex designs.
+- Use the metadata from the xml generated during the compile process to annotate data in the plugin.
 
 ##### Module History
 The saas-plugins module is a heavily refactored/refined version of one used in a earlier Model Driven Engineering (MDE) SaaS research project. This modules predecessor was the foundation for integrating model driven generated code and allowed entire inter-related systems to be dynamically compiled and linked in C# without unloading the controlling SaaS application.
