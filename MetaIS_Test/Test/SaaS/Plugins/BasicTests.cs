@@ -31,10 +31,41 @@ namespace MetaIS_Test.SaaS.Plugins
             Assert.IsTrue(true);
         }
 
+
+        #region " Readme.md examples " 
+
+        [Test]
+        public void TestReadme1() {
+            // The code for this plugin
+            string code = @"
+	            using System;
+	            namespace DynamicPlugins {
+		            public class CodeMirror {
+			            public int MirrorInt(int x) {return x;}
+		            }
+	            }";
+
+            // Core references are located in the bin folder and are not plugins
+            string[] coreRefs = new string[] {"System.dll", "MetaIS.SaaS.Plugins.dll"};
+
+            // Plugin references are DLL's that have been compiled and linked at runtime
+            string[] pluginRefs = null;
+
+            // Get the path to the core and plugin DLL's
+            string coreBinDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string pluginDir = coreBinDir + @"/PluginsTest/";
+
+            // Call the plugin creation helper to create a plugin
+            Plugin plugin = HelperPlugin.CreatePlugin("CodeMirror.dll", coreBinDir, pluginDir, 
+                new string[] {code}, "DynamicPlugins.CodeMirror", coreRefs, pluginRefs, 1);
+        }
+
+        #endregion
+
         
         #region " Plugin Creators "
 
-        static public Plugin CreatePlugin_RockStar(string dllRoot, string dllName, string[] dllRefs)
+        static public Plugin CreatePlugin_RockStar(string pluginFileName, string coreBinDir, string pluginDir, string[] coreRefs, string[] pluginRefs)
         {
             string code = @"
                 using System;
@@ -46,11 +77,11 @@ namespace MetaIS_Test.SaaS.Plugins
                     }
                   }
                 }";
-            return HelperPlugin.CreatePlugin("RockStar", "Return the input int.", dllRoot, dllName, new string[] {code}, 
-                "DynamicPlugins.RockStar", dllRefs);
+            return HelperPlugin.CreatePlugin(pluginFileName, coreBinDir, pluginDir, new string[] {code}, 
+                "DynamicPlugins.RockStar", coreRefs, pluginRefs);
         }
 
-        public static Plugin CreatePlugin_CodeMirror(string dllRoot, string dllName, string[] dllRefs) {
+        public static Plugin CreatePlugin_CodeMirror(string pluginFileName, string coreBinDir, string pluginDir, string[] coreRefs, string[] pluginRefs) {
             string code = @"
                 using System;
                 namespace DynamicPlugins {
@@ -60,13 +91,12 @@ namespace MetaIS_Test.SaaS.Plugins
                     }
                     }
                 }";
-            Plugin plugin = HelperPlugin.CreatePlugin("CodeMirror", "Return the input int.", 
-                dllRoot, dllName, new string[] {code}, "DynamicPlugins.CodeMirror", dllRefs);
+            Plugin plugin = HelperPlugin.CreatePlugin(pluginFileName, coreBinDir, pluginDir, new string[] {code}, "DynamicPlugins.CodeMirror", coreRefs, pluginRefs);
 
             return plugin;
         }
 
-        public static Plugin CreatePlugin_CodeMultiplier(string dllRoot, string dllName, string[] dllRefs) {
+        public static Plugin CreatePlugin_CodeMultiplier(string pluginFileName, string coreBinDir, string pluginDir, string[] coreRefs, string[] pluginRefs) {
             string code = @"
                 using System;
                 namespace DynamicPlugins {
@@ -77,14 +107,14 @@ namespace MetaIS_Test.SaaS.Plugins
                     }
                     }
                 }";
-            Plugin plugin =  HelperPlugin.CreatePlugin("CodeMultiplier", "Return the input int multiplied by 2.", 
-                dllRoot, dllName, new string[] {code}, "DynamicPlugins.CodeMultiplier", dllRefs);
+            Plugin plugin =  HelperPlugin.CreatePlugin(pluginFileName, coreBinDir, pluginDir, new string[] {code}, "DynamicPlugins.CodeMultiplier", coreRefs, pluginRefs);
 
             return plugin;
         }
 
         #endregion
 
+        
         #region " TestCase-Helper - Tests the HelperPlugin static class - The raw functionality without any imposed implementation. " 
 
         #region " Test Inputs "
@@ -94,14 +124,15 @@ namespace MetaIS_Test.SaaS.Plugins
                 string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
                 string subDir = pluginsSubDir;
                 string dllRoot = baseDir + subDir + @"/";
+                string[] coreRefs = new string[] {"System.dll", "System.Drawing.dll", "MetaIS.SaaS.Plugins.dll"};
 
                 string mirrorName = "_TestHelper3_CodeMirror.dll";
                 string multName = "_TestHelper3_CodeMultiplier.dll";
 
                 //string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\PluginsTest\";   // path to bin
-
-                Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
-                Plugin plugin2 = CreatePlugin_CodeMultiplier(dllRoot, multName, new string[] {mirrorName});
+                
+                Plugin plugin1 = CreatePlugin_CodeMirror(mirrorName, baseDir, dllRoot, coreRefs, null);
+                Plugin plugin2 = CreatePlugin_CodeMultiplier(multName, baseDir, dllRoot, coreRefs, new string[] {mirrorName});
                 List<Plugin> pluginSet = new List<Plugin>(){plugin1,plugin2};
                 
                 yield return new TestCaseData("Dual Class 1", "TestDomain", baseDir, subDir, runnerNameSpace, 
@@ -117,10 +148,11 @@ namespace MetaIS_Test.SaaS.Plugins
                 string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
                 string subDir = pluginsSubDir;
                 string dllRoot = baseDir + subDir + @"/";
+                string[] coreRefs = new string[] {"System.dll", "System.Drawing.dll", "MetaIS.SaaS.Plugins.dll"};
 
                 string mirrorName = "_TestHelper2_CodeMirror.dll";
 
-                Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
+                Plugin plugin1 = CreatePlugin_CodeMirror(mirrorName, baseDir, dllRoot, coreRefs, null);
                 List<Plugin> pluginSet = new List<Plugin>(){plugin1};
 
                 yield return new TestCaseData("Simple Class calling main library.", "TestDomain", baseDir, subDir, runnerNameSpace, 
@@ -134,14 +166,11 @@ namespace MetaIS_Test.SaaS.Plugins
                 string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
                 string subDir = pluginsSubDir;
                 string dllRoot = baseDir + subDir + @"/";
-
-                // "/home/travis/build/aaronu7/saas-plugins/MetaIS_Test/bin/Release\\"
-                // "/home/travis/build/aaronu7/saas-plugins/MetaIS_Test/bin/Release/"
-
+                string[] coreRefs = new string[] {"System.dll", "System.Drawing.dll", "MetaIS.SaaS.Plugins.dll"};
 
                 string mirrorName = "_TestHelper1_CodeMirror.dll";
 
-                Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
+                Plugin plugin1 = CreatePlugin_CodeMirror(mirrorName, baseDir, dllRoot, coreRefs, null);
                 List<Plugin> pluginSet = new List<Plugin>(){plugin1};
 
                 yield return new TestCaseData("Simple Class", "TestDomain", baseDir, subDir, runnerNameSpace, 
@@ -205,10 +234,11 @@ namespace MetaIS_Test.SaaS.Plugins
                 string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
                 string subDir = pluginsSubDir;
                 string dllRoot = baseDir + subDir + @"/";
+                string[] coreRefs = new string[] {"System.dll", "System.Drawing.dll", "MetaIS.SaaS.Plugins.dll"};
 
                 string mirrorName = "_TestPluginDomain1_CodeMirror.dll";
 
-                Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
+                Plugin plugin1 = CreatePlugin_CodeMirror(mirrorName, baseDir, dllRoot, coreRefs, null);
                 List<Plugin> pluginSet = new List<Plugin>(){plugin1};
 
                 yield return new TestCaseData("Simple Class", "TestDomain", baseDir, subDir, runnerNameSpace, pluginSet, "7", 
@@ -277,14 +307,15 @@ namespace MetaIS_Test.SaaS.Plugins
                 string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
                 string subDir = pluginsSubDir;
                 string dllRoot = baseDir + subDir + @"/";
+                string[] coreRefs = new string[] {"System.dll", "System.Drawing.dll", "MetaIS.SaaS.Plugins.dll"};
 
                 string mirrorName = "_TestPluginSystem1_CodeMirror.dll";
                 string multName = "_TestPluginSystem1_CodeMultiplier.dll";
                 string rockName = "_TestPluginSystem1_RockStar.dll";
 
-                Plugin plugin1 = CreatePlugin_CodeMirror(dllRoot, mirrorName, null);
-                Plugin plugin2 = CreatePlugin_RockStar(dllRoot, rockName, null);
-                Plugin plugin3 = CreatePlugin_CodeMultiplier(dllRoot, multName, new string[] {mirrorName, rockName});
+                Plugin plugin1 = CreatePlugin_CodeMirror(mirrorName, baseDir, dllRoot, coreRefs, null);
+                Plugin plugin2 = CreatePlugin_RockStar(rockName, baseDir, dllRoot, coreRefs, null);
+                Plugin plugin3 = CreatePlugin_CodeMultiplier(multName, baseDir, dllRoot, coreRefs, new string[] {mirrorName, rockName});
 
                 List<Plugin> pluginSet = new List<Plugin>(){plugin1, plugin2, plugin3};
 
@@ -324,7 +355,7 @@ namespace MetaIS_Test.SaaS.Plugins
         }
 
         #endregion
-
+    
     }
 }
   

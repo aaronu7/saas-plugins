@@ -15,6 +15,7 @@ namespace MetaIS_Test
         const string testFilesSubPath = @"/Test/SaaS/Plugins/Files/";
         const string runnerNameSpace = @"MetaIS.SaaS.Plugins.PluginRunner";
         const string pluginsSubDir = @"Plugins";
+        string[] coreRefs = new string[] {"System.dll", "System.Drawing.dll", "MetaIS.SaaS.Plugins.dll"};
 
         public frmTest()
         {
@@ -92,7 +93,7 @@ namespace MetaIS_Test
                 List<Plugin> pluginSet = new List<Plugin>();
                 lbPlugins.Items.Clear();
                 foreach(string file in fileSet) {
-                    Plugin plugin = CreatePlugin(file, dllRoot);
+                    Plugin plugin = CreatePlugin(file, binFolderPath, dllRoot);
                     if(plugin!=null) {
                         pluginSet.Add(plugin);
                         lbPlugins.Items.Add(plugin);
@@ -106,7 +107,7 @@ namespace MetaIS_Test
             return pluginSetSorted;
         }
 
-        protected Plugin CreatePlugin(string srcFilePath, string dllRoot)
+        protected Plugin CreatePlugin(string srcFilePath, string coreBinDir, string pluginDir)
         {
             // This is a quick and dirty reader to get some plugin settings
             //      definetly NOT recommend for production
@@ -146,7 +147,8 @@ namespace MetaIS_Test
                 }
             }
 
-            return HelperPlugin.CreatePlugin(pluginLibName, "", dllRoot, pluginLibName, new string[] {code}, "", pluginRefs.ToArray(), compileOrder);
+            
+            return HelperPlugin.CreatePlugin(pluginLibName, coreBinDir, pluginDir, new string[] {code}, "", coreRefs, pluginRefs.ToArray(), compileOrder);
         }
 
         #endregion

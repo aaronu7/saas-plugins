@@ -15,24 +15,35 @@ SaaS-Plugins is a C# project that deals with the runtime code compilation and ma
  
 ## Installation
 
-```bash
+```sh
 PM> Install-Package MetaIS.SaaS.Plugins
 ```
 
 ## Usage
 
 ```cs
+// The code for this plugin
 string code = @"
 	using System;
 	namespace DynamicPlugins {
 		public class CodeMirror {
-		public int MirrorInt(int x) {
-			return MetaIS.SaaS.Plugins.HelperPlugin.GetMirrorValue(x);
-		}
+			public int MirrorInt(int x) {return x;}
 		}
 	}";
-Plugin plugin = HelperPlugin.CreatePlugin("CodeMirror", "Return the input int.", 
-	dllRoot, dllName, new string[] {code}, "DynamicPlugins.CodeMirror", dllRefs);
+
+// Core references are located in the bin folder and are not plugins
+string[] coreRefs = new string[] {"System.dll", "MetaIS.SaaS.Plugins.dll"};
+
+// Plugin references are DLL's that have been compiled and linked at runtime
+string[] pluginRefs = null;
+
+// Get the path to the core and plugin DLL's
+string coreBinDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+string pluginDir = coreBinDir + @"/PluginsTest/";
+
+// Call the plugin creation helper to create a plugin
+Plugin plugin = HelperPlugin.CreatePlugin("CodeMirror", "Return the input int.", coreBinDir,
+	pluginDir, "CodeMirror.dll", new string[] {code}, "DynamicPlugins.CodeMirror", coreRefs, pluginRefs, 1);
 ```
 
 

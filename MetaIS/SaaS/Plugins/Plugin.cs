@@ -18,10 +18,11 @@ namespace MetaIS.SaaS.Plugins
 {
     public class Plugin
     {
-        private string _name = "";
-        private string _description = "";        
-        private string _dllFileDir = "";
+        //private string _name = "";
+        //private string _description = "";        
         private string _dllFileName = "";
+        private string _coreBinDir = "";
+        private string _pluginDir = "";
         private List<string> _dllFileNameReferenceSet = null;
         private string _classNamespacePath = "";
         private string[] _code = null;
@@ -32,14 +33,14 @@ namespace MetaIS.SaaS.Plugins
 
         // MetaData (ex. Function calls and parameters) 
 
-        public Plugin(string name, string description, 
-            string dllFileDir, string dllFileName, List<string> dllFileNameReferenceSet, 
-            string classNamespacePath, string[] code, Int32 compileOrder) {
+        public Plugin(string dllFileName, string coreBinDir, string pluginDir,
+            List<string> dllFileNameReferenceSet, string classNamespacePath, string[] code, Int32 compileOrder) {
 
-            this._name = name;
-            this._description = description;
-            this._dllFileDir = dllFileDir;
+            //this._name = name;
+            //this._description = description;
             this._dllFileName = dllFileName;
+            this._coreBinDir = coreBinDir;
+            this._pluginDir = pluginDir;
             this._dllFileNameReferenceSet = dllFileNameReferenceSet;
             this._classNamespacePath = classNamespacePath;
             this._code = code;
@@ -75,15 +76,23 @@ namespace MetaIS.SaaS.Plugins
         /// The full file path to the plugins DLL.
         /// </summary>
         public string DllFilePath {
-            get {return  this._dllFileDir + this._dllFileName;}
+            get {return  this._pluginDir + this._dllFileName;}
         }
 
         /// <summary>
         /// The directory path to the plugins DLL.
         /// </summary>
-        public string DllFileDir {
-            get {return this._dllFileDir;}
-            set {this._dllFileDir = value;}
+        public string PluginDir {
+            get {return this._pluginDir;}
+            set {this._pluginDir = value;}
+        }
+
+        /// <summary>
+        /// The directory path to the executing applications bin folder (usually a root of the Plugins)
+        /// </summary>
+        public string CoreBinDir {
+            get {return this._coreBinDir;}
+            set {this._coreBinDir = value;}
         }
 
         /// <summary>
@@ -102,6 +111,7 @@ namespace MetaIS.SaaS.Plugins
             set {this._dllFileNameReferenceSet = value;}
         }
 
+        /*
         /// <summary>
         /// The friendly name for this plugin.
         /// </summary>
@@ -117,6 +127,7 @@ namespace MetaIS.SaaS.Plugins
             get {return this._description;}
             set {this._description = value;}
         }
+        */
 
         /// <summary>
         /// A classnamespace path for this plugin.

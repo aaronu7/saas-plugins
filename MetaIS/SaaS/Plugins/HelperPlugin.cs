@@ -114,49 +114,30 @@ namespace MetaIS.SaaS.Plugins
 
         #region " CreatePlugin "
 
-        public static Plugin CreatePlugin(string name, string desc, string dllRoot, string dllFileName, string[] code, string codeNamespacePath, string[] dllCustomRefs)
+        public static Plugin CreatePlugin(string pluginFileName, string coreBinDir, string pluginDir, string[] code, string codeNamespacePath, string[] coreDllRefs, string[] pluginDllRefs)
         {
-            return CreatePlugin(name, desc, dllRoot, dllFileName, code, codeNamespacePath, dllCustomRefs, 0);
+            return CreatePlugin(pluginFileName, coreBinDir, pluginDir, code, codeNamespacePath, coreDllRefs, pluginDllRefs, 0);
         }
 
-        public static Plugin CreatePlugin(string name, string desc, string dllRoot, string dllFileName, string[] code, string codeNamespacePath, string[] dllCustomRefs, Int32 compileOrder)
+        public static Plugin CreatePlugin(string pluginFileName, string coreBinDir, string pluginDir, string[] code, string codeNamespacePath, string[] coreDllRefs, string[] pluginDllRefs, Int32 compileOrder)
         {
-            // alternate dll directories seem to cause issues ...
-            //  --- need to explore bindings and see where we can override this
-            //  --- explore variants for loading assembly into AppDomain
-            //
-            //string dllRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";   // path to bin
-            //      dllRoot = Application.StartupPath + @"\";
-
-            //string plugginRoot = Application.StartupPath + @"\DynamicPlugins\";
-            //string plugginRoot = Application.StartupPath + @"\";
-            //string libDllPath = Application.StartupPath + @"\saas_plugins.dll";
-            
-
             List<string> referencedAssemblySet = new List<string>();
-            //referencedAssemblySet.Add("system.dll");
-            //referencedAssemblySet.Add("system.drawing.dll");
-            //referencedAssemblySet.Add("MetaIS.dll");
+            //string projectRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
 
-            string projectRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/";   // path to bin
-            //referencedAssemblySet.Add(dllRoot + "saas_plugins.dll");    // unit tests need this expicit
-
-            referencedAssemblySet.Add(projectRoot + "System.dll");
-            referencedAssemblySet.Add(projectRoot + "System.Drawing.dll");
-            referencedAssemblySet.Add(projectRoot + "MetaIS.SaaS.Plugins.dll");    // unit tests need this expicit
-
-            if(dllCustomRefs != null) {
-                foreach(string reference in dllCustomRefs) { 
-                    referencedAssemblySet.Add(dllRoot + reference);   //  only needed if we move it out of the expected location .... which isn't working yet
-                    //referencedAssemblySet.Add(reference);
+            if(coreDllRefs != null) {
+                foreach(string reference in coreDllRefs) {
+                    referencedAssemblySet.Add(coreBinDir + @"/" + reference);
                 }
             }
 
-            
-            //string plugginRoot = Application.StartupPath + @"\";
-            System.IO.Directory.CreateDirectory(dllRoot);
-            Plugin oPlugin = new Plugin("", "", dllRoot, dllFileName, referencedAssemblySet, codeNamespacePath, code, compileOrder);
+            if(pluginDllRefs != null) {
+                foreach(string reference in pluginDllRefs) { 
+                    referencedAssemblySet.Add(pluginDir + @"/" + reference);   //  only needed if we move it out of the expected location .... which isn't working yet
+                }
+            }
 
+            System.IO.Directory.CreateDirectory(pluginDir);
+            Plugin oPlugin = new Plugin(pluginFileName, coreBinDir, pluginDir, referencedAssemblySet, codeNamespacePath, code, compileOrder);
             return oPlugin;
         }
 
